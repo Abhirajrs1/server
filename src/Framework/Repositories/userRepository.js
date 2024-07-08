@@ -97,6 +97,17 @@ const userRepository={
             console.log("Error occured during",error);
         }
     },
+    findUserByGoogleId:async(googleId)=>{
+        try {
+            return await User.findOne({googleId})
+        } catch (error) {
+            console.log("Error occured during",error);
+        }
+    },
+    createUser:async(userData)=>{
+        const newUser=new User(userData)
+        return await newUser.save()
+    }
 }
 
 export default userRepository
