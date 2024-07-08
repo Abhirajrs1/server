@@ -26,7 +26,7 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 router.get(
     "/auth/google/callback",
     passport.authenticate("google", {
-      failureRedirect: "http://localhost:3000/login",
+      failureRedirect: "http://localhost:3000/employee-login",
     }),
  userController.handlePassport
   );

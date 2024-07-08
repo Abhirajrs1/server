@@ -165,7 +165,6 @@ const userController = {
         }
     },
     handlePassport:async(req,res)=>{
-        console.log(req.user);
         if(req.user){
             const token=await generateJWT(req.user.email)
             res.cookie('accessToken', token, { httpOnly: true, maxAge: 3600000 });
