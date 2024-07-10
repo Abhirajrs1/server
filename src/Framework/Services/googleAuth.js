@@ -25,7 +25,6 @@ passport.use(
   )
 );
 
-// Serialize and deserialize user functions
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
