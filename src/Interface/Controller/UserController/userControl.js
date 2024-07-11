@@ -5,6 +5,7 @@ import logger from "../../../Framework/Utilis/logger.js";
 
 const userController = {
 
+    // create new user
     postSignup: async (req, res) => {
         try {
             const { username, email, password } = req.body
@@ -13,7 +14,6 @@ const userController = {
             if (result.message) {
                 logger.warn(`Sign up failed for email: ${email}, reason :${result.message}`)
                 res.status(409).json({ success: false, message: result.message })
-
             } else {
                 logger.info(`User registered: ${email}`)
                 res.status(201).json({ success: true, message: "User registered,OTP sent to mail" })
@@ -24,6 +24,7 @@ const userController = {
         }
     },
 
+    // Otp verification
     postVerifyOtp: async (req, res) => {
         const { email, otp } = req.body
         try {
@@ -40,6 +41,8 @@ const userController = {
             res.status(500).json({ message: "Internal server error" })
         }
     },
+
+    // Resend otp
     postResendOtp: async (req, res) => {
         const { email } = req.body
         try {
@@ -57,6 +60,7 @@ const userController = {
         }
     },
 
+    // User login
     postLogin: async (req, res) => {
         try {
             const { email, password } = req.body
@@ -76,6 +80,8 @@ const userController = {
             res.status(500).json({ message: "Internal server error" })
         }
     },
+
+    // Forgot password
     postForgotPassword: async (req, res) => {
         try {
             const { email } = req.body
@@ -93,6 +99,8 @@ const userController = {
             res.status(500).json({ message: "Internal server error" })
         }
     },
+
+    // Reset password
     postResetPassword: async (req, res) => {
         try {
             const { token } = req.params
@@ -110,16 +118,110 @@ const userController = {
             res.status(500).json({ message: "Internal server error" })
         }
     },
+
+    // User verification
     isVerified: async (req, res) => {
         try {
             logger.info(`User verified: ${req.user.email}`)
-            res.status(200).json({ success: true, message: "Verified user", user: req.user }) 
+            res.status(200).json({ success: true, message: "Verified user", user: req.user })
         } catch (error) {
             logger.error(`Verification error: ${error.message}`)
-            res.status(500).json({ message: "Internal server error"})
+            res.status(500).json({ message: "Internal server error" })
         }
     },
 
+    // Get all users
+    getUser: async (req, res) => {
+        try {
+            const { email } = req.params
+            const result = await userUseCase.getUserByEmail(email)
+            if (result.message) {
+                logger.warn(`User not found for email: ${email}`)
+                res.status(400).json({ success: false, message: result.message })
+            } else {
+                const { user } = result
+                logger.info(`User found: ${email}`)
+                res.status(200).json({ success: true, message: "User found successfully", user })
+            }
+        } catch (error) {
+            logger.error(`Get user error for email: ${email} error: ${error.message}`)
+            res.status(500).json({ message: "Internal server error" })
+        }
+    },
+
+    // Update user details
+    userUpdate: async (req, res) => {
+        try {
+            const { email } = req.params
+            const { updatedUserContact } = req.body
+            const updatedUser = await userUseCase.updateUser(email, updatedUserContact)
+            if (updatedUser.message == "User not found") {
+                logger.warn(`Update user failed for email: ${email}, reason: ${updatedUser.message}`)
+                res.status(400).json({ success: false, message: updatedUser.message })
+            }
+            if (updatedUser.message == "User contact details updated successfully") {
+                logger.info(`User details update successfully: ${email}`)
+                res.status(200).json({ success: true, message: updatedUser.message, user: updatedUser.user })
+            }
+        } catch (error) {
+            logger.error(`Update user error for email: ${email}, error:${error.message}`)
+            res.status(500).json({ message: "Internal server error" })
+        }
+    },
+
+    // Add user education
+    addEducation: async (req, res) => {
+        try {
+            const { email } = req.params
+            const { education } = req.body
+
+            const insertEducation = await userUseCase.addEducation(email, education)
+            if (insertEducation.message == "User not found") {
+                logger.warn(`Add education failed for email: ${email}, reason:{insertEducation.message}`)
+                res.status(400).json({ success: false, message: insertEducation.message })
+            }
+            if (insertEducation.message == "User education added successfully") {
+                logger.info(`Education details successfully added: ${email}`)
+                res.status(200).json({ success: true, message: insertEducation.message, user: insertEducation.user })
+            }
+        } catch (error) {
+            logger.error(`Add education failed for email: ${email}, error: {error.message}`)
+            res.status(500).json({ message: "Internal server error" })
+        }
+    },
+
+    // Add user skills
+    addSkill: async (req, res) => {
+        try {
+            const { email } = req.params
+            const { skill } = req.body
+            const insertSkill = await userUseCase.addSkill(email, skill)
+            if (insertSkill.message == "User not found") {
+                logger.warn(`Add skill failed for email: ${email}, reason: ${insertSkill.message}`)
+                res.status(400).json({ success: false, message: insertSkill.message })
+            }
+            if (insertSkill.message == "User skill added successfully") {
+                logger.info(`Skill details successfully added: ${email}`)
+                res.status(200).json({ success: true, message: insertSkill.message, user: insertSkill.user })
+            }
+        } catch (error) {
+            logger.error(`Add skill failed for email: ${email}, error: {error.message}`)
+            res.status(500).json({ message: "Internal server error" })
+        }
+    },
+
+    // Google authentication
+    handlePassport: async (req, res) => {
+        if (req.user) {
+            const token = await generateJWT(req.user.email)
+            res.cookie('accessToken', token, { httpOnly: true, maxAge: 3600000 });
+            res.redirect('http://localhost:5173')
+        } else {
+            res.status(401).json({ success: false, message: "Google authentication failed" });
+        }
+    },
+
+    // User logout
     postLogout: async (req, res) => {
         try {
             res.clearCookie('accessToken')
@@ -130,75 +232,6 @@ const userController = {
             res.status(500).json({ message: "Internal server error" })
         }
     },
-    getUser: async (req, res) => {
-        try {
-            const { email } = req.params
-            const result = await userUseCase.getUserByEmail(email)
-            if (result.message) {
-                res.status(400).json({ success: false, message: result.message })
-            } else {
-                const { user } = result
-                res.status(200).json({ success: true, message: "User found successfully", user })
-            }
-        } catch (error) {
-            res.status(500).json({ message: "Internal server error" })
-        }
-    },
-    userUpdate: async (req, res) => {
-        try {
-            const { email } = req.params
-            const { updatedUserContact } = req.body
-            const updatedUser = await userUseCase.updateUser(email, updatedUserContact)
-            if (updatedUser.message == "User not found") {
-                res.status(400).json({ success: false, message: updatedUser.message })
-            }
-            if (updatedUser.message == "User contact details updated successfully") {
-                res.status(200).json({ success: true, message: updatedUser.message, user: updatedUser.user })
-            }
-        } catch (error) {
-            res.status(500).json({ message: "Internal server error" })
-        }
-    },
-    addEducation: async (req, res) => {
-        try {
-            const { email } = req.params
-            const { education } = req.body
-
-            const insertEducation = await userUseCase.addEducation(email, education)
-            if (insertEducation.message == "User not found") {
-                res.status(400).json({ success: false, message: insertEducation.message })
-            }
-            if (insertEducation.message == "User education added successfully") {
-                res.status(200).json({ success: true, message: insertEducation.message, user: insertEducation.user })
-            }
-        } catch (error) {
-            res.status(500).json({ message: "Internal server error" })
-        }
-    },
-    addSkill: async (req, res) => {
-        try {
-            const { email } = req.params
-            const { skill } = req.body
-            const insertSkill = await userUseCase.addSkill(email, skill)
-            if (insertSkill.message == "User not found") {
-                res.status(400).json({ success: false, message: insertSkill.message })
-            }
-            if (insertSkill.message == "User skill added successfully") {
-                res.status(200).json({ success: true, message: insertSkill.message, user: insertSkill.user })
-            }
-        } catch (error) {
-
-        }
-    },
-    handlePassport: async (req, res) => {
-        if (req.user) {
-            const token = await generateJWT(req.user.email)
-            res.cookie('accessToken', token, { httpOnly: true, maxAge: 3600000 });
-            res.redirect('http://localhost:5173')
-        } else {
-            res.status(401).json({ success: false, message: "Google authentication failed" });
-        }
-    }
 
 }
 
