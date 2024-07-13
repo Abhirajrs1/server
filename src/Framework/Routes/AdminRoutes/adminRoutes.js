@@ -7,3 +7,5 @@ const router=express.Router()
 
 router.post('/admin-login',adminController.postLogin)
 router.get('/admin-verify',authMiddleware,adminController.adminVerified)
+
+export {router as AdminRouter}
