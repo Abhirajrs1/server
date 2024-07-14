@@ -31,6 +31,17 @@ const adminController = {
                   logger.error(`Admin verification error: ${error.message}`);
                   res.status(500).json({ message: "Internal server error" })
             }
+      },
+      adminLogout:async(req,res)=>{
+            try {
+                  res.clearCookie('adminaccessToken')
+                  logger.info(`Admin successfully logout ${req.admin.email}`)
+                  res.status(200).json({success:true,message:"Admin logout successfully"})
+            } catch (error) {
+                  logger.error(`Logout error: ${error.message}`)
+                  res.status(500).json({ message: "Internal server error" })
+                  
+            }
       }
 }
 export default adminController
