@@ -2,6 +2,7 @@ import adminUseCase from "../../../Application/Usecase/adminUsecase.js"
 import logger from "../../../Framework/Utilis/logger.js"
 
 const adminController = {
+
   postLogin: async (req, res) => {
     try {
       const { email, password } = req.body
@@ -25,11 +26,13 @@ const adminController = {
     try {
       logger.info(`Admin verification check`);
       res.status(200).json({ success: true, message: "Admin verified" })
+      res.status(200).json({ success: true, message: "Recruiter verified" })
     } catch (error) {
       logger.error(`Admin verification error: ${error.message}`);
       res.status(500).json({ message: "Internal server error" })
     }
   },
+
   adminLogout: async (req, res) => {
     try {
       res.clearCookie('adminaccessToken');
@@ -38,6 +41,38 @@ const adminController = {
     } catch (error) {
       logger.error(`Logout error: ${error.message}`);
       res.status(500).json({ message: "Internal server error" });
+    }
+  },
+
+  getAllCandidates: async (req, res) => {
+    try {
+      const candidates = await adminUseCase.getAllCandidates()
+      logger.info(`Found ${candidates.length} candidates`);
+      console.log(candidates,"CANDIDATES");
+      res.status(200).json({ success: true, candidates })
+    } catch (error) {
+      logger.error(`Error fetching candidates: ${error.message}`)
+      res.status(500).json({ message: "Internal server error" })
+    }
+  },
+  getAllRecruiters: async (req, res) => {
+    try {
+      const recruiters = await adminUseCase.getAllRecruiters()
+      logger.info(`Found ${recruiters.length} candidates`);
+      res.status(200).json({ success: true, recruiters })
+    } catch (error) {
+      logger.error(`Error fetching recruiters: ${error.message}`)
+      res.status(500).json({ message: "Internal server error" })
+    }
+  },
+  adminLogout: async (req, res) => {
+    try {
+      res.clearCookie('adminaccessToken')
+      logger.info(`Admin successfully logout ${req.admin.email}`)
+      res.status(200).json({ success: true, message: "Admin logout successfully" })
+    } catch (error) {
+      logger.error(`Logout error: ${error.message}`)
+      res.status(500).json({ message: "Internal server error" })
     }
   }
 }
