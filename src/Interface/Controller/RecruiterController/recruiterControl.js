@@ -1,4 +1,5 @@
 import recruiterUseCase from "../../../Application/Usecase/recruiterUsecase.js";
+import logger from "../../../Framework/Utilis/logger.js";
 
 const recruiterController={
 
@@ -97,6 +98,7 @@ const recruiterController={
     postLogout:async(req,res)=>{
         try {
             res.clearCookie('recruiteraccessToken')
+            logger.info(`Recruiter successfully logout: ${req.recruiter.email}`)
             res.status(200).json({success:true,message:"Recruiter logout successfully"})
         } catch (error) {
             res.status(500).json({ message: "Internal server error" })

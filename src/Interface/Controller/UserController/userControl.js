@@ -225,7 +225,7 @@ const userController = {
     postLogout: async (req, res) => {
         try {
             res.clearCookie('accessToken')
-            logger.info(`User successfully logout: ${req.user.email}`)
+            logger.info(`User successfully logout:${req.user.user.email}`)
             res.status(200).json({ success: true, message: "User logout successfully" })
         } catch (error) {
             logger.error(`Logout error: ${error.message}`)

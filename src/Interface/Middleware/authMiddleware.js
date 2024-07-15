@@ -60,7 +60,7 @@ const Middleware={
             }
             req.admin={
                 ...admin,
-                email:decoded.email
+                email: decoded.email 
             }
             next()
         } catch (error) {

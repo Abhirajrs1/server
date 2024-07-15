@@ -27,10 +27,10 @@ const adminUseCase={
             if(!admin){
                 return {message:"Admin not found"}
             }else{
-                {admin}
+                return {admin}
             }
         } catch (error) {
-            
+            return {message:error.message} 
         }
     }
 
