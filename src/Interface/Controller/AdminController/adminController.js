@@ -47,8 +47,10 @@ const adminController = {
   getAllCandidates: async (req, res) => {
     try {
       const candidates = await adminUseCase.getAllCandidates()
+      if(candidates.message){
+        logger.warn(`Error fetching candidatess: ${candidates.message}`)
+      }
       logger.info(`Found ${candidates.length} candidates`);
-      console.log(candidates,"CANDIDATES");
       res.status(200).json({ success: true, candidates })
     } catch (error) {
       logger.error(`Error fetching candidates: ${error.message}`)
@@ -58,6 +60,9 @@ const adminController = {
   getAllRecruiters: async (req, res) => {
     try {
       const recruiters = await adminUseCase.getAllRecruiters()
+      if(recruiters.message){
+        logger.warn(`Error fetching recruiters: ${recruiters.message}`)
+      }
       logger.info(`Found ${recruiters.length} candidates`);
       res.status(200).json({ success: true, recruiters })
     } catch (error) {
