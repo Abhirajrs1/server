@@ -19,6 +19,7 @@ const adminRepository={
    findAllCandidates:async()=>{
       try {
          const candidates=await User.find()
+         console.log(candidates);
          logger.info(`Found ${candidates.length} candidates`);
          return candidates
       } catch (error) {

@@ -41,6 +41,7 @@ const adminUseCase = {
   getAllCandidates: async () => {
     try {
       const candidates = await adminRepository.findAllCandidates();
+      console.log(candidates,"CANDI");
       logger.info(`Found ${candidates.length} candidates`);
       return candidates;
     } catch (error) {
