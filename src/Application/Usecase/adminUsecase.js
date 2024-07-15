@@ -42,8 +42,13 @@ const adminUseCase={
     getAllCandidates:async()=>{
         try {
             const candidates=await adminRepository.findAllCandidates()
-            logger.info(`Found ${candidates.length} candidates`);
-            return candidates
+            if(!candidates){
+                logger.warn(`Canidates not found`);
+                return {message:"Candidates not found"}
+            }else{
+                logger.info(`Found ${candidates.length} candidates`);
+                return candidates
+            }
         } catch (error) {
             logger.error(`Error fetching all candidates: ${error.message}`);
             return { message: error.message };  
@@ -52,8 +57,13 @@ const adminUseCase={
     getAllRecruiters:async()=>{
         try {
             const recruiters=await adminRepository.findAllRecruiters()
-            logger.info(`Found ${recruiters.length} recruiters`);
-            return recruiters
+            if(!recruiters){
+                logger.warn(`Recruiters not found`);
+                return {message:"Recruiters not found"}
+            }else{
+                logger.info(`Found ${recruiters.length} recruiters`);
+                return recruiters
+            } 
         } catch (error) {
             logger.error(`Error fetching all recruiters: ${error.message}`);
             return { message: error.message };  
