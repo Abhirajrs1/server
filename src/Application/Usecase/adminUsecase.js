@@ -67,6 +67,39 @@ const adminUseCase = {
       logger.error(`Error fetching all recruiters: ${error.message}`);
       return { message: error.message };
     }
+  },
+  candidateBlockOrUnblock: async (id) => {
+    try {
+      const candidate = await adminRepository.findCandidateById(id);
+      if (!candidate) {
+        logger.warn(`Candidate not found: ${id}`);
+        return { message: "Candidate not found" };
+      }
+      const newBlockStatus = !candidate.block;
+      await adminRepository.findCandidateByIdAndUpdate(id, { block: newBlockStatus });
+      logger.info(`Candidate ${id} block status updated to ${newBlockStatus}`);
+      return { success: true, block: newBlockStatus };
+    } catch (error) {
+      logger.error(`Error updating block status for candidate ${id}: ${error.message}`);
+      return { message: error.message };
+    }
+  },
+  recruiterBlockOrUnblock:async(id)=>{
+    try {
+      const recruiter = await adminRepository.findRecruiterById(id);
+      if (!recruiter) {
+        logger.warn(`Recruiter not found: ${id}`);
+        return { message: "Recruiter not found" };
+      }
+      const newBlockStatus = !recruiter.block;
+      await adminRepository.findRecruiterByIdAndUpdate(id, { block: newBlockStatus });
+      logger.info(`Recruiter ${id} block status updated to ${newBlockStatus}`);
+      return { success: true, block: newBlockStatus };
+      
+    } catch (error) {
+      logger.error(`Error updating block status for recruiter ${id}: ${error.message}`);
+      return { message: error.message };
+    }
   }
 };
 

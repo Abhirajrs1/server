@@ -19,7 +19,6 @@ const adminRepository={
    findAllCandidates:async()=>{
       try {
          const candidates=await User.find()
-         console.log(candidates);
          logger.info(`Found ${candidates.length} candidates`);
          return candidates
       } catch (error) {
@@ -35,6 +34,58 @@ const adminRepository={
       } catch (error) {
          logger.error(`Error fetching all recruiters: ${error.message}`);   
       }
-   }
+   },
+   findCandidateById:async(id)=>{
+      try {
+         const candidate=await User.findById({_id:id})
+         if (candidate) {
+            logger.info(`Candidate found: ${id}`);
+          } else {
+            logger.warn(`Candidate not found: ${id}`);
+          }
+          return candidate
+      } catch (error) {
+         logger.error(`Error finding candidate by ID: ${id}, ${error.message}`);
+      }
+   },
+   findCandidateByIdAndUpdate: async (id, update) => {
+      try {
+        const candidate = await User.findByIdAndUpdate(id, { $set: update }, { new: true });
+        if (candidate) {
+          logger.info(`Candidate updated: ${id}`);
+        } else {
+          logger.warn(`Candidate not found: ${id}`);
+        }
+        return candidate;
+      } catch (error) {
+        logger.error(`Error updating candidate by ID: ${id}, ${error.message}`);
+      }
+    },
+    findRecruiterById:async(id)=>{
+      try {
+         const recruiter=await Recruiter.findById({_id:id})
+         if (recruiter) {
+            logger.info(`Recruiter found: ${id}`);
+          } else {
+            logger.warn(`Recruiter not found: ${id}`);
+          }
+          return recruiter
+      } catch (error) {
+         logger.error(`Error finding recruiter by ID: ${id}, ${error.message}`);
+      }
+   },
+   findRecruiterByIdAndUpdate: async (id, update) => {
+      try {
+        const recruiter = await Recruiter.findByIdAndUpdate(id, { $set: update }, { new: true });
+        if (recruiter) {
+          logger.info(`Recruiter updated: ${id}`);
+        } else {
+          logger.warn(`Recruiter not found: ${id}`);
+        }
+        return recruiter;
+      } catch (error) {
+        logger.error(`Error updating recruiter by ID: ${id}, ${error.message}`);
+      }
+    }  
 }
 export default adminRepository

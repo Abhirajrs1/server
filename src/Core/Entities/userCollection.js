@@ -11,7 +11,7 @@ const UserSchema=new mongoose.Schema({
         type:String,
     },
     googleId: {
-        type: String, // Add googleId field to store Google user identifier
+        type: String, 
         unique: true,
         sparse: true,
       },

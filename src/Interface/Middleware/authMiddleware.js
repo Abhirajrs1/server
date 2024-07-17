@@ -18,6 +18,10 @@ const Middleware={
             if(!user){
                 return res.status(401).json({message:"User not found"})
             }
+            if (user.block) {
+                res.clearCookie('accessToken');
+                return res.status(403).json({ message: 'Your account has been blocked. Please contact support.' });
+            }
             req.user=user
             next()
         } catch (error) {
@@ -35,6 +39,10 @@ const Middleware={
             const recruiter=await recruiterUseCase.getRecruiterByEmail(decoded.email)
             if(!recruiter){
                 return res.status(401).json({message:"Recruiter not found"})
+            }
+            if (recruiter.block) {
+                res.clearCookie('recruiteraccessToken');
+                return res.status(403).json({ message: 'Your account has been blocked. Please contact support.' });
             }
             req.recruiter = {
                 ...recruiter,

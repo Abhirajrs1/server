@@ -192,28 +192,27 @@ const userUseCase={
             logger.error(`Add skill error for email: ${email}, error: ${error.message}`);
         }
     },
-
-    
-    findOrCreateGoogleUser:async(profile)=>{
-        try {
-            const existingUser=await userRepository.findUserByGoogleId(profile.id)
-            if(existingUser){
-                return existingUser
-            }
-            const newUser={
-                username:profile.displayName,
-                email:profile.emails[0].value,
-                googleId:profile.id,
-                isVerified:true
-            }
-            return await userRepository.createUser(newUser)
-        } catch (error) {
-            console.log(error);
-        }
-    },
-    findUserById: async (id) => {
-        return await userRepository.findUserById(id);
+   findOrCreateGoogleUser : async (profile) => {
+    try {
+      const existingUser = await userRepository.findUserByGoogleId(profile.id);
+      if (existingUser) {
+        return existingUser;
       }
+  
+      const newUser = {
+        username: profile.displayName,
+        email: profile.emails[0].value,
+        googleId: profile.id,
+        isVerified: true,
+      };
+      return await userRepository.createUser(newUser);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  findUserById :async (id) => {
+    return await userRepository.findUserById(id);
+  }
 }
 
 export default userUseCase

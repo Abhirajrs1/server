@@ -26,7 +26,6 @@ const adminController = {
     try {
       logger.info(`Admin verification check`);
       res.status(200).json({ success: true, message: "Admin verified" })
-      res.status(200).json({ success: true, message: "Recruiter verified" })
     } catch (error) {
       logger.error(`Admin verification error: ${error.message}`);
       res.status(500).json({ message: "Internal server error" })
@@ -70,14 +69,30 @@ const adminController = {
       res.status(500).json({ message: "Internal server error" })
     }
   },
-  adminLogout: async (req, res) => {
+  blockOrUnblockUser: async (req, res) => {
     try {
-      res.clearCookie('adminaccessToken')
-      logger.info(`Admin successfully logout ${req.admin.email}`)
-      res.status(200).json({ success: true, message: "Admin logout successfully" })
+      const { id } = req.params;
+      const result = await adminUseCase.candidateBlockOrUnblock(id);
+      if (result.message) {
+        return res.status(400).json({ success: false, message: result.message });
+      }
+      res.status(200).json({ success: true, block: result.block });
     } catch (error) {
-      logger.error(`Logout error: ${error.message}`)
-      res.status(500).json({ message: "Internal server error" })
+      logger.error(`Error blocking/unblocking user: ${error.message}`);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  },
+  blockOrUnblockRecruiter:async(req,res)=>{
+    try {
+      const { id } = req.params;
+      const result = await adminUseCase.recruiterBlockOrUnblock(id);
+      if (result.message) {
+        return res.status(400).json({ success: false, message: result.message });
+      }
+      res.status(200).json({ success: true, block: result.block });
+    } catch (error) {
+      logger.error(`Error blocking/unblocking recruiter: ${error.message}`);
+      res.status(500).json({ message: 'Internal server error' });
     }
   }
 }
