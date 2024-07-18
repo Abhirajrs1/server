@@ -1,28 +1,34 @@
 import { Job } from "../../Core/Entities/jobCollection.js";
+import logger from "../Utilis/logger.js";
 
-const jobRepository={
+const jobRepository = {
 
-    createJob:async(jobDetails)=>{
+    createJob: async (jobDetails) => {
         try {
-            const newJob=new Job(jobDetails)
+            const newJob = new Job(jobDetails)
             await newJob.save()
+            logger.info(`Created new job: ${newJob._id}`);
             return newJob
         } catch (error) {
-            console.log(error);
+            logger.error(`Error creating job: ${error}`);
         }
     },
-    getJobs:async()=>{
+    getJobs: async () => {
         try {
-            return await Job.find()
+            const jobs = await Job.find()
+            logger.info(`Retrieved ${jobs.length} jobs`);
+            return jobs
         } catch (error) {
-            console.log(error);
+            logger.error(`Error retrieving jobs: ${error}`);
         }
     },
-    getJobsById:async(id)=>{
+    getJobsById: async (id) => {
         try {
-            return await Job.find({jobPostedBy:id})
+            const jobs = await Job.find({ jobPostedBy: id })
+            logger.info(`Retrieved jobs posted by user: ${id}`);
+            return jobs;
         } catch (error) {
-            console.log(error);
+            logger.error(`Error retrieving jobs by ID: ${error}`);
         }
     }
 

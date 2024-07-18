@@ -1,61 +1,75 @@
 import { Recruiter } from "../../Core/Entities/recruiterCollection.js";
 import { TemperoryRecruiter } from "../../Core/Entities/temperoryRecruiterCollection.js";
+import logger from "../Utilis/logger.js";
 
-const recruiterRepository={
-       createRecruiter:async(recruiterData)=>{
+const recruiterRepository = {
+    createRecruiter: async (recruiterData) => {
         try {
-            const newRecruiter=new TemperoryRecruiter(recruiterData)
+            const newRecruiter = new TemperoryRecruiter(recruiterData)
             await newRecruiter.save()
+            logger.info(`Created new temporary recruiter: ${newRecruiter.email}`);
             return newRecruiter
         } catch (error) {
-            console.log(error);
-        }
-       },
-       findRecruiterByEmail:async(email)=>{
-        try {
-            return await Recruiter.findOne({email:email})
-        } catch (error) {
-            console.log(error);
-        }
-       },
-       findRecruiterByIdAndUpdate:async(id,value)=>{
-        try {
-            return await Recruiter.findByIdAndUpdate({_id:id},{password:value})
-        } catch (error) {
-            console.log("Error occured during",error);
+            logger.error(`Error creating recruiter: ${error}`);
         }
     },
-       findTemperoryRecruiterByEmail:async(email)=>{
+
+    findRecruiterByEmail: async (email) => {
         try {
-            return await TemperoryRecruiter.findOne({email:email})
+            const recruiter = await Recruiter.findOne({ email: email })
+            logger.info(`Found recruiter by email: ${email}`);
+            return recruiter
         } catch (error) {
-            console.log(error);
+            logger.error(`Error finding recruiter by email: ${error}`);
         }
-       },
-       updateRecruiterOtp:async(email,otp,expiration)=>{
+    },
+    findRecruiterByIdAndUpdate: async (id, value) => {
         try {
-            return TemperoryRecruiter.findOneAndUpdate({email:email},{$set:{otpCode:otp,otpExpiration:expiration}},{new:true})
+            const updatedRecruiter = await Recruiter.findByIdAndUpdate({ _id: id }, { password: value })
+            logger.info(`Updated recruiter password for ID: ${id}`);
+            return updatedRecruiter
         } catch (error) {
-            console.log(error);
+            logger.error(`Error updating recruiter password for ID: ${id}, error: ${error}`);
         }
-       },
-       moveTemperoryRecruiterToRecruiter:async(email)=>{
+    },
+    findTemperoryRecruiterByEmail: async (email) => {
         try {
-            const tempRecruiter=await TemperoryRecruiter.findOne({email:email})
-            if(tempRecruiter){
-                const permanentRecruiter=new Recruiter({
-                    recruitername:tempRecruiter.recruitername,
-                    email:tempRecruiter.email,
-                    password:tempRecruiter.password
+            const tempRecruiter = await TemperoryRecruiter.findOne({ email: email })
+            logger.info(`Found temporary recruiter by email: ${email}`);
+            return tempRecruiter
+        } catch (error) {
+            logger.error(`Error finding temporary recruiter by email: ${error}`);
+        }
+    },
+    updateRecruiterOtp: async (email, otp, expiration) => {
+        try {
+            const updatedRecruiter = TemperoryRecruiter.findOneAndUpdate({ email: email }, { $set: { otpCode: otp, otpExpiration: expiration } }, { new: true })
+            logger.info(`Updated OTP for temporary recruiter with email: ${email}`);
+            return updatedRecruiter
+        } catch (error) {
+            logger.error(`Error updating OTP for temporary recruiter with email: ${error}`);
+        }
+    },
+    moveTemperoryRecruiterToRecruiter: async (email) => {
+        try {
+            const tempRecruiter = await TemperoryRecruiter.findOne({ email: email })
+            if (tempRecruiter) {
+                const permanentRecruiter = new Recruiter({
+                    recruitername: tempRecruiter.recruitername,
+                    email: tempRecruiter.email,
+                    password: tempRecruiter.password
                 })
                 await permanentRecruiter.save()
-                await TemperoryRecruiter.deleteOne({email:email})
+                await TemperoryRecruiter.deleteOne({ email: email })
+                logger.info(`Moved temporary recruiter to permanent recruiter: ${email}`);
                 return permanentRecruiter
+            } else {
+                logger.warn(`Temporary recruiter not found with email: ${email}`);
             }
         } catch (error) {
-            console.log(error);
+            logger.error(`Error moving temporary recruiter to permanent recruiter: ${error}`);
         }
-       }
+    }
 }
 
 export default recruiterRepository
