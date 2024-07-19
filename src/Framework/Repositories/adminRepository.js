@@ -16,21 +16,25 @@ const adminRepository={
      } catch (error) {
       logger.error(`Error finding admin by email: ${email}, ${error.message}`);     }
    },
-   findAllCandidates:async()=>{
+   findAllCandidates:async(page,limit)=>{
       try {
-         const candidates=await User.find()
+         const skip=(page-1)*limit
+         const candidates=await User.find().skip(skip).limit(limit)
+         const total=await User.countDocuments()
          logger.info(`Found ${candidates.length} candidates`);
-         return candidates
+         return {candidates,total}
       } catch (error) {
          logger.error(`Error fetching all candidates: ${error.message}`);
          
       }
    },
-   findAllRecruiters:async()=>{
+   findAllRecruiters:async(page,limit)=>{
       try {
-         const recruiters=await Recruiter.find()
+        const skip=(page-1)*limit
+         const recruiters=await Recruiter.find().skip(skip).limit(limit)
+         const total=await Recruiter.countDocuments()
          logger.info(`Found ${recruiters.length} recruiters`);
-         return recruiters
+         return {recruiters,total}
       } catch (error) {
          logger.error(`Error fetching all recruiters: ${error.message}`);   
       }

@@ -45,12 +45,14 @@ const adminController = {
 
   getAllCandidates: async (req, res) => {
     try {
-      const candidates = await adminUseCase.getAllCandidates()
+      const page=parseInt(req.query.page) || 1
+      const limit=parseInt(req.query.limit) || 10
+      const candidates = await adminUseCase.getAllCandidates(page,limit)
       if(candidates.message){
         logger.warn(`Error fetching candidatess: ${candidates.message}`)
       }
       logger.info(`Found ${candidates.length} candidates`);
-      res.status(200).json({ success: true, candidates })
+      res.status(200).json({ success: true, candidates:candidates.candidates,total:candidates.total,page:candidates.page,limit:candidates.limit })
     } catch (error) {
       logger.error(`Error fetching candidates: ${error.message}`)
       res.status(500).json({ message: "Internal server error" })
@@ -58,12 +60,14 @@ const adminController = {
   },
   getAllRecruiters: async (req, res) => {
     try {
-      const recruiters = await adminUseCase.getAllRecruiters()
+      const page=parseInt(req.query.page) || 1
+      const limit=parseInt(req.query.limit) || 10
+      const recruiters = await adminUseCase.getAllRecruiters(page,limit)
       if(recruiters.message){
         logger.warn(`Error fetching recruiters: ${recruiters.message}`)
       }
       logger.info(`Found ${recruiters.length} candidates`);
-      res.status(200).json({ success: true, recruiters })
+      res.status(200).json({ success: true, recruiters:recruiters.recruiters,total:recruiters.total,page:recruiters.page,limit:recruiters.limit })
     } catch (error) {
       logger.error(`Error fetching recruiters: ${error.message}`)
       res.status(500).json({ message: "Internal server error" })

@@ -38,30 +38,30 @@ const adminUseCase = {
       return { message: error.message };
     }
   },
-  getAllCandidates: async () => {
+  getAllCandidates: async (page,limit) => {
     try {
-      const candidates = await adminRepository.findAllCandidates();
+      const {candidates,total} = await adminRepository.findAllCandidates(page,limit);
       if (!candidates) {
         logger.warn(`Candidates not found`);
         return { message: "Candidates not found" };
       } else {
         logger.info(`Found ${candidates.length} candidates`);
-        return candidates;
+        return {candidates,total,page,limit};
       }
     } catch (error) {
       logger.error(`Error fetching all candidates: ${error.message}`);
       return { message: error.message };
     }
   },
-  getAllRecruiters: async () => {
+  getAllRecruiters: async (page,limit) => {
     try {
-      const recruiters = await adminRepository.findAllRecruiters();
+      const {recruiters,total} = await adminRepository.findAllRecruiters(page,limit);
       if (!recruiters) {
         logger.warn(`Recruiters not found`);
         return { message: "Recruiters not found" };
       } else {
         logger.info(`Found ${recruiters.length} recruiters`);
-        return recruiters;
+        return {recruiters,total,page,limit};
       }
     } catch (error) {
       logger.error(`Error fetching all recruiters: ${error.message}`);
