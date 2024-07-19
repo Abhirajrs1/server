@@ -31,6 +31,10 @@ const RecruiterSchema=new mongoose.Schema({
         type:Boolean,
         default:false,
     },
+    isSubscribed:{
+        type:Boolean,
+        default:false
+    }
       },
 {
     timestamps:true

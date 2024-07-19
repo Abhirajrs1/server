@@ -42,63 +42,6 @@ const adminController = {
       res.status(500).json({ message: "Internal server error" });
     }
   },
-
-  getAllCandidates: async (req, res) => {
-    try {
-      const page=parseInt(req.query.page) || 1
-      const limit=parseInt(req.query.limit) || 10
-      const candidates = await adminUseCase.getAllCandidates(page,limit)
-      if(candidates.message){
-        logger.warn(`Error fetching candidatess: ${candidates.message}`)
-      }
-      logger.info(`Found ${candidates.length} candidates`);
-      res.status(200).json({ success: true, candidates:candidates.candidates,total:candidates.total,page:candidates.page,limit:candidates.limit })
-    } catch (error) {
-      logger.error(`Error fetching candidates: ${error.message}`)
-      res.status(500).json({ message: "Internal server error" })
-    }
-  },
-  getAllRecruiters: async (req, res) => {
-    try {
-      const page=parseInt(req.query.page) || 1
-      const limit=parseInt(req.query.limit) || 10
-      const recruiters = await adminUseCase.getAllRecruiters(page,limit)
-      if(recruiters.message){
-        logger.warn(`Error fetching recruiters: ${recruiters.message}`)
-      }
-      logger.info(`Found ${recruiters.length} candidates`);
-      res.status(200).json({ success: true, recruiters:recruiters.recruiters,total:recruiters.total,page:recruiters.page,limit:recruiters.limit })
-    } catch (error) {
-      logger.error(`Error fetching recruiters: ${error.message}`)
-      res.status(500).json({ message: "Internal server error" })
-    }
-  },
-  blockOrUnblockUser: async (req, res) => {
-    try {
-      const { id } = req.params;
-      const result = await adminUseCase.candidateBlockOrUnblock(id);
-      if (result.message) {
-        return res.status(400).json({ success: false, message: result.message });
-      }
-      res.status(200).json({ success: true, block: result.block });
-    } catch (error) {
-      logger.error(`Error blocking/unblocking user: ${error.message}`);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  },
-  blockOrUnblockRecruiter:async(req,res)=>{
-    try {
-      const { id } = req.params;
-      const result = await adminUseCase.recruiterBlockOrUnblock(id);
-      if (result.message) {
-        return res.status(400).json({ success: false, message: result.message });
-      }
-      res.status(200).json({ success: true, block: result.block });
-    } catch (error) {
-      logger.error(`Error blocking/unblocking recruiter: ${error.message}`);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  }
 }
 
 export default adminController;
