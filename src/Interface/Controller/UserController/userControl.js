@@ -7,7 +7,8 @@ const userController = {
     // create new user
     postSignup: async (req, res) => {
         try {
-            const { username, email, password } = req.body;
+            const formData = req.body;
+            const{username,email,password}=formData
             const userData = { username, email, password };
             let result = await userUseCase.userSignUp(userData);
             if (result.message) {
@@ -18,7 +19,7 @@ const userController = {
                 res.status(201).json({ success: true, message: "User registered, OTP sent to mail" });
             }
         } catch (error) {
-            logger.error(`Signup error for email: ${email}, error: ${error.message}`);
+            logger.error(`Signup error for email, error: ${error.message}`);
             res.status(500).json({ message: "Internal server error" });
         }
     },
@@ -108,8 +109,9 @@ const userController = {
     // Reset password
     postResetPassword: async (req, res) => {
         try {
-            const { token } = req.params;
-            const { password } = req.body;
+            const { token } = req.params
+            const formData = req.body
+            const {password}=formData
             const result = await userUseCase.resetPassword(token, password);
             if (result.message === "User not found, so password doesn't change") {
                 logger.warn(`Reset password failed, user not found for token: ${token}`);

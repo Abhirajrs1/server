@@ -5,7 +5,8 @@ const recruiterController = {
 
     postRecruiterSignup: async (req, res) => {
         try {
-            const { recruitername, email, password } = req.body
+            const {formData} = req.body
+            const {recruitername,email,password}=formData
             const recruiterData = { recruitername, email, password }
             const result = await recruiterUseCase.recruiterSignUp(recruiterData)
             if (result.message) {
@@ -97,7 +98,8 @@ const recruiterController = {
     postResetPassword: async (req, res) => {
         try {
             const { token } = req.params
-            const { password } = req.body
+            const formData = req.body
+            const {password}=formData
             const result = await recruiterUseCase.resetPassword(token, password)
             if (result.message == "Recruiter not found, so password doesn't change") {
                 logger.warn(`Reset password attempt failed, recruiter not found`);
