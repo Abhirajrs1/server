@@ -1,4 +1,5 @@
 import adminRepository from "../../Framework/Repositories/adminRepository.js";
+import jobRepository from "../../Framework/Repositories/jobRepository.js";
 import { generateJWT } from "../../Framework/Services/jwtServices.js";
 import logger from "../../Framework/Utilis/logger.js";
 
@@ -38,6 +39,15 @@ const adminUseCase = {
       return { message: error.message };
     }
   },
+  getAllJobs: async (page,limit) => {
+    try {
+        const {jobs,total} = await adminRepository.getAllJobs(page,limit)
+        logger.info(`Retrieved ${jobs.length} jobs`);
+        return {jobs,total,page,limit}
+    } catch (error) {
+        logger.error(`Error in getAllJobs: ${error}`);
+    }
+},
   getAllCandidates: async (page,limit) => {
     try {
       const {candidates,total} = await adminRepository.findAllCandidates(page,limit);
@@ -98,6 +108,21 @@ const adminUseCase = {
       
     } catch (error) {
       logger.error(`Error updating block status for recruiter ${id}: ${error.message}`);
+      return { message: error.message };
+    }
+  },
+  jobListOrUnlist:async(id)=>{
+    try {
+      const job=await jobRepository.getJobById(id)
+      if(!job){
+        logger.warn(`Jobs not found ${id}`)
+        return { message: "Job not found" };
+      }
+      const newListStatus=!job.delete
+      await adminRepository.findJobByIdAndUpdate(id,{delete:newListStatus})
+      return {success:true,delete:newListStatus}
+    } catch (error) {
+      logger.error(`Error updating list status of job ${id}: ${error.message}`);
       return { message: error.message };
     }
   }

@@ -1,6 +1,7 @@
 import { Admin } from "../../Core/Entities/adminCollection.js";
 import { User } from "../../Core/Entities/userCollection.js";
 import { Recruiter } from "../../Core/Entities/recruiterCollection.js";
+import { Job } from "../../Core/Entities/jobCollection.js";
 import logger from "../Utilis/logger.js";
 
 const adminRepository={
@@ -38,6 +39,17 @@ const adminRepository={
       } catch (error) {
          logger.error(`Error fetching all recruiters: ${error.message}`);   
       }
+   },
+   getAllJobs:async(page,limit)=>{
+    try {
+      const skip=(page-1)*limit
+      const jobs=await Job.find().skip(skip).limit(limit)
+      const total=await Job.countDocuments()
+      logger.info(`Found ${jobs.length} jobs`);
+      return {jobs,total}
+    } catch (error) {
+      logger.error(`Error fetching all jobs: ${error.message}`);   
+    }
    },
    findCandidateById:async(id)=>{
       try {
@@ -89,6 +101,19 @@ const adminRepository={
         return recruiter;
       } catch (error) {
         logger.error(`Error updating recruiter by ID: ${id}, ${error.message}`);
+      }
+    },
+    findJobByIdAndUpdate:async(id,update)=>{
+      try {
+        const job=await Job.findByIdAndUpdate(id,{$set:update},{new:true})
+        if(job){
+          logger.info(`Job updated: ${id}`)
+        }else{
+          logger.warn(`Recruiter not found: ${id}`);
+        }
+        return job
+      } catch (error) {
+        logger.error(`Error updating job by ID: ${id}, ${error.message}`);
       }
     }  
 }

@@ -33,10 +33,23 @@ const jobUseCase = {
     getAllJobs: async () => {
         try {
             const jobs = await jobRepository.getJobs()
+            const activeJobs=jobs.filter(job=>!job.delete)
             logger.info(`Retrieved ${jobs.length} jobs`);
-            return jobs
+            return activeJobs
         } catch (error) {
             logger.error(`Error in getAllJobs: ${error}`);
+        }
+    },
+    getJobById:async(id)=>{
+        try {
+            const job=await jobRepository.getJobDetailsById(id)
+            if(!job){
+                return ({message:"Job not found"})
+            }
+            logger.info(`Retrieved ${id} successfully`);
+            return job
+        } catch (error) {
+            logger.error(`Error in getJob: ${error}`);
         }
     },
     showJobs: async (id) => {

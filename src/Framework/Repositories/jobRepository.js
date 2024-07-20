@@ -22,11 +22,30 @@ const jobRepository = {
             logger.error(`Error retrieving jobs: ${error}`);
         }
     },
+    getJobDetailsById:async(id)=>{
+        try {
+            const job=await Job.findById({_id:id})
+            logger.info(`Retrieved ${id} job`);
+            return job
+        } catch (error) {
+            logger.error(`Error retrieving job: ${error}`);
+
+        }
+    },
     getJobsById: async (id) => {
         try {
             const jobs = await Job.find({ jobPostedBy: id })
             logger.info(`Retrieved jobs posted by user: ${id}`);
             return jobs;
+        } catch (error) {
+            logger.error(`Error retrieving jobs by ID: ${error}`);
+        }
+    },
+    getJobById:async(id)=>{
+        try {
+            const job=await Job.findById({_id:id})
+            logger.info(`Retrieved job: ${id}`);
+            return job
         } catch (error) {
             logger.error(`Error retrieving jobs by ID: ${error}`);
         }
