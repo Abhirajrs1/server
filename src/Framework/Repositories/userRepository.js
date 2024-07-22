@@ -125,13 +125,13 @@ const userRepository={
         }
     },
 
-    findUserByGoogleId:async(googleId)=>{
+    findUserByGoogleId:async(email)=>{
         try {
-            const user=await User.findOne({googleId})
-            logger.info(`User found by Google ID: ${googleId}`);
+            const user=await User.findOne({email});
+            logger.info(`User found by Google ID: ${email}`);
             return user;
         } catch (error) {
-            logger.error(`Error during finding user by Google ID: ${googleId}, error: ${error.message}`);
+            logger.error(`Error during finding user by Google ID: ${email}, error: ${error.message}`);
         }
     },
     createUser:async(userData)=>{

@@ -33,6 +33,32 @@ const categoryRepository={
         } catch (error) {
             logger.error(`Error retrieving categories: ${error.message}`);
         }
+    },
+    getIndividualCategory:async(id)=>{
+        try {
+            const category = await Category.findById(id);
+            if (category) {
+                logger.info(`Category retrieved successfully: ${JSON.stringify(category)}`);
+            } else {
+                logger.warn(`Category not found with ID: ${id}`);
+            }
+            return category
+        } catch (error) {
+            logger.error(`Error retrieving category with ID ${id}: ${error.message}`);
+        }
+    },
+    editCategory:async(id,newDetails)=>{
+        try {
+            const updatedCategory=await Category.findByIdAndUpdate({_id:id},newDetails,{new:true})
+            if(updatedCategory){
+                logger.info(`Category updated successfully: ${JSON.stringify(updatedCategory)}`);
+            }else{
+                logger.warn(`Category not found with ID: ${id}`);
+            }
+            return updatedCategory
+        } catch (error) {
+            logger.error(`Error updating category with ID ${id}: ${error.message}`);
+        }
     }
 
 

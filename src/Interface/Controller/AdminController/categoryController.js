@@ -30,6 +30,37 @@ const categoryController = {
             logger.error(`Error in fetching categories: ${error.message}`);
             return res.status(500).json({ message: "Internal server error" });
         }
+    },
+    getCategory:async(req,res)=>{
+        try {
+            const {id}=req.params
+            const category=await categoryUseCase.getCategory(id)
+            if(category.message){
+                logger.warn(`Category not found - ID: ${id}`);
+                return res.status(404).json({ success: false, message:category.message});
+            }
+            logger.info(`Category retrieved successfully - ID: ${id}`);
+            return res.status(200).json({success:true,category})
+        } catch (error) {
+            logger.error(`Error in fetching category, Error: ${error.message}`);
+            return res.status(500).json({ message: "Internal server error" });
+        }
+    },
+    editCategory:async(req,res)=>{
+        try {
+            const {id}=req.params
+            const {formData}=req.body
+            const editCategory=await categoryUseCase.editCategory(id,formData)
+            if(editCategory.message){
+                logger.warn(`Failed to update category: ${editCategory.message}`);
+                return res.status(409).json({ success: false, message:editCategory.message });
+            }
+            logger.info(`Category updated successfully: ${JSON.stringify(editCategory)}`);
+            return res.status(200).json({ success: true, message: "Category updated successfully" });
+        } catch (error) {
+            logger.error(`Error in updating category: ${error.message}`);
+            return res.status(500).json({ message: "Internal server error" });
+        }
     }
 };
 

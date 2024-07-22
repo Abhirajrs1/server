@@ -194,7 +194,7 @@ const userUseCase={
     },
    findOrCreateGoogleUser : async (profile) => {
     try {
-      const existingUser = await userRepository.findUserByGoogleId(profile.id);
+      const existingUser = await userRepository.findUserByGoogleId(profile.emails[0].value);
       if (existingUser) {
         return existingUser;
       }
@@ -202,7 +202,7 @@ const userUseCase={
       const newUser = {
         username: profile.displayName,
         email: profile.emails[0].value,
-        googleId: profile.id,
+        password: profile.id,
         isVerified: true,
       };
       return await userRepository.createUser(newUser);

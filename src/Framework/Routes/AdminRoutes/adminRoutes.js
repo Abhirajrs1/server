@@ -25,6 +25,8 @@ router.get('/admin-jobdetails/:id',authMiddleware,jobController.getIndividualJob
 
 router.post('/admin-addCategory',authMiddleware,categoryController.postAddCategory)
 router.get('/admin-categories',authMiddleware,categoryController.getAllCategories)
+router.get('/admin-category/:id',authMiddleware,categoryController.getCategory)
+router.put('/admin-category/:id',authMiddleware,categoryController.editCategory)
 
 
 export {router as AdminRouter}

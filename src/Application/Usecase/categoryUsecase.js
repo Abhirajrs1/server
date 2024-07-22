@@ -36,6 +36,39 @@ const categoryUseCase = {
         } catch (error) {
             logger.error(`Error in fetching categories: ${error.message}`);
         }
+    },
+    getCategory:async(id)=>{
+        try {
+            const category=await categoryRepository.getIndividualCategory(id)
+            if(!category){
+                logger.warn(`Category not found - ID: ${id}`);
+                return ({message:"Category not found"})
+            }else{
+                logger.info(`Category retrieved successfully - ID: ${id}`);
+                return category
+            }
+        } catch (error) {
+            logger.error(`Error in fetching category - ID: ${id}, Error: ${error.message}`);
+        }
+    },
+    editCategory:async(id,formData)=>{
+        try {
+            const {categoryName,description}=formData
+            const existingCategory=await categoryRepository.findExistingCategory(categoryName)
+            if (existingCategory && existingCategory._id.toString() !== id) {
+                logger.warn(`Category name conflict: ${categoryName}`);
+                return { message: "Category name already exists" };
+            }
+            const updatedCategory=await categoryRepository.editCategory(id,{categoryName,categoryDescription:description})
+            if(!updatedCategory){
+                logger.warn(`Failed to update category with ID: ${id}`);
+                return { message: "Failed to update category" };
+            }
+            logger.info(`Category updated successfully with ID: ${id}`);
+            return updatedCategory;
+        } catch (error) {
+            logger.error(`Error in updating category: ${error.message}`);
+        }
     }
 };
 

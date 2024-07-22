@@ -228,7 +228,14 @@ const userController = {
 
     // Google authentication
     handlePassport: async (req, res) => {
+        
         if (req.user) {
+            // console.log("ferf",req.user);
+            const userData={
+                username:req.user.displayName,email:req.user.emails[0].value,password:req.user.id
+            }
+            const googleuser=await userUseCase.findOrCreateGoogleUser(req.user);
+            console.log("googleuser",googleuser);
             const token = await generateJWT(req.user.email);
             res.cookie('accessToken', token, { httpOnly: true, maxAge: 3600000 });
             res.redirect('http://localhost:5173');
