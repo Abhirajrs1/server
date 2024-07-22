@@ -4,6 +4,7 @@ import recruiterController from '../../../Interface/Controller/AdminController/r
 import userController from '../../../Interface/Controller/AdminController/userController.js'
 import Middleware from '../../../Interface/Middleware/authMiddleware.js'
 import jobController from '../../../Interface/Controller/AdminController/jobController.js'
+import categoryController from '../../../Interface/Controller/AdminController/categoryController.js'
 const authMiddleware=Middleware.adminMiddleware
 
 const router=express.Router()
@@ -21,6 +22,9 @@ router.put('/admin-recruiters/:id/block',authMiddleware,recruiterController.bloc
 router.get('/admin-jobs',authMiddleware,jobController.getAllJobs)
 router.put('/admin-jobs/:id/list',authMiddleware,jobController.listOrUnlistJobs)
 router.get('/admin-jobdetails/:id',authMiddleware,jobController.getIndividualJob)
+
+router.post('/admin-addCategory',authMiddleware,categoryController.postAddCategory)
+router.get('/admin-categories',authMiddleware,categoryController.getAllCategories)
 
 
 export {router as AdminRouter}
