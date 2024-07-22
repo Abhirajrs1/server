@@ -37,6 +37,21 @@ const categoryUseCase = {
             logger.error(`Error in fetching categories: ${error.message}`);
         }
     },
+    getAllCategoriesForRecruiter:async()=>{
+        try {
+            const categories=await categoryRepository.getAllCategories()
+            if(!categories){
+                logger.warn("No categories found");
+                return { message: "Categories not found" };
+            }else{
+                logger.info('Categories retrieved successfully');
+                return categories
+            }
+        } catch (error) {
+            logger.error(`Error in fetching categories: ${error.message}`);
+        }
+
+    },
     getCategory:async(id)=>{
         try {
             const category=await categoryRepository.getIndividualCategory(id)

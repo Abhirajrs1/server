@@ -5,7 +5,7 @@ import logger from "../../Framework/Utilis/logger.js";
 const jobUseCase = {
     postJob: async (jobData) => {
         try {
-            const { jobTitle, companyName, minPrice, maxPrice, jobLocation, yearsOfExperience, employmentType, description, jobPostedBy, skills } = jobData
+            const { jobTitle, companyName, minPrice, maxPrice, jobLocation, yearsOfExperience, employmentType, description, jobPostedBy,education, skills } = jobData
 
             const newJob = await jobRepository.createJob({
                 jobTitle: jobTitle,
@@ -17,6 +17,7 @@ const jobUseCase = {
                 employmentType: employmentType,
                 description: description,
                 skills: skills,
+                education:education,
                 jobPostedBy
             }
             )
@@ -24,7 +25,7 @@ const jobUseCase = {
                 logger.warn("Job posting not completed");
                 return { message: "Job posted not done" }
             }
-            logger.info(`New job posted: ${newJob._id}`)
+            logger.info(`New job posted`)
             return newJob
         } catch (error) {
             logger.error(`Error in postJob: ${error}`);

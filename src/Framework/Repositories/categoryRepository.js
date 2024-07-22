@@ -34,6 +34,15 @@ const categoryRepository={
             logger.error(`Error retrieving categories: ${error.message}`);
         }
     },
+    getAllCategories:async()=>{
+        try {
+            const categories=await Category.find()
+            logger.info(`Retrieved ${categories.length} categories`);
+            return categories
+        } catch (error) {
+            logger.error(`Error retrieving categories: ${error.message}`);
+        }
+    },
     getIndividualCategory:async(id)=>{
         try {
             const category = await Category.findById(id);

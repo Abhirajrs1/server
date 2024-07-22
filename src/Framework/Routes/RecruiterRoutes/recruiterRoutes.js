@@ -1,6 +1,7 @@
 import express from 'express'
 import recruiterController from '../../../Interface/Controller/RecruiterController/recruiterControl.js'
 import jobController from '../../../Interface/Controller/RecruiterController/jobController.js'
+import categoryController from '../../../Interface/Controller/RecruiterController/categoryController.js'
 import Middleware from '../../../Interface/Middleware/authMiddleware.js'
 const authMiddleware=Middleware.recruiterMiddleware
 
@@ -19,6 +20,8 @@ router.get('/recruiter-logout',authMiddleware,recruiterController.postLogout)
 
 router.post('/recruiter-postJob',authMiddleware,jobController.postJob)
 router.get('/recruiter-showJobs/:id',authMiddleware,jobController.showJobs)
+
+router.get('/recruiter-getAllCategories',authMiddleware,categoryController.getAllCategories)
 
 
 export {router as RecruiterRouter}

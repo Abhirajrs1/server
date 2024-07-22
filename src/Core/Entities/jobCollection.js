@@ -13,6 +13,12 @@ const JobSchema = new mongoose.Schema({
     maxPrice: {
         type: Number,
     },
+    education:{
+        type:String,
+    },
+    categoryName:{
+        type:String
+    },
     jobLocation: {
         type: String,
     },

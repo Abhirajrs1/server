@@ -12,7 +12,7 @@ const jobController={
                 logger.warn(`Failed to post job: ${job.message}`);
                 res.status(400).json({success:false,message:job.message})
             }else{
-                logger.info(`Job created successfully: ${job.newJob._id}`);
+                logger.info(`Job created successfully`);
                 res.status(200).json({success:true,message:"Job created successfully",job:job.newJob})
             }
             
