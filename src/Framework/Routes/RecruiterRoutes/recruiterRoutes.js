@@ -20,6 +20,8 @@ router.get('/recruiter-logout',authMiddleware,recruiterController.postLogout)
 
 router.post('/recruiter-postJob',authMiddleware,jobController.postJob)
 router.get('/recruiter-showJobs/:id',authMiddleware,jobController.showJobs)
+router.get('/recruiter-viewJob/:id',authMiddleware,jobController.showIndividualJob)
+router.delete('/recruiter-deleteJob/:id',authMiddleware,jobController.deleteJob)
 
 router.get('/recruiter-getAllCategories',authMiddleware,categoryController.getAllCategories)
 

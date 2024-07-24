@@ -65,6 +65,20 @@ const jobUseCase = {
         } catch (error) {
             logger.error(`Error in showJobs: ${error}`);
         }
+    },
+    deleteJob:async(id)=>{
+        try {
+            const job=await jobRepository.getJobById(id)
+            if(!job){
+             logger.warn(`Attempt to delete job failed - Job not found or unauthorized. Job ID: ${id}`);         
+             return {message: 'Job not found or unauthorized' };
+             }
+             let deletedJob=await jobRepository.deleteJobById(id)
+             logger.info(`Job deleted successfully. Job ID: ${id}`);
+             return deletedJob
+        } catch (error) {
+            logger.error(`Error deleting job with ID ${id}: ${error.message}`);
+        }
     }
 }
 export default jobUseCase

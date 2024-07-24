@@ -46,7 +46,38 @@ const jobController={
             logger.error(`Error in showJobs: ${error.message}`);
             res.status(500).json({ message: "Internal server error" })
         }
+    },
+    showIndividualJob:async(req,res)=>{
+        try {
+            const {id}=req.params
+            const job=await jobUseCase.getJobById(id)
+            if(job.message){
+                logger.warn(`Error fetching job: ${job.message}`)
+                return res.status(400).json({success:false,message:job.message})
+            }
+            logger.info(`Job fetched successfully: ${id}`)
+            return res.status(200).json({success:true,message:"Job fetch successfully",job})
+        } catch (error) {
+            logger.error(`Error in showJobs: ${error.message}`);
+            res.status(500).json({ message: "Internal server error" })
+        }
+    },
+    deleteJob:async(req,res)=>{
+        try {
+            const {id}=req.params
+            const result=await jobUseCase.deleteJob(id)
+            if(result.message){
+                logger.warn(`Job deletion failed - ${result.message}. Job ID: ${id}`);
+               return res.status(400).json({success:false,message:result.message})
+            }
+              logger.info(`Job deleted successfully. Job ID: ${id}`);    
+              return res.status(200).json({success:true,message:"Job deleted successfully"})
+        } catch (error) {
+            logger.error(`Error in delete jobs: ${error.message}`);
+            res.status(500).json({ message: "Internal server error" })
+        }
     }
+
 
 }
 export default jobController

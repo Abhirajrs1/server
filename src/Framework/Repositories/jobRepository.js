@@ -49,6 +49,19 @@ const jobRepository = {
         } catch (error) {
             logger.error(`Error retrieving jobs by ID: ${error}`);
         }
+    },
+    deleteJobById:async(id)=>{
+        try {
+            const deleteJob=await Job.findByIdAndDelete({_id:id})
+            if(deleteJob){
+                logger.info(`Job with ID ${id} deleted successfully.`)
+            }else{
+                logger.warn(`Job with ID ${id} not found.`);
+            }
+            return deleteJob
+        } catch (error) {
+            logger.error(`Error deleting job with ID ${id}: ${error.message}`);
+        }
     }
 
 }
