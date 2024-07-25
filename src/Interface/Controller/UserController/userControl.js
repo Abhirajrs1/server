@@ -237,8 +237,11 @@ const userController = {
             const googleuser=await userUseCase.findOrCreateGoogleUser(req.user);
             console.log("googleuser",googleuser);
             const token = await generateJWT(req.user.email);
-            res.cookie('accessToken', token, { httpOnly: true, maxAge: 3600000 });
-            res.redirect('http://localhost:5173');
+            res.cookie('accessToken', String(token), { httpOnly: true, maxAge: 3600000 });
+            logger.info(`User successfully logged in:`);
+            res.status(200).json({ success: true, userData, token });
+            
+            // res.redirect('http://localhost:5173');
         } else {
             res.status(401).json({ success: false, message: "Google authentication failed" });
         }

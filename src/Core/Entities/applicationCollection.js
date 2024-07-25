@@ -18,8 +18,17 @@ const ApplicationSchema=new mongoose.Schema({
     currentCompany:{
         type:String
     },
+    currentSalary:{
+        type:Number
+    },
+    expectedSalary:{
+        type:Number
+    },
     preferredLocation:{
         type:String
+    },
+    city:{
+        type:String,
     },
     jobId:{
         type:mongoose.Schema.Types.ObjectId,
