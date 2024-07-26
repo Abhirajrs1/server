@@ -1,6 +1,7 @@
 import express from 'express'
 import userController from '../../../Interface/Controller/UserController/userControl.js'
 import jobController from '../../../Interface/Controller/RecruiterController/jobController.js'
+import jobControl from '../../../Interface/Controller/UserController/jobControl.js'
 import middleware from '../../../Interface/Middleware/authMiddleware.js'
 const router= express.Router()
 const authMiddleware=middleware.authMiddleware
@@ -21,6 +22,8 @@ router.post('/employee-addQualification/skill/:email',userController.addSkill)
 router.get('/employee-logout',authMiddleware,userController.postLogout)
 
 router.get('/employee-listJobs',jobController.getAllJobs)
+router.get('/employee-getIndividualJobDetails/:id',authMiddleware,jobControl.getIndividualJob)
+router.post('/employee-applyJob',authMiddleware,jobControl.applyJob)
 
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get(

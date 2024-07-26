@@ -62,7 +62,8 @@ const jobRepository = {
         } catch (error) {
             logger.error(`Error deleting job with ID ${id}: ${error.message}`);
         }
-    }
+    },
+
 
 }
 export default jobRepository

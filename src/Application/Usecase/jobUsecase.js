@@ -1,5 +1,6 @@
 
 import jobRepository from "../../Framework/Repositories/jobRepository.js";
+import applicationRepository from "../../Framework/Repositories/applicationRepository.js";
 import logger from "../../Framework/Utilis/logger.js";
 
 const jobUseCase = {
@@ -78,6 +79,35 @@ const jobUseCase = {
              return deletedJob
         } catch (error) {
             logger.error(`Error deleting job with ID ${id}: ${error.message}`);
+        }
+    },
+    applyJob:async(jobId,recruiterid,jobData)=>{
+        try {
+            const {name,email,contact,dob,totalExperience,currentCompany,expectedSalary,preferredLocation,city,resume,applicant}=jobData
+            console.log(resume,"RESUME");
+            const newApplication=await applicationRepository.postApplication({
+                name:name,
+                email:email,
+                contact:contact,
+                dob:dob,
+                totalExperience:totalExperience,
+                currentCompany:currentCompany,
+                expectedSalary:expectedSalary,
+                preferredLocation:preferredLocation,
+                city:city,
+                resume,
+                applicant,
+                jobId:jobId,
+                employerId:recruiterid
+            })
+            if (!newApplication) {
+                logger.warn("Application posting not completed");
+                return { message: "Application posted not done" }
+            }
+            logger.info(`New job application posted`)
+            return newApplication
+        } catch (error) {
+            logger.error(`Error in postJobApplication: ${error}`);
         }
     }
 }
