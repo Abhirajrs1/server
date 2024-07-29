@@ -1,6 +1,7 @@
 
 import { User } from "../../Core/Entities/userCollection.js";
 import { TemperoryUser } from "../../Core/Entities/temperoryUserCollection.js";
+import { Resume } from "../../Core/Entities/resumeCollection.js";
 import logger from "../Utilis/logger.js";
 
 const userRepository={
@@ -49,7 +50,32 @@ const userRepository={
             logger.error(`Error during updating user contact for email: ${email}, error: ${error.message}`);
         }
    },
-
+   findResumeCandidateByIdAndUpdate:async(id,resumeData)=>{
+    try {
+        console.log(id,"ID");
+        console.log(resumeData,"RRRRRRRRRRR");
+        const resume=await Resume.findOneAndUpdate({candidate:id},resumeData,{new:true})
+        console.log(resume,"RESUMEEEEEEEEEEEEEEEEEEEEEEEE");
+        if (resume) {
+            logger.info(`Resume found and updated for candidate ID: ${id}`);
+        } else {
+            logger.info(`No resume found for candidate ID: ${id}`);
+        }
+        return resume;
+    } catch (error) {
+        logger.error(`Error during finding and updating resume for candidate ID: ${id}, error: ${error.message}`);    }
+   },
+   createResume:async(resumeData)=>{
+    try {
+        const resume = new Resume(resumeData);
+        await resume.save();
+        logger.info(`Created new resume for candidate ID: ${resumeData.candidate}`);
+        return resume;
+    } catch (error) {
+        logger.error(`Error during creating resume for candidate ID: ${resumeData.candidate}, error: ${error.message}`);
+    }
+   },
+   
     // Add education details of user
    addEducation:async(email,education)=>{
       try {

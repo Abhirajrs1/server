@@ -83,7 +83,7 @@ const jobUseCase = {
     },
     applyJob:async(jobId,recruiterid,jobData)=>{
         try {
-            const {name,email,contact,dob,totalExperience,currentCompany,expectedSalary,preferredLocation,city,resume,applicant}=jobData
+            const {name,email,contact,dob,totalExperience,currentCompany,currentSalary,expectedSalary,preferredLocation,city,resume,applicant}=jobData
             console.log(resume,"RESUME");
             const newApplication=await applicationRepository.postApplication({
                 name:name,
@@ -92,6 +92,7 @@ const jobUseCase = {
                 dob:dob,
                 totalExperience:totalExperience,
                 currentCompany:currentCompany,
+                currentSalary:currentSalary,
                 expectedSalary:expectedSalary,
                 preferredLocation:preferredLocation,
                 city:city,

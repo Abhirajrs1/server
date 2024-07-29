@@ -2,6 +2,7 @@ import express from 'express'
 import userController from '../../../Interface/Controller/UserController/userControl.js'
 import jobController from '../../../Interface/Controller/RecruiterController/jobController.js'
 import jobControl from '../../../Interface/Controller/UserController/jobControl.js'
+import resumeControl from '../../../Interface/Controller/UserController/resumeControl.js'
 import middleware from '../../../Interface/Middleware/authMiddleware.js'
 const router= express.Router()
 const authMiddleware=middleware.authMiddleware
@@ -19,6 +20,7 @@ router.get('/employee-details/:email',userController.getUser)
 router.put('/employee-updateContact/:email',userController.userUpdate)
 router.post('/employee-addQualification/education/:email',userController.addEducation)
 router.post('/employee-addQualification/skill/:email',userController.addSkill)
+router.post('/employee-postResume',authMiddleware,resumeControl.postUserDetails)
 router.get('/employee-logout',authMiddleware,userController.postLogout)
 
 router.get('/employee-listJobs',jobController.getAllJobs)

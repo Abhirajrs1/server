@@ -161,6 +161,25 @@ const userUseCase={
         }
     },
 
+    updateResume:async(resumeData)=>{
+        try {
+            console.log(resumeData.candidate,"USECASE");
+
+            const resume=await userRepository.findResumeCandidateByIdAndUpdate(resumeData.candidate,resumeData)
+            console.log(resume,"USECASERESUME");
+            if(!resume){
+                resume=await userRepository.createResume(resumeData)
+                logger.info(`Created new resume for candidate ID: ${resumeData.candidate}`);
+            }else{
+                logger.info(`Updated resume for candidate ID: ${resumeData.candidate}`);
+            }
+            return resume
+
+        } catch (error) {
+            logger.error(`Failed to update or create resume for candidate ID: ${resumeData.candidate} - ${error.message}`);
+        }
+    },
+
     // Add education details
     addEducation:async(email,education)=>{
         try {
