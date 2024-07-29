@@ -6,7 +6,7 @@ import logger from "../../Framework/Utilis/logger.js";
 const jobUseCase = {
     postJob: async (jobData) => {
         try {
-            const { jobTitle, companyName, minPrice, maxPrice, jobLocation, yearsOfExperience, employmentType, description, jobPostedBy,education, skills } = jobData
+            const { jobTitle, companyName, minPrice, maxPrice, jobLocation, yearsOfExperience, category,employmentType, description, jobPostedBy,education, skills } = jobData
 
             const newJob = await jobRepository.createJob({
                 jobTitle: jobTitle,
@@ -19,6 +19,7 @@ const jobUseCase = {
                 description: description,
                 skills: skills,
                 education:education,
+                categoryName:category,
                 jobPostedBy
             }
             )
@@ -81,10 +82,24 @@ const jobUseCase = {
             logger.error(`Error deleting job with ID ${id}: ${error.message}`);
         }
     },
+    editJob:async(id,formData)=>{
+        try {
+            const job=await jobRepository.editJob(id,formData)
+            if (job) {
+                logger.info(`Successfully updated job with ID: ${id}`, { job });
+                return {message:"Job updated successfully",job}
+              } else {
+                logger.warn(`Job with ID: ${id} not found`);
+              }
+        } catch (error) {
+            logger.error(`Error updating job with ID: ${id}`, `${error.message}`);
+        }
+    },
     applyJob:async(jobId,recruiterid,jobData)=>{
         try {
-            const {name,email,contact,dob,totalExperience,currentCompany,currentSalary,expectedSalary,preferredLocation,city,resume,applicant}=jobData
-            console.log(resume,"RESUME");
+            console.log("jobdata",jobData)
+            const {name,email,contact,dob,totalExperience,currentCompany,currentSalary,expectedSalary,preferredLocation,city,resumeLink,resume,applicant}=jobData
+            // console.log(resume,"RESUME");
             const newApplication=await applicationRepository.postApplication({
                 name:name,
                 email:email,
@@ -96,7 +111,8 @@ const jobUseCase = {
                 expectedSalary:expectedSalary,
                 preferredLocation:preferredLocation,
                 city:city,
-                resume,
+                resume:resume||"haii",
+                resumelink:resumeLink,
                 applicant,
                 jobId:jobId,
                 employerId:recruiterid

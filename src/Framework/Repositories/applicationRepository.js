@@ -12,6 +12,32 @@ const applicationRepository={
         } catch (error) {
             logger.error(`Error in applying job: ${error}`);
         }
+    },
+    getApplicationByRecruiter:async(id)=>{
+        try {
+            const application=await Application.find({employerId:id})
+            if(!application){
+                logger.warn(`No applications found for recruiter ID: ${id}`);
+            }else{
+                logger.info(`Fetched applications for recruiter ID: ${id}`);
+            }
+            return application
+        } catch (error) {
+            logger.error(`Error fetching applications for recruiter ID: ${id} - ${error.message}`);
+        }
+    },
+    getApplicationDetails:async(id)=>{
+        try {
+            const application=await Application.findOne({_id:id})
+            if(!application){
+                logger.warn(`No application found for application ID: ${id}`);
+            } else {
+                logger.info(`Fetched application details for application ID: ${id}`);
+            }
+            return application
+        } catch (error) {
+            logger.error(`Error fetching application details for application ID: ${id} - ${error.message}`);
+        }
     }
 
 }

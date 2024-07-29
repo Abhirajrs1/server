@@ -76,6 +76,23 @@ const jobController={
             logger.error(`Error in delete jobs: ${error.message}`);
             res.status(500).json({ message: "Internal server error" })
         }
+    },
+    editJob:async(req,res)=>{
+        try {
+            const{id}=req.params
+            const {formData}=req.body
+            const result=await jobUseCase.editJob(id,formData)
+            if(result.message){
+                logger.info(`Successfully updated job with ID:`, { job: result.job });
+                return res.status(200).json({success:true,message:result.message,job:result.job})
+            }else{
+                logger.warn(`Job with ID: not found`);
+                return res.status(404).json({ success: false, message: 'Job not found' });
+            }
+        } catch (error) {
+            logger.error(`Error updating job with ID:`, { error });
+            return res.status(500).json({ success: false, message: 'Internal server error' });
+        }
     }
 
 

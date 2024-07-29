@@ -63,6 +63,20 @@ const jobRepository = {
             logger.error(`Error deleting job with ID ${id}: ${error.message}`);
         }
     },
+    editJob:async(id,formData)=>{
+        try {
+            const updatedJob=await Job.findByIdAndUpdate({_id:id},formData,{new:true})
+            if (updatedJob) {
+                logger.info(`Successfully updated job with ID: ${id}`, { updatedJob });
+                return updatedJob;
+              } else {
+                logger.warn(`Job with ID: ${id} not found`);
+              }
+            return updatedJob
+        } catch (error) {
+            logger.error(`Error updating job with ID: ${id}`, { error });
+        }
+    }
 
 
 }

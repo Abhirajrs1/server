@@ -3,6 +3,7 @@ import recruiterController from '../../../Interface/Controller/RecruiterControll
 import jobController from '../../../Interface/Controller/RecruiterController/jobController.js'
 import categoryController from '../../../Interface/Controller/RecruiterController/categoryController.js'
 import Middleware from '../../../Interface/Middleware/authMiddleware.js'
+import applicationController from '../../../Interface/Controller/RecruiterController/applicationController.js'
 const authMiddleware=Middleware.recruiterMiddleware
 
 const router=express.Router()
@@ -22,8 +23,12 @@ router.post('/recruiter-postJob',authMiddleware,jobController.postJob)
 router.get('/recruiter-showJobs/:id',authMiddleware,jobController.showJobs)
 router.get('/recruiter-viewJob/:id',authMiddleware,jobController.showIndividualJob)
 router.delete('/recruiter-deleteJob/:id',authMiddleware,jobController.deleteJob)
+router.put('/recruiter-updateJob/:id',authMiddleware,jobController.editJob)
 
 router.get('/recruiter-getAllCategories',authMiddleware,categoryController.getAllCategories)
+
+router.get('/recruiter-getApplication/:id',authMiddleware,applicationController.getApplication)
+router.get('/recruiter-getApplicationDetails/:id',authMiddleware,applicationController.getApplicationDetails)
 
 
 export {router as RecruiterRouter}

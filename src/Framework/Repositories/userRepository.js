@@ -55,7 +55,6 @@ const userRepository={
         console.log(id,"ID");
         console.log(resumeData,"RRRRRRRRRRR");
         const resume=await Resume.findOneAndUpdate({candidate:id},resumeData,{new:true})
-        console.log(resume,"RESUMEEEEEEEEEEEEEEEEEEEEEEEE");
         if (resume) {
             logger.info(`Resume found and updated for candidate ID: ${id}`);
         } else {
@@ -73,6 +72,44 @@ const userRepository={
         return resume;
     } catch (error) {
         logger.error(`Error during creating resume for candidate ID: ${resumeData.candidate}, error: ${error.message}`);
+    }
+   },
+
+   addResumeEducation:async(id,education)=>{
+    try {
+        const resume=await Resume.findOneAndUpdate({candidate:id},{$push:{education:education}},{ new: true, upsert: true })
+        logger.info(`Education added to resume for candidate ID: ${id}`);
+        return resume;
+    } catch (error) {
+        logger.error(`Error during adding education to resume for candidate ID: ${id}, error: ${error.message}`);
+    }
+
+   },
+   getResumeEducation:async(id)=>{
+    try {
+        const resume=await Resume.findOne({candidate:id})
+        logger.info(`Education details found for candidate ID: ${id}`);
+        return resume.education;
+    } catch (error) {
+        logger.error(`Error during fetching education details for candidate ID: ${id}, error: ${error.message}`);
+    }
+   },
+   addResumeSkill:async(id,skill)=>{
+    try {
+        const resume=await Resume.findOneAndUpdate({candidate:id},{$push:{skills:skill}},{ new: true, upsert: true })
+        logger.info(`SKills added to resume for candidate ID: ${id}`);
+        return resume;
+    } catch (error) {
+        logger.error(`Error during adding skill to resume for candidate ID: ${id}, error: ${error.message}`);
+    }
+   },
+   getResumeSkill:async(id)=>{
+    try {
+        const resume=await Resume.findOne({candidate:id})
+        logger.info(`Skill details found for candidate ID: ${id}`);
+        return resume.skills;
+    } catch (error) {
+        logger.error(`Error during fetching skill details for candidate ID: ${id}, error: ${error.message}`);
     }
    },
    

@@ -1,5 +1,6 @@
 import logger from "../../../Framework/Utilis/logger.js";
 import jobUseCase from "../../../Application/Usecase/jobUsecase.js";
+import categoryUseCase from "../../../Application/Usecase/categoryUsecase.js";
 
 const jobControl={
     getIndividualJob:async(req,res)=>{
@@ -32,6 +33,16 @@ const jobControl={
         } catch (error) {
             logger.error(`Error in apply job: ${error.message}`);
             res.status(500).json({ message: "Internal server error" })
+        }
+    },
+    getCategories:async(req,res)=>{
+        try {
+            const categories=await categoryUseCase.getAllCategoriesForRecruiter()
+            logger.info('Categories retrieved successfully')
+            return res.status(200).json({success:true,categories})
+        } catch (error) {
+            logger.error(`Error in fetching categories: ${error.message}`);
+            return res.status(500).json({ message: "Internal server error" });
         }
     }
 

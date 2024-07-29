@@ -163,10 +163,7 @@ const userUseCase={
 
     updateResume:async(resumeData)=>{
         try {
-            console.log(resumeData.candidate,"USECASE");
-
             const resume=await userRepository.findResumeCandidateByIdAndUpdate(resumeData.candidate,resumeData)
-            console.log(resume,"USECASERESUME");
             if(!resume){
                 resume=await userRepository.createResume(resumeData)
                 logger.info(`Created new resume for candidate ID: ${resumeData.candidate}`);
@@ -179,6 +176,65 @@ const userUseCase={
             logger.error(`Failed to update or create resume for candidate ID: ${resumeData.candidate} - ${error.message}`);
         }
     },
+    addResumeEducation:async(id,education)=>{
+        try {
+            const resumeEducation=await userRepository.addResumeEducation(id,education)
+            if (!resumeEducation) {
+                logger.warn(`Add education failed for candidate ID: ${id}`);
+                return { message: "Failed to add education to resume" };
+            } else {
+                logger.info(`Education added successfully for candidate ID: ${id}`);
+                return { message: "Education added successfully", resume: resumeEducation };
+            }
+        } catch (error) {
+            logger.error(`Add education error for candidate ID: ${id}, error: ${error.message}`);
+        }
+    },
+    getResumeEducation:async(id)=>{
+        try {
+            const education=await userRepository.getResumeEducation(id)
+            if(education){
+                logger.info(`Education details successfully retrieved for candidate ID: ${id}`);
+                return education
+            }else{
+                logger.warn(`No education details found for candidate ID: ${id}`);
+                return {message: "No education details found for the given candidate ID" };
+            }
+        } catch (error) {
+            logger.error(`Error getting education by candidate ID: ${id}, error: ${error.message}`);
+            return { success: false, message: "Internal server error" };
+        }
+    },
+    addResumeSkill:async(id,skill)=>{
+        try {
+            const resumeSkill=await userRepository.addResumeSkill(id,skill)
+            if (!resumeSkill) {
+                logger.warn(`Add skill failed for candidate ID: ${id}`);
+                return { message: "Failed to add skill to resume" };
+            } else {
+                logger.info(`Skill added successfully for candidate ID: ${id}`);
+                return { message: "Skills added successfully", skill: resumeSkill };
+            }
+        } catch (error) {
+            logger.error(`Add skill error for candidate ID: ${id}, error: ${error.message}`);
+        }
+    },
+    getResumeSkill:async(id)=>{
+        try {
+            const skill=await userRepository.getResumeSkill(id)
+            if(skill){
+                logger.info(`Skill details successfully retrieved for candidate ID: ${id}`);
+                return skill
+            }else{
+                logger.warn(`No skill details found for candidate ID: ${id}`);
+                return {message: "No skill details found for the given candidate ID" };
+            }
+        } catch (error) {
+            logger.error(`Error getting skill by candidate ID: ${id}, error: ${error.message}`);
+            return { success: false, message: "Internal server error"};
+        }
+    },
+
 
     // Add education details
     addEducation:async(email,education)=>{

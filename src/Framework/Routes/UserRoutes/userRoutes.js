@@ -21,11 +21,18 @@ router.put('/employee-updateContact/:email',userController.userUpdate)
 router.post('/employee-addQualification/education/:email',userController.addEducation)
 router.post('/employee-addQualification/skill/:email',userController.addSkill)
 router.post('/employee-postResume',authMiddleware,resumeControl.postUserDetails)
+router.post('/employee-addresumeeducation',authMiddleware,resumeControl.postResumeEducation)
+router.get('/employee-getresumeeducation',authMiddleware,resumeControl.getResumeEducation)
+router.post('/employee-addresumeskill',authMiddleware,resumeControl.postResumeSkill)
+router.get('/employee-getresumeskill',authMiddleware,resumeControl.getResumeSkill)
+
 router.get('/employee-logout',authMiddleware,userController.postLogout)
 
 router.get('/employee-listJobs',jobController.getAllJobs)
 router.get('/employee-getIndividualJobDetails/:id',authMiddleware,jobControl.getIndividualJob)
 router.post('/employee-applyJob',authMiddleware,jobControl.applyJob)
+
+router.get('/employee-getCategories',authMiddleware,jobControl.getCategories)
 
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get(
