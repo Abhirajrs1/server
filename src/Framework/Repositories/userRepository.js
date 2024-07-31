@@ -134,6 +134,34 @@ const userRepository={
         logger.error(`Error during adding skill for email: ${email}, error: ${error.message}`);
     }
    },
+   addDescription:async(id,description)=>{
+    try {
+        let result=await User.findOneAndUpdate({_id:id},{description:description},{new:true})
+        if(!result){
+            logger.warn(`Add description failed for user ID: ${id}`);
+            return { message: "Failed to add description" };
+        }else{
+            logger.info(`Description added successfully for user ID: ${id}`);
+            return result
+        }
+    } catch (error) {
+        logger.error(`Add description error for user ID: ${id}, error: ${error.message}`)
+    }
+   },
+   getDescription:async(id)=>{
+    try {
+        let result=await User.findById({_id:id})
+        if (result) {
+            logger.info(`Description found for user with ID: ${id}`);
+            return result.description;
+        } else {
+            logger.warn(`No user found with ID: ${id}`);
+            return null;
+        }  
+      } catch (error) {
+        logger.error(`Error fetching description for user with ID: ${id}`, error);
+    }
+   },
 
     // Find user by id and update password
     findUserByIdAndUpdate:async(id,value)=>{

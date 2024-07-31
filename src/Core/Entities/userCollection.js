@@ -44,7 +44,9 @@ const UserSchema=new mongoose.Schema({
             type:String
         },
     }],
-
+    description:{
+        type:String
+    },
     block:{
         type: Boolean,
         default:false,

@@ -225,6 +225,39 @@ const userController = {
             res.status(500).json({ message: "Internal server error" });
         }
     },
+    addDescription:async(req,res)=>{
+        try {
+            const {userId,description}=req.body
+            const result=await userUseCase.addDescription(userId,description)
+            if(result.message){
+                logger.warn(`Failed to add description for user ID: ${userId}, reason: ${result.message}`);
+                res.status(400).json({ success: false, message: result.message });
+            }else{
+                logger.info(`Description added successfully for user ID: ${userId}`);
+                res.status(200).json({ success: true, message:"Description added successfully",description:result});
+            }
+        } catch (error) {
+            logger.error(`Add description error for user ID: ${userId}, error: ${error.message}`);
+            res.status(500).json({ message: "Internal server error" });
+        }
+
+    },
+    getDescription:async(req,res)=>{
+        try {
+            const {id}=req.params
+            const result=await userUseCase.getDescription(id)
+            if(result.message){
+                logger.warn(`No description found for user with ID: ${id}`);
+                return res.status(404).json({ success:false,message: result.message });
+            }else{
+                logger.info(`Description found for user with ID: ${id}`);
+                return res.status(200).json({success:true,message:"Description found succcessfully",result});
+            }
+        } catch (error) {
+            logger.error(`Error fetching description for user with ID: ${id}`, error);
+        return res.status(500).json({ message: 'Error fetching description' });
+        }
+    },
 
     // Google authentication
     handlePassport: async (req, res) => {

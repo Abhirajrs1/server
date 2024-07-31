@@ -267,6 +267,35 @@ const userUseCase={
             logger.error(`Add skill error for email: ${email}, error: ${error.message}`);
         }
     },
+    addDescription:async(id,description)=>{
+        try {
+            const result=await userRepository.addDescription(id,description)
+            if(!result){
+                logger.warn(`Add description failed for candidate ID: ${id}`);
+                return { message: "Failed to add description to resume" };
+            }else{
+                logger.info(`Description added successfully for candidate ID: ${id}`);
+                return result
+            }
+        } catch (error) {
+            logger.error(`Add description error for candidate ID: ${id}, error: ${error.message}`);
+        }
+    },
+    getDescription:async(id)=>{
+        try {
+            const result=await userRepository.getDescription(id)
+            if(!result){
+                logger.warn(`No description found for user with ID: ${id}`);
+                return {message:"No description found"}
+            }else{
+                logger.info(`Description found for user with ID: ${id}`);
+                return result;
+            }
+        } catch (error) {
+            logger.error(`Error fetching description for user with ID: ${id}`, error);
+        }
+
+    },
    findOrCreateGoogleUser : async (profile) => {
     try {
       const existingUser = await userRepository.findUserByGoogleId(profile.emails[0].value);
