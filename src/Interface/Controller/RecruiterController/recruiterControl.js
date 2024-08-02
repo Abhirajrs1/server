@@ -116,7 +116,7 @@ const recruiterController = {
     recruiterVerified: async (req, res) => {
         try {
             logger.info(`Recruiter verified: ${req.recruiter.email}`);
-            res.status(200).json({ success: true, message: "Recruiter verified" })
+            res.status(200).json({ success: true, message: "Recruiter verified",recruiter:req.recruiter})
         } catch (error) {
             logger.error(`Error in recruiterVerified: ${error.message}`);
             res.status(500).json({ message: "Internal server error" })
