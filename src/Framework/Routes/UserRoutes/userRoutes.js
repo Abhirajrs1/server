@@ -34,7 +34,7 @@ router.get('/employee-listJobs',jobController.getAllJobs)
 router.get('/employee-getIndividualJobDetails/:id',authMiddleware,jobControl.getIndividualJob)
 router.post('/employee-applyJob',authMiddleware,jobControl.applyJob)
 
-router.get('/employee-getCategories',authMiddleware,jobControl.getCategories)
+router.get('/employee-getCategories',jobControl.getCategories)
 
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get(
