@@ -1,0 +1,41 @@
+import mongoose from "mongoose";
+const CompanySchema=new mongoose.Schema({
+    companyName:{
+        type:String
+    },
+    typeOfCompany:{
+        type:String
+    },
+    companyaddress:[{
+        id:{
+            type:String,
+        },
+        Buildingname:{
+            type:String,
+        },
+        area:{
+            type:String,
+        },
+        street:{
+            type:String,
+        },
+        pincode:{
+            type:Number,
+        },
+        city:{
+            type:String,
+        },
+        state:{
+            type:String,
+        },
+        country:{
+            type:String
+        },
+    }],
+    numberOfEmployees:{
+        type:Number
+    }
+},{
+    timestamps:true
+})
+export const Company=mongoose.model('Company',CompanySchema)
