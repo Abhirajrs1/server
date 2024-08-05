@@ -3,6 +3,12 @@ const CompanySchema=new mongoose.Schema({
     companyName:{
         type:String
     },
+    email:{
+        type:String
+    },
+    password:{
+        type:String
+    },
     typeOfCompany:{
         type:String
     },

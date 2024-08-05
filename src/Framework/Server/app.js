@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import { UserRouter } from '../Routes/UserRoutes/userRoutes.js'
 import { RecruiterRouter } from '../Routes/RecruiterRoutes/recruiterRoutes.js'
 import { AdminRouter } from '../Routes/AdminRoutes/adminRoutes.js'
+import { CompanyRouter } from '../Routes/CompanyRoutes/companyRoutes.js'
 import connectDB from '../Database/mongoClient.js'
 
 import Session  from 'express-session';
@@ -44,6 +45,7 @@ app.use(passport.session())
  app.use('/',UserRouter)
  app.use('/',RecruiterRouter)
  app.use('/',AdminRouter)
+ app.use('/',CompanyRouter)
 
  connectDB().then(() => {
    app.listen(port, () => {

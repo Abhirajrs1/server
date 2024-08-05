@@ -75,6 +75,13 @@ const Middleware={
             console.log(error);
             return res.status(401).json({ message: 'Invalid token' });
         }
+    },
+    companyMiddleware:async(req,res,next)=>{
+        const token=req.cookies.companyaccessToken
+        if(!token){
+            return res.status(400).json({message:"Access denied. No token found"})
+        }
+        const decoded=jwt.verify(token,process.env.KEY)
     }
 }
 
