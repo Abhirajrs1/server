@@ -3,14 +3,24 @@ import logger from "../Utilis/logger.js";
 
 const companyRepository={
 
-    findExistingCompany:async(companyName)=>{
+    findExistingCompany:async(companyName,email)=>{
         try {
-            const existingCompany=await Company.findOne({companyName:{ $regex: new RegExp(`^${companyName}$`, 'i')}})
+            const existingCompany = await Company.findOne({
+                $or: [
+                    { companyName: { $regex: new RegExp(`^${companyName}$`, 'i') } },
+                    { email: { $regex: new RegExp(`^${email}$`, 'i') } }
+                ]
+            });
             if(existingCompany){
-                logger.info(`Company found: ${existingCompany.companyName}`);
-            }else{
+                if (existingCompany.companyName.toLowerCase() === companyName.toLowerCase()) {
+                    logger.info(`Company found with name: ${existingCompany.companyName}`);
+                }
+                if (existingCompany.email.toLowerCase() === email.toLowerCase()) {
+                    logger.info(`Company found with email: ${existingCompany.email}`);
+                }         
+               }else{
                 logger.info(`No company found with name: ${companyName}`);
-            }
+               }
             return existingCompany
         } catch (error) {
             logger.error('Error finding company:', error);

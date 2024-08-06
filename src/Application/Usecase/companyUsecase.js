@@ -6,10 +6,16 @@ const companyUseCase={
     companySignup:async(companyData)=>{
         try {
             const{companyName,email,password}=companyData
-            const existingCompany=await companyRepository.findExistingCompany(companyName)
-            if(existingCompany){
-                logger.warn(`Signup failed: Company with name ${companyName} already exists`);
-                return {message:"Company already exists"}
+            const existingCompany=await companyRepository.findExistingCompany(companyName,email)
+            if (existingCompany) {
+                if (existingCompany.companyName.toLowerCase() === companyName.toLowerCase()) {
+                    logger.warn(`Signup failed: Company with name ${companyName} already exists`);
+                    return { message: "Company name already exists" };
+                }
+                if (existingCompany.email.toLowerCase() === email.toLowerCase()) {
+                    logger.warn(`Signup failed: Company with email ${email} already exists`);
+                    return { message: "Email already in use" };
+                }
             }
             const hashPassword=await bcrypt.hash(password,10)
             const newCompany=await companyRepository.createNewCompany({

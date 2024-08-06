@@ -8,9 +8,12 @@ const companyController={
             const {companyName,email,password}=formData
             const companyData={companyName,email,password}
             const result =await companyUseCase.companySignup(companyData)
-            if(result.message){
-                logger.warn('Company signup failed: Company already exists', { companyName });
-                return res.status(409).json({success:false,message:result.message})
+            if(result.message ==="Company name already exists"){
+                logger.warn(`Company signup failed: ${result.message}`);
+                return res.json({success:false,message:result.message})
+            }else if(result.message === "Email already in use"){
+                logger.warn(`Company signup failed: ${result.message}`);
+                return res.json({success:false,message:result.message})
             }else{
                 logger.info('Company registered successfully', { companyName });
                 return res.status(201).json({ success: true, message: "Company registered successfully" });
