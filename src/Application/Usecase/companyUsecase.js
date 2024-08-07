@@ -1,6 +1,7 @@
 import logger from "../../Framework/Utilis/logger.js";
 import bcrypt from 'bcrypt'
 import companyRepository from "../../Framework/Repositories/companyRepository.js";
+import { generateJWT } from "../../Framework/Services/jwtServices.js";
 
 const companyUseCase={
     companySignup:async(companyData)=>{
@@ -27,6 +28,39 @@ const companyUseCase={
             return newCompany
         } catch (error) {
             logger.error('Error during company signup:', error);
+        }
+    },
+    companyLogin:async(companyData)=>{
+        try {
+           const {email,password}=companyData 
+           const company=await companyRepository.findCompanyByEmail(email)
+           if(!company){
+            logger.warn(`Login failed: Company not found for email ${email}`);
+            return {message:"Company not found"}
+           }
+           const valid=await bcrypt.compare(password,company.password)
+            if(!valid){
+                logger.warn(`Login failed: Incorrect password for company with email ${email}`);
+                return {message:"Incorrect password"}
+           }
+           const token=await generateJWT(company.email)
+           logger.info(`Login successful for company: ${company.email}`);
+           return {company,token}
+        } catch (error) {
+            logger.error(`Error during company login: ${error.message}`);
+        }
+    },
+    getCompanyByEmail:async(email)=>{
+        try {
+            const company=await companyRepository.findCompanyByEmail(email)
+            if (company) {
+                logger.info(`Company found with email: ${email}`);
+            } else {
+                logger.info(`No company found with email: ${email}`);
+            }
+            return company;
+        } catch (error) {
+            logger.error(`Error finding company by email: ${error.message}`);
         }
     }
 

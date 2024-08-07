@@ -52,8 +52,6 @@ const userRepository={
    },
    findResumeCandidateByIdAndUpdate:async(id,resumeData)=>{
     try {
-        console.log(id,"ID");
-        console.log(resumeData,"RRRRRRRRRRR");
         const resume=await Resume.findOneAndUpdate({candidate:id},resumeData,{new:true})
         if (resume) {
             logger.info(`Resume found and updated for candidate ID: ${id}`);

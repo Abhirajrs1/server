@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import userUseCase from '../../Application/Usecase/userUsecase.js'
 import recruiterUseCase from '../../Application/Usecase/recruiterUsecase.js'
 import adminUseCase from '../../Application/Usecase/adminUsecase.js'
+import companyUseCase from '../../Application/Usecase/companyUsecase.js'
 dotenv.config()
 
 const Middleware={
@@ -77,11 +78,25 @@ const Middleware={
         }
     },
     companyMiddleware:async(req,res,next)=>{
-        const token=req.cookies.companyaccessToken
+        try {
+            const token=req.cookies.companyaccessToken
         if(!token){
             return res.status(400).json({message:"Access denied. No token found"})
         }
         const decoded=jwt.verify(token,process.env.KEY)
+        const company=await companyUseCase.getCompanyByEmail(decoded.email)
+        if(!company){
+            return res.status(401).json({message:"Company not found"})
+        }
+        req.company={
+            ...company,
+            email:decoded.email
+        }
+        next()
+        } catch (error) {
+            console.log(error);
+            return res.status(401).json({ message: 'Invalid token' });
+        }   
     }
 }
 

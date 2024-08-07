@@ -35,6 +35,19 @@ const companyRepository={
         } catch (error) {
             logger.error('Error creating new company:', error);
         }
+    },
+    findCompanyByEmail:async(email)=>{
+        try {
+            const company=await Company.findOne({email:email})
+            if (company) {
+                logger.info(`Company found with email: ${email}`);
+              } else {
+                logger.info(`No company found with email: ${email}`);
+              }
+            return company
+        } catch (error) {
+            logger.error(`Error finding company by email: ${error.message}`);
+        }
     }
 
 }
