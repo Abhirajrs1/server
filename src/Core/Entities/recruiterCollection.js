@@ -10,6 +10,9 @@ const RecruiterSchema=new mongoose.Schema({
     password:{
         type:String,
     },
+    companyName:{
+        type:String
+    },
     contact:{
         type:Number,
     },

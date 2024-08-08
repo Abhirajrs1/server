@@ -99,7 +99,6 @@ const jobUseCase = {
         try {
             console.log("jobdata",jobData)
             const {name,email,contact,dob,totalExperience,currentCompany,currentSalary,expectedSalary,preferredLocation,city,resumeLink,resume,applicant}=jobData
-            // console.log(resume,"RESUME");
             const newApplication=await applicationRepository.postApplication({
                 name:name,
                 email:email,

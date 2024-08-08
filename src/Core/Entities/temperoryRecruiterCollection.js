@@ -10,6 +10,9 @@ const temperoryRecruiterSchema=new mongoose.Schema({
     password:{
         type:String,
     },
+    companyName:{
+        type:String
+    },
     block:{
         type: Boolean,
         default:false,

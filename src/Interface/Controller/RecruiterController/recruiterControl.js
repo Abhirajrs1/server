@@ -5,9 +5,8 @@ const recruiterController = {
 
     postRecruiterSignup: async (req, res) => {
         try {
-            const {formData} = req.body
-            const {recruitername,email,password}=formData
-            const recruiterData = { recruitername, email, password }
+            const {recruitername,email,password,companyName}=req.body
+            const recruiterData = { recruitername, email, password,companyName }
             const result = await recruiterUseCase.recruiterSignUp(recruiterData)
             if (result.message) {
                 logger.warn(`Signup failed for email: ${email}, message: ${result.message}`);

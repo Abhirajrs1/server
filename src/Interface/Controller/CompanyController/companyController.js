@@ -49,6 +49,16 @@ const companyController={
             logger.error(`Error in company Verified: ${error.message}`);
             res.status(500).json({ message: "Internal server error" })
         }
+    },
+    getCompanies:async(req,res)=>{
+        try {
+            const companies=await companyUseCase.getAllCompanies()
+            logger.info('Successfully fetched company names');
+            return res.status(200).json({ success: true, companyNames:companies });
+        } catch (error) {
+            logger.error(`Error in getCompanies controller: ${error.message}`);
+            return res.status(500).json({ success: false, message: 'Internal server error' });
+        }
     }
 
 }

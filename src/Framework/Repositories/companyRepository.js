@@ -48,6 +48,15 @@ const companyRepository={
         } catch (error) {
             logger.error(`Error finding company by email: ${error.message}`);
         }
+    },
+    getAllCompanies:async()=>{
+        try {
+            const companies=await Company.find({},'companyName')
+            logger.info(`Fetched ${companies.length} companies`);
+            return companies.map(company=>company.companyName)
+        } catch (error) {
+            logger.error(`Error fetching company names: ${error.message}`);
+        }
     }
 
 }

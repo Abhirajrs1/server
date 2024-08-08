@@ -62,6 +62,15 @@ const companyUseCase={
         } catch (error) {
             logger.error(`Error finding company by email: ${error.message}`);
         }
+    },
+    getAllCompanies:async()=>{
+        try {
+            const companies=await companyRepository.getAllCompanies()
+            logger.info(`Fetched ${companies.length} companies`);
+            return companies;
+        } catch (error) {
+            logger.error(`Error fetching all companies: ${error.message}`);
+        }
     }
 
 }

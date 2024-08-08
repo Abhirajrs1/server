@@ -15,7 +15,7 @@ const recruiterUseCase = {
 
     recruiterSignUp: async (recruiterData) => {
         try {
-            const { recruitername, email, password } = recruiterData
+            const { recruitername, email, password,companyName } = recruiterData
             const existingRecruiter = await recruiterRepository.findRecruiterByEmail(email)
             if (existingRecruiter) {
                 logger.warn(`Recruiter already registered: ${email}`);
@@ -28,6 +28,7 @@ const recruiterUseCase = {
                 recruitername: recruitername,
                 email: email,
                 password: hashPassword,
+                companyName:companyName,
                 otpCode: otp,
                 otpExpiration: expiration
             })

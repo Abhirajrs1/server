@@ -57,7 +57,8 @@ const recruiterRepository = {
                 const permanentRecruiter = new Recruiter({
                     recruitername: tempRecruiter.recruitername,
                     email: tempRecruiter.email,
-                    password: tempRecruiter.password
+                    password: tempRecruiter.password,
+                    companyName:tempRecruiter.companyName
                 })
                 await permanentRecruiter.save()
                 await TemperoryRecruiter.deleteOne({ email: email })
