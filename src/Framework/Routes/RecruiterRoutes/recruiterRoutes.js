@@ -18,6 +18,7 @@ router.post('/recruiter-forgotPassword',recruiterController.postForgotPassword)
 router.post('/recruiter-resetPassword/:token',recruiterController.postResetPassword)
 router.get('/recruiter-verify',authMiddleware,recruiterController.recruiterVerified)
 router.get('/recruiter-logout',authMiddleware,recruiterController.postLogout)
+router.get('/recruiter-getRecruiterDetails/:email',authMiddleware,recruiterController.getRecruiterDetails)
 
 router.post('/recruiter-postJob',authMiddleware,jobController.postJob)
 router.get('/recruiter-showJobs/:id',authMiddleware,jobController.showJobs)

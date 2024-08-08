@@ -131,5 +131,21 @@ const recruiterController = {
             res.status(500).json({ message: "Internal server error" })
         }
     },
+    getRecruiterDetails:async(req,res)=>{
+        try {
+            const {email}=req.params
+            const recruiter=await recruiterUseCase.getRecruiterByEmail(email)
+            if (recruiter) {
+                logger.info(`Fetched recruiter details for email: ${email}, Company: ${recruiter.recruiter.companyName}`);
+                res.status(200).json({ success: true,companyName:recruiter.recruiter.companyName });
+            } else {
+                logger.warn(`No recruiter found for email: ${email}`);
+                res.status(404).json({ success: false, message: "Recruiter not found" });
+            }
+        } catch (error) {
+            logger.error(`Error in getRecruiterDetails: ${error.message}`);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    }
 }
 export default recruiterController

@@ -10,7 +10,7 @@ const jobUseCase = {
 
             const newJob = await jobRepository.createJob({
                 jobTitle: jobTitle,
-                companyName: companyName,
+                companyName,
                 minPrice: minPrice,
                 maxPrice: maxPrice,
                 jobLocation: jobLocation,
