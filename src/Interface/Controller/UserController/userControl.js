@@ -272,9 +272,9 @@ const userController = {
             const token = await generateJWT(req.user.email);
             res.cookie('accessToken', String(token), { httpOnly: true, maxAge: 3600000 });
             logger.info(`User successfully logged in:`);
-            res.status(200).json({ success: true, userData, token });
+            // res.status(200).json({ success: true, userData, token });
             
-            // res.redirect('http://localhost:5173');
+            res.redirect('http://localhost:5173');
         } else {
             res.status(401).json({ success: false, message: "Google authentication failed" });
         }

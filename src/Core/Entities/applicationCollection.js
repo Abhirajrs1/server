@@ -30,9 +30,6 @@ const ApplicationSchema=new mongoose.Schema({
     city:{
         type:String,
     },
-    resumelink:{
-        type:String
-    },
     jobId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Job'

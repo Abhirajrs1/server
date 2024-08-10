@@ -10,4 +10,6 @@ router.post('/company-signup',companyController.postCompanySignup)
 router.post('/company-login',companyController.postCompanyLogin)
 router.get('/company-verify',authMiddleware,companyController.companyVerify)
 router.get('/get-companies',companyController.getCompanies)
+
+router.get('/company-logout',authMiddleware,companyController.logOut)
 export {router as CompanyRouter}

@@ -1,12 +1,13 @@
 
 import jobRepository from "../../Framework/Repositories/jobRepository.js";
 import applicationRepository from "../../Framework/Repositories/applicationRepository.js";
+import uploadFileToS3 from "../../Framework/Services/s3.js";
 import logger from "../../Framework/Utilis/logger.js";
 
 const jobUseCase = {
     postJob: async (jobData) => {
         try {
-            const { jobTitle, companyName, minPrice, maxPrice, jobLocation, yearsOfExperience, category,employmentType, description, jobPostedBy,education, skills } = jobData
+            const { jobTitle, companyName, minPrice, maxPrice, jobLocation, yearsOfExperience, category,employmentType, description, jobPostedBy,education, skills,easyApply,applicationUrl } = jobData
 
             const newJob = await jobRepository.createJob({
                 jobTitle: jobTitle,
@@ -20,7 +21,9 @@ const jobUseCase = {
                 skills: skills,
                 education:education,
                 categoryName:category,
-                jobPostedBy
+                jobPostedBy,
+                easyApply,
+                applicationUrl
             }
             )
             if (!newJob) {
@@ -95,10 +98,14 @@ const jobUseCase = {
             logger.error(`Error updating job with ID: ${id}`, `${error.message}`);
         }
     },
-    applyJob:async(jobId,recruiterid,jobData)=>{
+    applyJob:async(jobId,recruiterid,jobData,file)=>{
         try {
-            console.log("jobdata",jobData)
-            const {name,email,contact,dob,totalExperience,currentCompany,currentSalary,expectedSalary,preferredLocation,city,resumeLink,resume,applicant}=jobData
+            const {name,email,contact,dob,totalExperience,currentCompany,currentSalary,expectedSalary,preferredLocation,city,applicant}=jobData
+            let resumeUrl=''
+            if(file){
+                resumeUrl=await uploadFileToS3(file)
+
+            }
             const newApplication=await applicationRepository.postApplication({
                 name:name,
                 email:email,
@@ -110,8 +117,7 @@ const jobUseCase = {
                 expectedSalary:expectedSalary,
                 preferredLocation:preferredLocation,
                 city:city,
-                resume:resume||"haii",
-                resumelink:resumeLink,
+                resume:resumeUrl,
                 applicant,
                 jobId:jobId,
                 employerId:recruiterid

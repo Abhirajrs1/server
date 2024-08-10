@@ -23,7 +23,11 @@ const jobControl={
             const jobId=req.query.jobid
             const recruiterid=req.query.recruiterid
             const jobData={...req.body,applicant:req.user.user._id}
-            const application=await jobUseCase.applyJob(jobId,recruiterid,jobData)
+            const file=req.file
+            if (file && file.mimetype !== 'application/pdf') {
+                return res.status(400).json({ success: false, message: 'Only PDF files are allowed.' });
+              }
+            const application=await jobUseCase.applyJob(jobId,recruiterid,jobData,file)
             if(application.message){
                 logger.warn(`Error in job posting: ${application.message}`)
                 return res.status(400).json({success:false,message:application.message})
@@ -31,7 +35,7 @@ const jobControl={
             logger.info(`Job applyed successfully`)
             return res.status(200).json({success:true,message:"Job posted successfully",application})
         } catch (error) {
-            logger.error(`Error in apply job: ${error.message}`);
+            logger.error(`Error in apply job: ${error}`);
             res.status(500).json({ message: "Internal server error" })
         }
     },

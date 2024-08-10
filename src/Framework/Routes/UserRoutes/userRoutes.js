@@ -4,6 +4,9 @@ import jobController from '../../../Interface/Controller/RecruiterController/job
 import jobControl from '../../../Interface/Controller/UserController/jobControl.js'
 import resumeControl from '../../../Interface/Controller/UserController/resumeControl.js'
 import middleware from '../../../Interface/Middleware/authMiddleware.js'
+import multer from 'multer'
+
+const upload=multer({ storage: multer.memoryStorage() })
 const router= express.Router()
 const authMiddleware=middleware.authMiddleware
 
@@ -32,7 +35,7 @@ router.get('/employee-logout',authMiddleware,userController.postLogout)
 
 router.get('/employee-listJobs',jobController.getAllJobs)
 router.get('/employee-getIndividualJobDetails/:id',authMiddleware,jobControl.getIndividualJob)
-router.post('/employee-applyJob',authMiddleware,jobControl.applyJob)
+router.post('/employee-applyJob',upload.single('resume'),authMiddleware,jobControl.applyJob)
 
 router.get('/employee-getCategories',jobControl.getCategories)
 

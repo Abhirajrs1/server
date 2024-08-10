@@ -28,6 +28,13 @@ const JobSchema = new mongoose.Schema({
     employmentType: {
         type: String
     },
+    easyApply:{
+        type:Boolean,
+        default:true
+    },
+    applicationUrl:{
+        type:String
+    },
     delete: {
         type: Boolean,
         default: false

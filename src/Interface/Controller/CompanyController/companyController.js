@@ -59,6 +59,16 @@ const companyController={
             logger.error(`Error in getCompanies controller: ${error.message}`);
             return res.status(500).json({ success: false, message: 'Internal server error' });
         }
+    },
+    logOut:async(req,res)=>{
+        try {
+            res.clearCookie('companyaccessToken');
+            logger.info(`Company successfully logged out}`);
+            res.status(200).json({ success: true, message: "Company logout successfully" });
+        } catch (error) {
+            logger.error(`Logout error: ${error.message}`);
+            res.status(500).json({ message: "Internal server error" });
+        }
     }
 
 }
