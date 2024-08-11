@@ -62,24 +62,44 @@ const UserSchema=new mongoose.Schema({
     Qualification:{
         education:[
             {
-            field:{
+            levelOfEducation:{
                 type:String,
             },
-            level:{
+            degree:{
                 type:String
+            },
+            specialization:{
+                type:String
+            },
+            city:{
+                type:String
+            },
+            state:{
+                type:String
+            },
+            country:{
+                type:String
+            },
+            collegeName:{
+                type:String
+            },
+            startDate:{
+                type:Date
+            },
+            endDate:{
+                type:Date
+            },
+            courseType:{
+                type:String
+            },
+            percentage:{
+                type:Number
             }
         },
     ],
-        skills:[
-            {
-            userSkills:{
-                type:String,
-            },
-            yearsOfExperience:{
-                type:Number,
-            },
-        },
-    ]   
+        skills:{
+            type:[]
+        }
     }
       },
 {
