@@ -19,17 +19,24 @@ router.post('/employee-login',userController.postLogin)
 router.post('/employee-forgotPassword',userController.postForgotPassword)
 router.post('/employee-resetPassword/:token',userController.postResetPassword)
 router.get('/verify',authMiddleware,userController.isVerified)
+
+
 router.get('/employee-details/:email',userController.getUser)
 router.put('/employee-updateContact/:email',userController.userUpdate)
 router.post('/employee-addQualification/education/:email',userController.addEducation)
 router.post('/employee-addQualification/skill/:email',userController.addSkill)
 router.get('/employee-getDescription/:id',userController.getDescription)
 router.put('/employee-addDescription',authMiddleware,userController.addDescription)
+router.post('/employee-addworkexperience',authMiddleware,userController.addWorkExperience)
+
+
 router.post('/employee-postResume',authMiddleware,resumeControl.postUserDetails)
 router.post('/employee-addresumeeducation',authMiddleware,resumeControl.postResumeEducation)
 router.get('/employee-getresumeeducation',authMiddleware,resumeControl.getResumeEducation)
 router.post('/employee-addresumeskill',authMiddleware,resumeControl.postResumeSkill)
 router.get('/employee-getresumeskill',authMiddleware,resumeControl.getResumeSkill)
+
+
 
 router.get('/employee-logout',authMiddleware,userController.postLogout)
 

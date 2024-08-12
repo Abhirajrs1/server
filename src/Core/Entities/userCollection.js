@@ -100,7 +100,11 @@ const UserSchema=new mongoose.Schema({
         skills:{
             type:[]
         }
-    }
+    },
+    jobExperienceId:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'JobExperience'
+    }]
       },
 {
     timestamps:true

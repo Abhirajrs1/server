@@ -259,6 +259,17 @@ const userController = {
         }
     },
 
+    addWorkExperience:async(req,res)=>{
+        try {
+            const data={...req.body,userId:req.user.user._id}
+            const result=await userUseCase.addWorkExperience(data)
+            res.status(201).json({ success: true, message: 'Work experience added successfully.', data: result });
+        } catch (error) {
+            res.status(500).json({ success: false, message: 'Failed to add work experience.', error: error.message });
+        }
+    },
+
+
     // Google authentication
     handlePassport: async (req, res) => {
         

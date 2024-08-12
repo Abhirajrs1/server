@@ -294,6 +294,27 @@ const userUseCase={
         } catch (error) {
             logger.error(`Error fetching description for user with ID: ${id}`, error);
         }
+    },
+    addWorkExperience:async(data)=>{
+        try {
+            const {jobTitle,companyName,city,state,country,startDate,endDate,salary,userId}=data
+            const result=await userRepository.addWorkExperience({
+                jobTitle:jobTitle,
+                companyName:companyName,
+                city:city,
+                state:state,
+                country:country,
+                startDate:startDate,
+                endDate:endDate,
+                currentSalary:salary,
+                userId
+            })
+            logger.info(`Work experience added successfully for user ID: ${userId}, experience ID: ${result._id}`);
+            await userRepository.addJobExperienceToUser(userId,result._id)
+            logger.info(`Work experience associated with user ID: ${userId}, experience ID: ${result._id}`);
+        } catch (error) {
+            logger.error(`Error adding work experience for user ID: ${userId}, error: ${error.message}`);
+        }
 
     },
    findOrCreateGoogleUser : async (profile) => {

@@ -2,6 +2,7 @@
 import { User } from "../../Core/Entities/userCollection.js";
 import { TemperoryUser } from "../../Core/Entities/temperoryUserCollection.js";
 import { Resume } from "../../Core/Entities/resumeCollection.js";
+import { JobExperience } from "../../Core/Entities/jobExperienceCollection.js";
 import logger from "../Utilis/logger.js";
 
 const userRepository={
@@ -158,6 +159,25 @@ const userRepository={
         }  
       } catch (error) {
         logger.error(`Error fetching description for user with ID: ${id}`, error);
+    }
+   },
+
+   addWorkExperience:async(data)=>{
+    try {
+        let result=new JobExperience(data)
+        await result.save()
+        logger.info('Successfully added work experience for user ID: ' + data.userId);
+        return result;
+    } catch (error) {
+        logger.error('Error adding work experience for user ID: ' + data.userId + '. Error: ' + error.message);
+    }
+   },
+   addJobExperienceToUser:async(userId,jobExperienceId)=>{
+    try {
+        await User.findByIdAndUpdate({_id:userId},{$push:{jobExperienceId:jobExperienceId}},{new:true})
+        logger.info('Successfully added job experience ID: ' + jobExperienceId + ' to user ID: ' + userId);
+    } catch (error) {
+        logger.error('Error adding job experience ID: ' + jobExperienceId + ' to user ID: ' + userId + '. Error: ' + error.message);
     }
    },
 
