@@ -33,6 +33,8 @@ router.get('/recruiter-getApplication/:id',authMiddleware,applicationController.
 router.get('/recruiter-getApplicationDetails/:id',authMiddleware,applicationController.getApplicationDetails)
 
 router.get('/recruiter-getPlans',planControl.getPlansForRecruiter)
+router.post('/recruiter-createOrder',recruiterController.createOrder)
+router.post('/recruiter-verifyPayment',recruiterController.verifyPayment)
 
 
 export {router as RecruiterRouter}

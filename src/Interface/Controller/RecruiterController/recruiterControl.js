@@ -146,6 +146,35 @@ const recruiterController = {
             logger.error(`Error in getRecruiterDetails: ${error.message}`);
             res.status(500).json({ message: "Internal server error" });
         }
+    },
+    createOrder:async(req,res)=>{
+        const {amount}=req.body
+        try {
+            const order=await recruiterUseCase.createOrder(amount)
+            if(!order){
+                logger.warn("Failed to create order.");
+                return res.status(400).json({ success: false, message: "Order creation failed." });
+            }
+            logger.info(`Order created successfully: ${JSON.stringify(order)}`);
+            res.status(200).json({ success: true, orderId: order.id });
+        } catch (error) {
+            logger.error(`Error creating order: ${error.message}`);
+            res.status(500).json({ success: false, message: "An error occurred while creating the order" });
+        }
+    },
+    verifyPayment:async(req,res)=>{
+        try {
+            const { paymentId, orderId, signature, email } = req.body;
+            const result=await recruiterUseCase.verifyPayment(paymentId, orderId, signature, email)
+            if (result.success) {
+                res.status(200).json(result);
+              } else {
+                res.status(400).json(result);
+              }
+        } catch (error) {
+            logger.error(`Error verifying payment: ${error.message}`);
+            res.status(500).json({ success: false, message: "An error occurred while verifying the payment" });
+        }
     }
 }
 export default recruiterController

@@ -3,6 +3,7 @@ import generateOTP from "../../Framework/Services/otpServices.js";
 import EmailService from "../../Framework/Services/mailerServices.js";
 import { generateJWT } from "../../Framework/Services/jwtServices.js";
 import sendRecruiterEmail from "../../Framework/Services/recruiterForgotPassword.js";
+import paymentService from "../../Framework/Services/razorpayServices.js";
 import logger from "../../Framework/Utilis/logger.js";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
@@ -146,6 +147,29 @@ const recruiterUseCase = {
             }
         } catch (error) {
             logger.error(`Error in getRecruiterByEmail: ${error}`);
+        }
+    },
+    createOrder:async(amount)=>{
+        try {
+            const order=await paymentService.createOrder(amount)
+            return order
+        } catch (error) {
+            logger.error(`Failed to create order. Error: ${error.message}`, { error });
+        }
+    },
+    verifyPayment:async(paymentId,orderId,signature,email)=>{
+        try {
+            const verification=await paymentService.verifyPayment(paymentId, orderId, signature)
+            if(verification.success){
+                await recruiterRepository.updateRecruiterSubscription(email,true)
+                logger.info(`Payment verified successfully for email: ${email}`);
+                return { success: true, message: 'Payment verified and subscription updated' };
+            }else{
+                logger.warn(`Invalid signature for payment ID: ${paymentId}`);
+                return { success: false, message: 'Invalid signature' };
+            }
+        } catch (error) {
+            logger.error(`Failed to verify payment. Error: ${error.message}`, { error });
         }
     }
 }

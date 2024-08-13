@@ -70,6 +70,19 @@ const recruiterRepository = {
         } catch (error) {
             logger.error(`Error moving temporary recruiter to permanent recruiter: ${error}`);
         }
+    },
+    updateRecruiterSubscription:async(email,isSubscribed)=>{
+        try {
+            const result=await Recruiter.findOneAndUpdate({email:email},{isSubscribed},{new:true})
+            if (!result) {
+                logger.warn(`Recruiter with email ${email} not found.`);
+              } else {
+                logger.info(`Recruiter subscription updated: ${email}`);
+              }
+              return result;
+        } catch (error) {
+            logger.error(`Failed to update recruiter subscription. Error: ${error.message}`, { error });
+        }
     }
 }
 
