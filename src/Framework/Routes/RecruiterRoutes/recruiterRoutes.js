@@ -4,6 +4,7 @@ import jobController from '../../../Interface/Controller/RecruiterController/job
 import categoryController from '../../../Interface/Controller/RecruiterController/categoryController.js'
 import Middleware from '../../../Interface/Middleware/authMiddleware.js'
 import applicationController from '../../../Interface/Controller/RecruiterController/applicationController.js'
+import planControl from '../../../Interface/Controller/RecruiterController/planController.js'
 const authMiddleware=Middleware.recruiterMiddleware
 
 const router=express.Router()
@@ -30,6 +31,8 @@ router.get('/recruiter-getAllCategories',authMiddleware,categoryController.getAl
 
 router.get('/recruiter-getApplication/:id',authMiddleware,applicationController.getApplication)
 router.get('/recruiter-getApplicationDetails/:id',authMiddleware,applicationController.getApplicationDetails)
+
+router.get('/recruiter-getPlans',planControl.getPlansForRecruiter)
 
 
 export {router as RecruiterRouter}

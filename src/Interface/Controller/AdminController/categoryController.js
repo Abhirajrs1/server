@@ -9,7 +9,6 @@ const categoryController = {
             
             if (result.message) {
                 logger.warn(`Failed to add category: ${result.message}`);
-                console.log(result.message,"MESSAGE");
                 return res.status(409).json({ success: false, message: result.message });
             }
             logger.info("Category added successfully");
