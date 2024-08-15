@@ -101,6 +101,9 @@ const UserSchema=new mongoose.Schema({
             type:[]
         }
     },
+    resume:{
+        type:String
+    },
     jobExperienceId:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:'JobExperience'

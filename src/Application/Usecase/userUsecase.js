@@ -3,6 +3,7 @@ import generateOTP from "../../Framework/Services/otpServices.js";
 import EmailService from "../../Framework/Services/mailerServices.js";
 import { generateJWT } from "../../Framework/Services/jwtServices.js";
 import sendEmail from "../../Framework/Services/forgotPasswordMail.js";
+import uploadFileToS3 from "../../Framework/Services/s3.js";
 import logger from "../../Framework/Utilis/logger.js";
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
@@ -315,26 +316,58 @@ const userUseCase={
         } catch (error) {
             logger.error(`Error adding work experience for user ID: ${userId}, error: ${error.message}`);
         }
+    },
+    getExperiences:async(userId)=>{
+        try {
+            const workExperiences=await userRepository.getUserWorkExperience(userId)
+            logger.info(`Successfully fetched work experiences for user ${userId}`);
+            return workExperiences;
+        } catch (error) {
+            logger.error(`Error fetching work experiences for user ${userId}: ${error.message}`);
+        }
+    },
+    addResumeUrl:async(file,userId)=>{
+        try {
+            const resumeUrl=await uploadFileToS3(file)
+            logger.info(`Resume uploaded successfully for user ${userId}. Resume URL: ${resumeUrl}`);
+            await userRepository.addResumeUrl(userId,resumeUrl)
+            logger.info(`Resume URL updated in database for user ${userId}`);
+            return resumeUrl
+        } catch (error) {
+            logger.error(`Error updating resume URL in database for user ${userId}: ${error.message}`);
+        }
+    },
+    getResumeUrl:async(userId)=>{
+        try {
+            const resumeUrl=await userRepository.getResumeUrl(userId)
+            if (resumeUrl) {
+                logger.info(`Successfully retrieved resume URL for user ${userId}. Resume URL: ${resumeUrl}`);
+                return resumeUrl;
+            } else {
+                logger.warn(`No resume URL found for user ${userId}.`);
+            }
+        } catch (error) {
+            logger.error(`Error retrieving resume URL for user ${userId}: ${error.message}`);
+        }
 
     },
-   findOrCreateGoogleUser : async (profile) => {
-    try {
-      const existingUser = await userRepository.findUserByGoogleId(profile.emails[0].value);
-      if (existingUser) {
-        return existingUser;
-      }
-  
-      const newUser = {
-        username: profile.displayName,
-        email: profile.emails[0].value,
-        password: profile.id,
-        isVerified: true,
-      };
-      return await userRepository.createUser(newUser);
-    } catch (error) {
-      console.log(error);
-    }
-  },
+    findOrCreateGoogleUser: async (profile) => {
+        try {
+          const existingUser = await userRepository.findUserByGoogleId(profile.emails[0].value);
+          if (existingUser) {
+            return existingUser;
+          }
+          const newUser = {
+            username: profile.displayName,
+            email: profile.emails[0].value,
+            password: profile.id,
+            isVerified: true,
+          };
+          return await userRepository.createUser(newUser);
+        } catch (error) {
+          console.log(error);
+        }
+    },
   findUserById :async (id) => {
     return await userRepository.findUserById(id);
   }

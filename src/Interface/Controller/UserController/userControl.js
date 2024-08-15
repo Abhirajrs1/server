@@ -268,28 +268,68 @@ const userController = {
             res.status(500).json({ success: false, message: 'Failed to add work experience.', error: error.message });
         }
     },
+    getWorkExperience:async(req,res)=>{
+        try {
+            const userId=req.user.user._id
+            const experiences=await userUseCase.getExperiences(userId)
+            logger.info(`Successfully retrieved work experiences for user ${userId}`);
+            console.log(experiences,"EXPPPPPP");
+            res.status(200).json({ success: true, experiences });
+        } catch (error) {
+            logger.error(`Error retrieving work experiences for user ${userId}: ${error.message}`);
+            res.status(500).json({ success: false, message: 'Failed to retrieve work experiences' });
+        }
+    },
+    addResume:async(req,res)=>{
+        try {
+            if(!req.file){
+                logger.warn('No file uploaded');
+                return res.status(400).json({ success: false, message: 'No file uploaded' });
+            }
+            const userId=req.user.user._id
+            const resumeUrl=await userUseCase.addResumeUrl(req.file,userId)
+            logger.info(`Resume uploaded successfully for user ${userId}`);
+            return res.status(200).json({success:true,message:"Add resume successfully",resumeUrl})
+        } catch (error) {
+            logger.error(`Error uploading resume for user ${req.user.user._id}: ${error.message}`);
+            res.status(500).json({ success: false, message: 'Failed to upload resume' });
+        }
+    },
+    getResumeUrl:async(req,res)=>{
+        try {
+            const userId=req.user.user._id
+            const resumeUrl = await userUseCase.getResumeUrl(userId);
+
+            if (resumeUrl) {
+                logger.info(`Successfully retrieved resume URL for user ${userId}. Resume URL: ${resumeUrl}`);
+                res.status(200).json({ success: true, resumeUrl });
+            } else {
+                logger.warn(`No resume URL found for user ${userId}.`);
+                res.status(404).json({ success: false, message: 'Resume URL not found' });
+            }
+        } catch (error) {
+            logger.error(`Error retrieving resume URL for user ${userId}: ${error.message}`);
+            res.status(500).json({ success: false, message: 'Internal Server Error' });
+        }
+    },
 
 
     // Google authentication
     handlePassport: async (req, res) => {
-        
         if (req.user) {
-            // console.log("ferf",req.user);
-            const userData={
-                username:req.user.displayName,email:req.user.emails[0].value,password:req.user.id
-            }
-            const googleuser=await userUseCase.findOrCreateGoogleUser(req.user);
-            console.log("googleuser",googleuser);
-            const token = await generateJWT(req.user.email);
+          try {
+            const googleUser = await userUseCase.findOrCreateGoogleUser(req.user);
+            const token = await generateJWT(googleUser.email);
             res.cookie('accessToken', String(token), { httpOnly: true, maxAge: 3600000 });
-            logger.info(`User successfully logged in:`);
-            // res.status(200).json({ success: true, userData, token });
-            
             res.redirect('http://localhost:5173');
+          } catch (error) {
+            res.status(500).json({ success: false, message: 'Server error' });
+          }
         } else {
-            res.status(401).json({ success: false, message: "Google authentication failed" });
+          res.status(401).json({ success: false, message: "Google authentication failed" });
         }
-    },
+      },
+      
 
     // User logout
     postLogout: async (req, res) => {

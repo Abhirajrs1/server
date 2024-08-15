@@ -172,6 +172,15 @@ const userRepository={
         logger.error('Error adding work experience for user ID: ' + data.userId + '. Error: ' + error.message);
     }
    },
+   getUserWorkExperience:async(userId)=>{
+    try {
+        const experience=await JobExperience.find({userId:userId})
+        logger.info(`Fetched work experience for user ${userId}`);
+        return experience
+    } catch (error) {
+        logger.error(`Error fetching work experience for user ${userId}: ${error.message}`);
+    }
+   },
    addJobExperienceToUser:async(userId,jobExperienceId)=>{
     try {
         await User.findByIdAndUpdate({_id:userId},{$push:{jobExperienceId:jobExperienceId}},{new:true})
@@ -180,6 +189,34 @@ const userRepository={
         logger.error('Error adding job experience ID: ' + jobExperienceId + ' to user ID: ' + userId + '. Error: ' + error.message);
     }
    },
+   addResumeUrl:async(userId,resumeUrl)=>{
+    try {
+        const result=await User.findOneAndUpdate({_id:userId},{resume:resumeUrl},{new:true})
+        if (result) {
+            logger.info(`Successfully updated resume URL for user ${userId}. New resume URL: ${resumeUrl}`);
+        } else {
+            logger.warn(`No user found with ID ${userId}. Resume URL update failed.`);
+        }
+        return result
+    } catch (error) {
+        logger.error(`Error updating resume URL for user ${userId}: ${error.message}`);
+    }
+
+
+   },
+   getResumeUrl:async(userId)=>{
+    try {
+        const result = await User.findOne({ _id: userId });
+        if (result) {
+            return result.resume;  
+        } else {
+            logger.warn(`No user found with ID ${userId}. Unable to retrieve resume URL.`);
+        }
+    } catch (error) {
+        logger.error(`Error retrieving resume URL for user ${userId}: ${error.message}`);
+    }
+   },
+
 
     // Find user by id and update password
     findUserByIdAndUpdate:async(id,value)=>{

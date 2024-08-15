@@ -28,6 +28,9 @@ router.post('/employee-addQualification/skill/:email',userController.addSkill)
 router.get('/employee-getDescription/:id',userController.getDescription)
 router.put('/employee-addDescription',authMiddleware,userController.addDescription)
 router.post('/employee-addworkexperience',authMiddleware,userController.addWorkExperience)
+router.get('/employee-getWorkExperience',authMiddleware,userController.getWorkExperience)
+router.post('/employee-addResume',upload.single('resume'),authMiddleware,userController.addResume)
+router.get('/employee-getResumeUrl',authMiddleware,userController.getResumeUrl)
 
 
 router.post('/employee-postResume',authMiddleware,resumeControl.postUserDetails)
