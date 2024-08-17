@@ -9,7 +9,42 @@ const CompanySchema=new mongoose.Schema({
     password:{
         type:String
     },
+    contactNumber:{
+        type:Number
+    },
     typeOfCompany:{
+        type:String
+    },
+    companyDescription:{
+        type:String
+    },
+    website:{
+        type:String
+    },
+    logo:{
+        type:String
+    },
+    establishedYear:{
+        type:String
+    },
+    headQuarters:{
+        type:String
+    },
+    socialMedia:{
+        linkedin:{
+            type:String
+        },
+        twitter:{
+            type:String
+        },
+        facebookd:{
+            type:String
+        }
+    },
+    ceoName:{
+        type:String
+    },
+    missionStatement:{
         type:String
     },
     companyaddress:[{
@@ -40,7 +75,11 @@ const CompanySchema=new mongoose.Schema({
     }],
     numberOfEmployees:{
         type:Number
-    }
+    },
+    reviewsId:[{
+        type:mongoose.Schema.ObjectId,
+        ref:'Review'
+    }]
 },{
     timestamps:true
 })
