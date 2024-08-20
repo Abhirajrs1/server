@@ -321,7 +321,8 @@ const userController = {
             const googleUser = await userUseCase.findOrCreateGoogleUser(req.user);
             const token = await generateJWT(googleUser.email);
             res.cookie('accessToken', String(token), { httpOnly: true, maxAge: 3600000 });
-            res.redirect('http://localhost:5173');
+            const redirectUrl = `http://localhost:5173/auth?token=${encodeURIComponent(token)}&user=${encodeURIComponent(JSON.stringify(googleUser))}`;
+            res.redirect(redirectUrl);
           } catch (error) {
             res.status(500).json({ success: false, message: 'Server error' });
           }

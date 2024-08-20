@@ -12,7 +12,7 @@
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
-          // const existingUser = await userUseCase.findOrCreateGoogleUser(profile);
+          const existingUser = await userUseCase.findOrCreateGoogleUser(profile);
           done(null, profile);
         } catch (error) {
           done(error, null);
@@ -27,7 +27,6 @@
 
   passport.deserializeUser( (user, done) => {
     try {
-      // const user = await userUseCase.findUserById(id);
       done(null, user);
     } catch (error) {
       done(error, null);

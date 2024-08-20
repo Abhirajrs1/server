@@ -18,6 +18,9 @@ const UserSchema=new mongoose.Schema({
     contact:{
         type:Number,
     },
+    dob:{
+        type:Date,
+    },
     useraddress:[{
         id:{
             type:String,
@@ -110,7 +113,20 @@ const UserSchema=new mongoose.Schema({
     }]
       },
 {
-    timestamps:true
+    timestamps:true,
+    toJSON: {
+        virtuals: true,
+        transform: function (doc, ret) {
+          if (ret.dob) {
+            const date = new Date(ret.dob);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            ret.dob = `${day}/${month}/${year}`;
+          }
+          return ret;
+        }
+      }
 })
 
 export const User=mongoose.model('User',UserSchema)
