@@ -273,7 +273,6 @@ const userController = {
             const userId=req.user.user._id
             const experiences=await userUseCase.getExperiences(userId)
             logger.info(`Successfully retrieved work experiences for user ${userId}`);
-            console.log(experiences,"EXPPPPPP");
             res.status(200).json({ success: true, experiences });
         } catch (error) {
             logger.error(`Error retrieving work experiences for user ${userId}: ${error.message}`);

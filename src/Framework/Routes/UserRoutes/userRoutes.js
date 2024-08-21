@@ -45,7 +45,7 @@ router.get('/employee-logout',authMiddleware,userController.postLogout)
 
 router.get('/employee-listJobs',jobController.getAllJobs)
 router.get('/employee-getIndividualJobDetails/:id',authMiddleware,jobControl.getIndividualJob)
-router.post('/employee-applyJob',upload.single('resume'),authMiddleware,jobControl.applyJob)
+router.post('/employee-applyJob',authMiddleware,jobControl.applyJob)
 
 router.get('/employee-getCategories',jobControl.getCategories)
 

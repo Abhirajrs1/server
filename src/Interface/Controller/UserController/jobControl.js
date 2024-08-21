@@ -23,11 +23,11 @@ const jobControl={
             const jobId=req.query.jobid
             const recruiterid=req.query.recruiterid
             const jobData={...req.body,applicant:req.user.user._id}
-            const file=req.file
-            if (file && file.mimetype !== 'application/pdf') {
-                return res.status(400).json({ success: false, message: 'Only PDF files are allowed.' });
-              }
-            const application=await jobUseCase.applyJob(jobId,recruiterid,jobData,file)
+            if (jobData.dob) {
+                const [day, month, year] = jobData.dob.split('/').map(Number);
+                jobData.dob = new Date(year, month - 1, day); 
+            }
+            const application=await jobUseCase.applyJob(jobId,recruiterid,jobData)
             if(application.message){
                 logger.warn(`Error in job posting: ${application.message}`)
                 return res.status(400).json({success:false,message:application.message})

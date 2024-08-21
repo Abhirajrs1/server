@@ -8,7 +8,7 @@ const jobUseCase = {
     postJob: async (jobData) => {
         try {
             const { jobTitle, companyName, minPrice, maxPrice, jobLocation, yearsOfExperience, category,employmentType, description, jobPostedBy,education, skills,easyApply,applicationUrl } = jobData
-
+            
             const newJob = await jobRepository.createJob({
                 jobTitle: jobTitle,
                 companyName,
@@ -98,26 +98,21 @@ const jobUseCase = {
             logger.error(`Error updating job with ID: ${id}`, `${error.message}`);
         }
     },
-    applyJob:async(jobId,recruiterid,jobData,file)=>{
-        try {
-            const {name,email,contact,dob,totalExperience,currentCompany,currentSalary,expectedSalary,preferredLocation,city,applicant}=jobData
-            let resumeUrl=''
-            if(file){
-                resumeUrl=await uploadFileToS3(file)
+    applyJob:async(jobId,recruiterid,jobData)=>{
 
-            }
+        try {
+            const {name,email,contact,dob,totalExperience,currentCompany,currentSalary,expectedSalary,preferredLocation,resume,applicant}=jobData
             const newApplication=await applicationRepository.postApplication({
-                name:name,
-                email:email,
-                contact:contact,
-                dob:dob,
-                totalExperience:totalExperience,
-                currentCompany:currentCompany,
-                currentSalary:currentSalary,
-                expectedSalary:expectedSalary,
-                preferredLocation:preferredLocation,
-                city:city,
-                resume:resumeUrl,
+                name,
+                email,
+                contact,
+                dob,
+                totalExperience,
+                currentCompany,
+                currentSalary,
+                expectedSalary,
+                preferredLocation,
+                resume,
                 applicant,
                 jobId:jobId,
                 employerId:recruiterid
