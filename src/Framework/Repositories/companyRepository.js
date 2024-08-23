@@ -57,6 +57,19 @@ const companyRepository={
         } catch (error) {
             logger.error(`Error fetching company names: ${error.message}`);
         }
+    },
+    findCompanyByid:async(id)=>{
+        try {
+            const company=await Company.findOne({_id:id})
+            if (company) {
+                logger.info(`Company found with id: ${id}`);
+              } else {
+                logger.info(`No company found with id: ${id}`);
+              }
+            return company
+        } catch (error) {
+            logger.error(`Error finding company by id: ${error.message}`);
+        }
     }
 
 }

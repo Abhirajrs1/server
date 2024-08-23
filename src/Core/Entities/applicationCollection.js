@@ -27,8 +27,9 @@ const ApplicationSchema=new mongoose.Schema({
     preferredLocation:{
         type:String
     },
-    city:{
-        type:String,
+    appliedOn:{
+        type:Date,
+        default: new Date
     },
     jobId:{
         type:mongoose.Schema.Types.ObjectId,
@@ -46,7 +47,24 @@ const ApplicationSchema=new mongoose.Schema({
         type:String
     },
 },
-{ timestamps: true }
+{ timestamps: true,
+    toJSON: {
+        virtuals: true,
+        transform: function (doc, ret) {
+            if (ret.appliedOn) {
+                const date = new Date(ret.appliedOn);
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                ret.appliedOn = `${day}/${month}/${year}`;
+            }
+            return ret;
+        }
+    },
+    toObject: {
+        virtuals: true
+    }
+ }
 )
 export const Application = mongoose.model('Application', ApplicationSchema);
 

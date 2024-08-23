@@ -6,7 +6,8 @@ const planController={
 
     addPlans:async(req,res)=>{
         try {
-            const {formData} = req.body
+            const {planName, planDescription, planPrice, planType, planDuration} = req.body
+            const formData={planName, planDescription, planPrice, planType, planDuration}
             const result =await planUseCase.addPlans(formData)
             if(result.message){
                 logger.warn(`Failed to add plan: ${result.message}`);

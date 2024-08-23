@@ -38,6 +38,19 @@ const applicationRepository={
         } catch (error) {
             logger.error(`Error fetching application details for application ID: ${id} - ${error.message}`);
         }
+    },
+    getApplicationforCandidates:async(id)=>{
+        try {
+            const application=await Application.find({applicant:id}).populate('jobId')
+            if(!application){
+                logger.warn(`No applications found for candidate ID: ${id}`);
+            }else{
+                logger.info(`Fetched applications for candidate ID: ${id}`);
+            }
+            return application
+        } catch (error) {
+            logger.error(`Error fetching applications for candidate ID: ${id} - ${error.message}`);
+        }
     }
 
 }

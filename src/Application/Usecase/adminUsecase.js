@@ -1,5 +1,6 @@
 import adminRepository from "../../Framework/Repositories/adminRepository.js";
 import jobRepository from "../../Framework/Repositories/jobRepository.js";
+import companyRepository from "../../Framework/Repositories/companyRepository.js";
 import { generateJWT } from "../../Framework/Services/jwtServices.js";
 import logger from "../../Framework/Utilis/logger.js";
 
@@ -78,6 +79,21 @@ const adminUseCase = {
       return { message: error.message };
     }
   },
+  getAllCompanies:async(page,limit)=>{
+    try {
+      const {companies,total}=await adminRepository.findAllCompanies(page,limit)
+      if(!companies){
+        logger.warn(`Companies not found`);
+        return { message: "Companies not found" };
+      }else{
+        logger.info(`Found ${companies.length} companies`);
+        return {companies,total,page,limit};
+      }
+    } catch (error) {
+      logger.error(`Error fetching all companies: ${error.message}`);
+      return { message: error.message };
+    }
+  },
   candidateBlockOrUnblock: async (id) => {
     try {
       const candidate = await adminRepository.findCandidateById(id);
@@ -123,6 +139,21 @@ const adminUseCase = {
       return {success:true,delete:newListStatus}
     } catch (error) {
       logger.error(`Error updating list status of job ${id}: ${error.message}`);
+      return { message: error.message };
+    }
+  },
+  activeOrInactiveCompany:async(id)=>{
+    try {
+      const company=await companyRepository.findCompanyByid(id)
+      if(!company){
+        logger.warn(`Company not found ${id}`)
+        return { message: "Company not found" };
+      }
+      const newActiveStatus=!company.active
+      await adminRepository.findCompanyByIdAndUpdate(id,{active:newActiveStatus})
+      return {success:true,active:newActiveStatus}
+    } catch (error) {
+      logger.error(`Error updating active status of company ${id}: ${error.message}`);
       return { message: error.message };
     }
   }

@@ -12,12 +12,21 @@ const planUseCase={
                 logger.warn(`Failed to add plan: Plan with name "${planName}" already exists.`);
                 return { message: "Plan with this name already exists."};
             }
+
+            let expirationDate = null;
+            if (planType === 'duration' && planDuration) {
+                const now = new Date();
+                expirationDate = new Date(now.setMonth(now.getMonth() + planDuration));
+            }
+
+
             const result=await planRepository.addPlans({
                 planName:planName,
                 amount:planPrice,
                 description:planDescription,
                 planType:planType,
-                planDuration:planDuration
+                planDuration:planDuration,
+                expirationDate
             })
             if(!result){
                 logger.warn("Plan was not added successfully.");

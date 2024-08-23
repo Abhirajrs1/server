@@ -8,7 +8,7 @@ const jobUseCase = {
     postJob: async (jobData) => {
         try {
             const { jobTitle, companyName, minPrice, maxPrice, jobLocation, yearsOfExperience, category,employmentType, description, jobPostedBy,education, skills,easyApply,applicationUrl } = jobData
-            
+
             const newJob = await jobRepository.createJob({
                 jobTitle: jobTitle,
                 companyName,
@@ -126,6 +126,7 @@ const jobUseCase = {
         } catch (error) {
             logger.error(`Error in postJobApplication: ${error}`);
         }
-    }
+    },
+    
 }
 export default jobUseCase

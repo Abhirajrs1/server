@@ -2,6 +2,7 @@ import { Admin } from "../../Core/Entities/adminCollection.js";
 import { User } from "../../Core/Entities/userCollection.js";
 import { Recruiter } from "../../Core/Entities/recruiterCollection.js";
 import { Job } from "../../Core/Entities/jobCollection.js";
+import { Company } from "../../Core/Entities/companyCollection.js";
 import logger from "../Utilis/logger.js";
 
 const adminRepository={
@@ -39,6 +40,18 @@ const adminRepository={
       } catch (error) {
          logger.error(`Error fetching all recruiters: ${error.message}`);   
       }
+   },
+   findAllCompanies:async(page,limit)=>{
+    try {
+      const skip=(page-1)*limit
+      const companies=await Company.find().skip(skip).limit(limit)
+      const total=await Company.countDocuments()
+      logger.info(`Found ${companies.length} companies`);
+         return {companies,total}
+    } catch (error) {
+      logger.error(`Error fetching all companies: ${error.message}`);   
+    }
+
    },
    getAllJobs:async(page,limit)=>{
     try {
@@ -115,6 +128,19 @@ const adminRepository={
       } catch (error) {
         logger.error(`Error updating job by ID: ${id}, ${error.message}`);
       }
-    }  
+    },
+    findCompanyByIdAndUpdate:async(id,update)=>{
+      try {
+        const company=await Company.findByIdAndUpdate(id,{$set:update},{new:true})
+        if(company){
+          logger.info(`Company updated: ${id}`)
+        }else{
+          logger.warn(`Company not found: ${id}`);
+        }
+        return company
+      } catch (error) {
+        logger.error(`Error updating company by ID: ${id}, ${error.message}`);
+      }
+    } 
 }
 export default adminRepository

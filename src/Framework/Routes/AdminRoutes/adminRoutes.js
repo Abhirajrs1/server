@@ -6,6 +6,7 @@ import Middleware from '../../../Interface/Middleware/authMiddleware.js'
 import jobController from '../../../Interface/Controller/AdminController/jobController.js'
 import categoryController from '../../../Interface/Controller/AdminController/categoryController.js'
 import planController from '../../../Interface/Controller/AdminController/planController.js'
+import companyControl from '../../../Interface/Controller/AdminController/companyControl.js'
 const authMiddleware=Middleware.adminMiddleware
 
 const router=express.Router()
@@ -31,6 +32,9 @@ router.put('/admin-category/:id',authMiddleware,categoryController.editCategory)
 
 router.post('/admin-addPlans',authMiddleware,planController.addPlans)
 router.get('/admin-plans',authMiddleware,planController.getPlans)
+
+router.get('/admin-companies',authMiddleware,companyControl.getCompanies)
+router.put('/admin-companies/:id/status',authMiddleware,companyControl.activeOrInactiveCompany)
 
 
 export {router as AdminRouter}

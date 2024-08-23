@@ -1,6 +1,7 @@
 import logger from "../../../Framework/Utilis/logger.js";
 import jobUseCase from "../../../Application/Usecase/jobUsecase.js";
 import categoryUseCase from "../../../Application/Usecase/categoryUsecase.js";
+import applicationUseCase from "../../../Application/Usecase/applicationUsecase.js";
 
 const jobControl={
     getIndividualJob:async(req,res)=>{
@@ -47,6 +48,22 @@ const jobControl={
         } catch (error) {
             logger.error(`Error in fetching categories: ${error.message}`);
             return res.status(500).json({ message: "Internal server error" });
+        }
+    },
+    getApplications:async(req,res)=>{
+        try {
+            const userId=req.user.user._id
+            const applications=await applicationUseCase.getApplicationforCandidates(userId)
+            if(applications.message){
+                logger.warn(`Failed to fetch applications for candidate ID: ${userId} - ${applications.message}`);
+                return res.status(400).json({success:false,message:applications.message})
+            }else{
+                logger.info(`Applications fetched successfully for candidate ID: ${userId}`);
+                 return res.status(200).json({success:true,message:"Job fetch successfully",applications})
+            }
+        } catch (error) {
+            logger.error(`Error fetching applications for candidate ID: ${userId} - ${error.message}`);
+            return res.status(500).json({ success: false, message: "Internal Server Error" });   
         }
     }
 
