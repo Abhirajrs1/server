@@ -149,9 +149,9 @@ const adminUseCase = {
         logger.warn(`Company not found ${id}`)
         return { message: "Company not found" };
       }
-      const newActiveStatus=!company.active
-      await adminRepository.findCompanyByIdAndUpdate(id,{active:newActiveStatus})
-      return {success:true,active:newActiveStatus}
+      const newActiveStatus=!company.block
+      await adminRepository.findCompanyByIdAndUpdate(id,{block:newActiveStatus})
+      return {success:true,block:newActiveStatus}
     } catch (error) {
       logger.error(`Error updating active status of company ${id}: ${error.message}`);
       return { message: error.message };

@@ -43,9 +43,8 @@ const companyController={
     },
     companyVerify:async(req,res)=>{
         try {
-           logger.info(`Company verified: ${req.company.email}`);
+           logger.info(`Company verified: ${req.company.email}`);           
            res.status(200).json({ success: true, message: "Company verified",company:req.company})
-            
         } catch (error) {
             logger.error(`Error in company Verified: ${error.message}`);
             res.status(500).json({ message: "Internal server error" })

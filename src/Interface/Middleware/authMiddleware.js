@@ -84,18 +84,15 @@ const Middleware={
             return res.status(400).json({message:"Access denied. No token found"})
         }
         const decoded=jwt.verify(token,process.env.KEY)        
-        const company=await companyUseCase.getCompanyByEmail(decoded.email)        
+        const company=await companyUseCase.getCompanyByEmail(decoded.email)                
         if(!company){
             return res.status(401).json({message:"Company not found"})
         }
-        if (!company.active) {
+        if (company.block) {
             res.clearCookie('companyaccessToken');
-            return res.status(403).json({ message: 'Your account has been blocked. Please contact support.' });
+            return res.status(403).json({ message: 'Your account has been blocked. Please contact support.'});
         }
-        req.company={
-            ...company,
-            email:decoded.email
-        }
+        req.company=company
         next()
         } catch (error) {
             console.log(error);

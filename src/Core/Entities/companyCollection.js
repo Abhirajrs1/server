@@ -80,9 +80,9 @@ const CompanySchema=new mongoose.Schema({
         type:mongoose.Schema.ObjectId,
         ref:'Review'
     }],
-    active:{
+    block:{
         type:Boolean,
-        default:true
+        default:false
     },
 },{
     timestamps:true

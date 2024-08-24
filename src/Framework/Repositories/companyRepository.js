@@ -60,7 +60,7 @@ const companyRepository={
     },
     findCompanyByid:async(id)=>{
         try {
-            const company=await Company.findOne({_id:id})
+            const company=await Company.findById({_id:id})
             if (company) {
                 logger.info(`Company found with id: ${id}`);
               } else {

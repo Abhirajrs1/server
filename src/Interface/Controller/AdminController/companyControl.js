@@ -22,13 +22,11 @@ const companyControl={
             if(result.message){
                 return res.status(400).json({ success: false, message: result.message });  
             }
-             return res.status(200).json({ success: true, active: result.active });
+             return res.status(200).json({ success: true, block: result.block });
         } catch (error) {
             logger.error(`Error active/inactive company: ${error.message}`);
             res.status(500).json({ message: 'Internal server error' });
         }
     }
-
-
 }
 export default companyControl
