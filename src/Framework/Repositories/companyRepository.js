@@ -70,8 +70,16 @@ const companyRepository={
         } catch (error) {
             logger.error(`Error finding company by id: ${error.message}`);
         }
+    },
+    updateProfile:async(email,updateCompanyDetails)=>{
+        try {
+            const company=await Company.findOneAndUpdate({email:email},updateCompanyDetails,{new:true})
+            logger.info(`Company contact updated for email: ${email}`);
+            return company
+        } catch (error) {
+            logger.error(`Error during updating company details for email: ${email}, error: ${error.message}`);
+        }
     }
-
 }
 
 export default companyRepository

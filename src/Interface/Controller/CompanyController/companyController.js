@@ -69,6 +69,26 @@ const companyController={
             logger.error(`Logout error: ${error.message}`);
             res.status(500).json({ message: "Internal server error" });
         }
+    },
+    updateProfile:async(req,res)=>{
+        try {
+           const {updatedCompanyContact}=req.body
+           const {email}=req.params
+           const updateCompany=await companyUseCase.updateProfile(email,updatedCompanyContact)
+           if (updateCompany.message === "Company not found") {
+            logger.warn(`Update company failed for email: ${email}, reason: ${updateCompany.message}`);
+            res.status(400).json({ success: false, message: updateCompany.message });
+        } else if (updateCompany.message === "Company contact details updated successfully") {
+            logger.info(`Company contact details updated successfully: ${email}`);
+            res.status(200).json({ success: true, message: updateCompany.message, company: updateCompany.result});
+        } else {
+            logger.warn(`Update user failed for email: ${email}, reason: ${updatedUser.message}`);
+            res.status(400).json({ success: false, message: updatedUser.message });
+        }
+        } catch (error) {
+            logger.error(`Update company error for email: ${email}, error: ${error.message}`);
+            res.status(500).json({ message: "Internal server error" });
+        }
     }
 
 }

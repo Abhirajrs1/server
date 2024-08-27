@@ -76,6 +76,15 @@ const CompanySchema=new mongoose.Schema({
     numberOfEmployees:{
         type:Number
     },
+    registrationCertificate:{
+        type:String
+    },
+    license:{
+        type:String
+    },
+    taxCertificate:{
+        type:String
+    },
     reviewsId:[{
         type:mongoose.Schema.ObjectId,
         ref:'Review'

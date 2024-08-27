@@ -161,7 +161,7 @@ const userUseCase={
             logger.error(`Update user error for email: ${email}, error: ${error.message}`);
         }
     },
-
+    
     updateResume:async(resumeData)=>{
         try {
             const resume=await userRepository.findResumeCandidateByIdAndUpdate(resumeData.candidate,resumeData)

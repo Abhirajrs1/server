@@ -71,6 +71,20 @@ const companyUseCase={
         } catch (error) {
             logger.error(`Error fetching all companies: ${error.message}`);
         }
+    },
+    updateProfile:async(email,updatedCompanyContact)=>{
+        try {
+            const result=await companyRepository.updateProfile(email,updatedCompanyContact)
+            if(!result){
+                logger.warn(`Update company details failed for email: ${email}, reason: Company not found`);
+                return {message:"Company not found"}
+            }else{
+                logger.info(`Company details updated successfully for email: ${email}`);
+                return {message:"Company contact details updated successfully",result}
+            }
+        } catch (error) {
+            logger.error(`Update company error for email: ${email}, error: ${error.message}`);
+        }
     }
 
 }
