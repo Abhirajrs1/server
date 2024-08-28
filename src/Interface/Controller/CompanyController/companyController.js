@@ -82,11 +82,32 @@ const companyController={
             logger.info(`Company contact details updated successfully: ${email}`);
             res.status(200).json({ success: true, message: updateCompany.message, company: updateCompany.result});
         } else {
-            logger.warn(`Update user failed for email: ${email}, reason: ${updatedUser.message}`);
-            res.status(400).json({ success: false, message: updatedUser.message });
+            logger.warn(`Update user failed for email: ${email}, reason: ${updateCompany.message}`);
+            res.status(400).json({ success: false, message: updateCompany.message });
         }
         } catch (error) {
             logger.error(`Update company error for email: ${email}, error: ${error.message}`);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    },
+    updateAboutDetails:async(req,res)=>{
+        try {
+            const {updatedCompanyAbout}=req.body
+            const{email}=req.params
+            console.log(updatedCompanyAbout,"DATA");
+            const updateAboutDetails=await companyUseCase.updateAboutDetails(email,updatedCompanyAbout)
+            if(updateAboutDetails.message==="Company not found"){
+                logger.warn(`Update company about failed for email: ${email}, reason: ${updateAboutDetails.message}`);
+                res.status(400).json({ success: false, message: updateAboutDetails.message }); 
+            }else if(updateAboutDetails.message==='Company about details updated successfully'){
+                logger.info(`Company about details updated successfully: ${email}`);
+                res.status(200).json({ success: true, message: updateAboutDetails.message, company: updateAboutDetails.result});
+            }else{
+                logger.warn(`Update user about failed for email: ${email}, reason: ${updateAboutDetails.message}`);
+                res.status(400).json({ success: false, message: updateAboutDetails.message });
+            }
+        } catch (error) {
+            logger.error(`Update company about error for email: ${email}, error: ${error.message}`);
             res.status(500).json({ message: "Internal server error" });
         }
     }

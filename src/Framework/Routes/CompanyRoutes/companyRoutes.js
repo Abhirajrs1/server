@@ -12,6 +12,7 @@ router.get('/company-verify',authMiddleware,companyController.companyVerify)
 router.get('/get-companies',companyController.getCompanies)
 
 router.put('/company-updateContact/:email',authMiddleware,companyController.updateProfile)
+router.put('/company-updateAboutDetails/:email',authMiddleware,companyController.updateAboutDetails)
 
 router.get('/company-logout',authMiddleware,companyController.logOut)
 export {router as CompanyRouter}

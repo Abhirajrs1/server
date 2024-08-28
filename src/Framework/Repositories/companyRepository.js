@@ -79,6 +79,15 @@ const companyRepository={
         } catch (error) {
             logger.error(`Error during updating company details for email: ${email}, error: ${error.message}`);
         }
+    },
+    updateAboutDetails:async(email,formData)=>{
+        try {
+            const aboutData=await Company.findOneAndUpdate({email:email},formData,{new:true})
+            logger.info(`Company about updated for email: ${email}`);
+            return aboutData
+        } catch (error) {
+            logger.error(`Error during updating company about for email: ${email}, error: ${error.message}`);
+        }
     }
 }
 

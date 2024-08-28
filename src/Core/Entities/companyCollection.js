@@ -37,7 +37,7 @@ const CompanySchema=new mongoose.Schema({
         twitter:{
             type:String
         },
-        facebookd:{
+        facebook:{
             type:String
         }
     },
@@ -73,7 +73,10 @@ const CompanySchema=new mongoose.Schema({
             type:String
         },
     }],
-    numberOfEmployees:{
+    minEmployees:{
+        type:Number
+    },
+    maxEmployees:{
         type:Number
     },
     registrationCertificate:{
