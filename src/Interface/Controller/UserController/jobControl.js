@@ -65,6 +65,22 @@ const jobControl={
             logger.error(`Error fetching applications for candidate ID: ${userId} - ${error.message}`);
             return res.status(500).json({ success: false, message: "Internal Server Error" });   
         }
+    },
+    reportJob:async(req,res)=>{
+        try {
+            const {jobId,reason,description}=req.body
+            const userId=req.user.user._id            
+            const result=await jobUseCase.reportJob(jobId,userId,reason,description)
+            if(result.message){
+                logger.warn(result.message);
+                return res.status(400).json({ success: false, message: result.message });
+            }
+            logger.info(`Job reported successfully: ${jobId}`);
+            return res.status(200).json({ success: true, message: "Job reported successfully", job: result });
+        } catch (error) {
+            logger.error(`Error reporting job: ${error.message}`);
+            return res.status(500).json({ message: "Internal server error" });
+        }
     }
 
 }

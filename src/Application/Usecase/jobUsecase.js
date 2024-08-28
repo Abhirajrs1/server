@@ -127,6 +127,27 @@ const jobUseCase = {
             logger.error(`Error in postJobApplication: ${error}`);
         }
     },
+    reportJob:async(jobId,userId,reason,description)=>{
+        try {
+            const reportedData={
+                reportedBy:userId,
+                reason:reason,
+                description:description
+            }            
+            const result=await jobRepository.reportJob(jobId,reportedData)
+            if(result===null){
+                return { message: "Job not found or reporting failed" };
+            }
+            if(result.removed){
+                logger.info(`Job removed after report count exceeded 5: ${jobId}`);
+                return { message: "Job removed due to excessive reports" };
+            }
+            logger.info(`Job reported successfully: ${jobId}`);
+            return result.job;
+        } catch (error) {
+            logger.error(`Error reporting job: ${error.message}`);
+        }
+    }
     
 }
 export default jobUseCase

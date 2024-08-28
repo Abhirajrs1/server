@@ -76,6 +76,28 @@ const jobRepository = {
         } catch (error) {
             logger.error(`Error updating job with ID: ${id}`, { error });
         }
+    },
+    reportJob:async(jobId,reportedData)=>{
+        try {
+            const job=await Job.findById({_id:jobId})
+            if(job){
+                job.jobReports.push(reportedData);
+                job.reportCount += 1;
+
+                if (job.reportCount > 5) {
+                    await Job.findByIdAndDelete({_id:jobId});
+                    logger.info(`Job removed due to excessive reports: ${jobId}`);
+                    return { removed: true };
+                }
+                await job.save();
+                logger.info(`Job reported successfully: ${jobId}`);
+                return { removed: false, job };
+            }else{
+                logger.warn(`Job with ID: ${jobId} not found`);
+            }
+        } catch (error) {
+            logger.error(`Error reporting job: ${error.message}`);
+        }
     }
 
 

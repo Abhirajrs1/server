@@ -132,9 +132,7 @@ const userController = {
     // User verification
     isVerified: async (req, res) => {
         try {
-            logger.info(`User verified: ${req.user.email}`);
-            console.log(req.user,"USER");
-            
+            logger.info(`User verified: ${req.user.email}`);            
             res.status(200).json({ success: true, message: "Verified user", user: req.user });
         } catch (error) {
             logger.error(`Verification error: ${error.message}`);

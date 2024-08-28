@@ -9,9 +9,17 @@ const JobSchema = new mongoose.Schema({
     },
     minPrice: {
         type: Number,
+        min:0
     },
     maxPrice: {
         type: Number,
+        min:0,
+        validate:{
+            validator: function(value) {
+                return value >= this.minPrice;
+            },
+            message: "Max price should be greater than or equal to min price."
+        }
     },
     education:{
         type:String,
@@ -52,6 +60,22 @@ const JobSchema = new mongoose.Schema({
     },
     skills: {
         type: []
+    },
+    jobReports:[{
+        reportedBy:{
+            type:mongoose.Schema.ObjectId,
+            ref:'User', 
+        },
+        reason:{
+            type:String
+        },
+        description:{
+            type:String
+        }
+    }],
+    reportCount:{
+        type:Number,
+        default:0
     }
 }, {
     timestamps: true,
