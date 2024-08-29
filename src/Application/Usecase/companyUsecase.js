@@ -2,6 +2,7 @@ import logger from "../../Framework/Utilis/logger.js";
 import bcrypt from 'bcrypt'
 import companyRepository from "../../Framework/Repositories/companyRepository.js";
 import { generateJWT } from "../../Framework/Services/jwtServices.js";
+import uploadFileToS3 from "../../Framework/Services/s3.js";
 
 const companyUseCase={
     companySignup:async(companyData)=>{
@@ -98,6 +99,21 @@ const companyUseCase={
             }
         } catch (error) {
             logger.error(`Update about error for email: ${email}, error: ${error.message}`);
+        }
+    },
+    uploadCompanyDocuments:async(companyId,docType,file)=>{
+        try {
+            const fileUrl = await uploadFileToS3(file);
+            const result = await companyRepository.uploadCompanyDocuments(companyId, docType, fileUrl);
+            if (!result) {
+                logger.warn(`Upload document failed for company ID: ${companyId}, reason: Company not found`);
+                return { message: "Company not found" };
+            } else {
+                logger.info(`Document ${docType} uploaded successfully for company ID: ${companyId}`);
+                return { message: "Document uploaded successfully", result };
+            }
+        } catch (error) {
+            logger.error(`Error uploading document for company ID: ${companyId}, error: ${error.message}`);
         }
     }
 

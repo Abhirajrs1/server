@@ -11,7 +11,7 @@ AWS.config.update({
 
 const s3 = new AWS.S3();
 
-const uploadFileToS3 = (file) => {
+const uploadFileToS3 = (file) => {  
   const params = {
     Bucket: process.env.S3_BUCKET_NAME,
     Key: `resumes/${Date.now()}_${file.originalname}`,

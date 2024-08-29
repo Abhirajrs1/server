@@ -94,7 +94,6 @@ const companyController={
         try {
             const {updatedCompanyAbout}=req.body
             const{email}=req.params
-            console.log(updatedCompanyAbout,"DATA");
             const updateAboutDetails=await companyUseCase.updateAboutDetails(email,updatedCompanyAbout)
             if(updateAboutDetails.message==="Company not found"){
                 logger.warn(`Update company about failed for email: ${email}, reason: ${updateAboutDetails.message}`);
@@ -109,6 +108,27 @@ const companyController={
         } catch (error) {
             logger.error(`Update company about error for email: ${email}, error: ${error.message}`);
             res.status(500).json({ message: "Internal server error" });
+        }
+    },
+    uploadCompanyDocuments:async(req,res)=>{
+        try {
+            const companyId  = req.company._id
+            const { docType } = req.body;
+            const file = req.file;
+            if (!file) {
+                logger.warn(`Upload document failed: No file provided`);
+                return res.status(400).json({ message: "No file provided" });
+            }
+            const uploadResult = await companyUseCase.uploadCompanyDocuments(companyId, docType, file);
+            if (uploadResult.message === "Company not found") {
+                logger.warn(`Upload document failed: Company not found with ID: ${companyId}`);
+                return res.status(404).json({ message: "Company not found" });
+            }
+            logger.info(`Document uploaded successfully for company ID: ${companyId}`);
+            return res.status(200).json({ message: "Document uploaded successfully", fileUrl: uploadResult.result.fileUrl });
+        } catch (error) {
+            logger.error(`Error uploading document: ${error.message}`);
+            return res.status(500).json({ message: 'Error uploading document' });
         }
     }
 

@@ -88,6 +88,21 @@ const companyRepository={
         } catch (error) {
             logger.error(`Error during updating company about for email: ${email}, error: ${error.message}`);
         }
+    },
+    uploadCompanyDocuments:async(companyId, docType, fileUrl)=>{
+        try {
+            const update = {};
+            update[docType] = fileUrl;
+            const updatedCompany = await Company.findByIdAndUpdate(companyId, update, { new: true });
+            if (updatedCompany) {
+                logger.info(`Document ${docType} uploaded successfully for company ID: ${companyId}`);
+            } else {
+                logger.warn(`No company found to upload document for ID: ${companyId}`);
+            }
+            return updatedCompany;
+        } catch (error) {
+            logger.error(`Error uploading document for company ID: ${companyId}, error: ${error.message}`);
+        }
     }
 }
 
