@@ -35,6 +35,7 @@ router.get('/admin-plans',authMiddleware,planController.getPlans)
 
 router.get('/admin-companies',authMiddleware,companyControl.getCompanies)
 router.put('/admin-companies/:id/block',authMiddleware,companyControl.activeOrInactiveCompany)
+router.get('/admin-companyDetails/:id',authMiddleware,companyControl.getCompanyDetails)
 
 
 export {router as AdminRouter}

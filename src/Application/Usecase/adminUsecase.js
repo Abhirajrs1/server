@@ -156,6 +156,20 @@ const adminUseCase = {
       logger.error(`Error updating active status of company ${id}: ${error.message}`);
       return { message: error.message };
     }
+  },
+  getCompanyDetails:async(id)=>{
+    try {
+      const company=await adminRepository.getCompanyDetails(id)
+      if (!company) {
+        logger.warn(`Company not found: ${id}`);
+        return { message: "Company not found" };
+      }
+      logger.info(`Company details retrieved: ${id}`);
+      return company ;
+    } catch (error) {
+      logger.error(`Error retrieving company details by ID: ${id}, error: ${error.message}`);
+      return { message: error.message };
+    }
   }
 };
 

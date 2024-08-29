@@ -141,6 +141,19 @@ const adminRepository={
       } catch (error) {
         logger.error(`Error updating company by ID: ${id}, ${error.message}`);
       }
-    } 
+    },
+    getCompanyDetails:async(id)=>{
+      try {
+        const company=await Company.findById({_id:id})
+        if (company) {
+          logger.info(`Company details retrieved: ${id}`);
+        } else {
+          logger.warn(`Company not found: ${id}`);
+        }
+        return company
+      } catch (error) {
+        logger.error(`Error retrieving company details by ID: ${id}, error: ${error.message}`);
+      }
+    }
 }
 export default adminRepository
