@@ -1,5 +1,7 @@
 import { Job } from "../../Core/Entities/jobCollection.js";
+import { Company } from "../../Core/Entities/companyCollection.js";
 import logger from "../Utilis/logger.js";
+import { Review } from "../../Core/Entities/reviewCollection.js";
 
 const jobRepository = {
 
@@ -11,6 +13,19 @@ const jobRepository = {
             return newJob
         } catch (error) {
             logger.error(`Error creating job: ${error}`);
+        }
+    },
+    findCompanyByName:async(companyName)=>{
+        try {
+            const company=await Company.findOne({companyName:companyName})            
+            if(company){
+                logger.info(`Company found: ${company._id}`);
+            }else{
+                logger.warn(`Company not found for name: ${companyName}`);
+            }
+            return company._id
+        } catch (error) {
+            logger.error(`Error finding company by name ${companyName}: ${error.message}`);
         }
     },
     getJobs: async () => {
@@ -98,7 +113,31 @@ const jobRepository = {
         } catch (error) {
             logger.error(`Error reporting job: ${error.message}`);
         }
+    },
+    addReviewAndRating:async(data)=>{
+        try {
+            let result=new Review(data)
+            await result.save()
+            logger.info(`Review added successfully: ${JSON.stringify(data)}`);
+            return result;
+        } catch (error) {
+            logger.error(`Error add review job: ${error.message}`);
+        }
+    },
+    addReviewToCompany:async(company,id)=>{
+        try {
+           const result= await Company.findByIdAndUpdate({_id:company},{$push:{reviewsId:id}},{new:true})
+           if(result){
+            logger.info('Successfully added review to company')
+           }else{
+              logger.warn('Company not found or review not added')
+           }
+           return result
+        } catch (error) {
+            logger.error(`Error add review to company: ${error.message}`);
+        }
     }
+
 
 
 }

@@ -81,6 +81,23 @@ const jobControl={
             logger.error(`Error reporting job: ${error.message}`);
             return res.status(500).json({ message: "Internal server error" });
         }
+    },
+    addReviewAndRating:async(req,res)=>{
+        try {
+            const reviewerName=req.user.user.username
+            const {reviewData}=req.body
+            const result=await jobUseCase.addReviewAndRating(reviewerName,reviewData)            
+            if(result){
+                logger.info('Review added successfully');
+                return res.status(200).json({success:true,message:"Review added successfully"})
+            }else{
+                logger.warn('Error while adding review');
+                return res.status(400).json({success:false,message:"Review not added"})  
+            }
+        } catch (error) {
+            logger.error(`Error adding review: ${error.message}`);
+            return res.status(500).json({ message: "Internal server error" });
+        }
     }
 
 }

@@ -3,13 +3,15 @@ import jobRepository from "../../Framework/Repositories/jobRepository.js";
 import applicationRepository from "../../Framework/Repositories/applicationRepository.js";
 import uploadFileToS3 from "../../Framework/Services/s3.js";
 import logger from "../../Framework/Utilis/logger.js";
+import { Job } from "../../Core/Entities/jobCollection.js";
 
 const jobUseCase = {
     postJob: async (jobData) => {
         try {
             const { jobTitle, companyName, minPrice, maxPrice, jobLocation, yearsOfExperience, category,employmentType, description, jobPostedBy,education, skills,easyApply,applicationUrl } = jobData
-
+            const companyId=await jobRepository.findCompanyByName(companyName)
             const newJob = await jobRepository.createJob({
+                company:companyId,
                 jobTitle: jobTitle,
                 companyName,
                 minPrice: minPrice,
@@ -25,7 +27,7 @@ const jobUseCase = {
                 easyApply,
                 applicationUrl
             }
-            )
+            )            
             if (!newJob) {
                 logger.warn("Job posting not completed");
                 return { message: "Job posted not done" }
@@ -102,6 +104,11 @@ const jobUseCase = {
 
         try {
             const {name,email,contact,dob,totalExperience,currentCompany,currentSalary,expectedSalary,preferredLocation,resume,applicant}=jobData
+            const job=await Job.findById({_id:jobId})
+            if (!job) {
+                logger.warn(`Job not found with ID: ${jobId}`);
+                return { message: "Job not found" };
+            }
             const newApplication=await applicationRepository.postApplication({
                 name,
                 email,
@@ -115,7 +122,8 @@ const jobUseCase = {
                 resume,
                 applicant,
                 jobId:jobId,
-                employerId:recruiterid
+                employerId:recruiterid,
+                companyId:job.company
             })
             if (!newApplication) {
                 logger.warn("Application posting not completed");
@@ -147,6 +155,24 @@ const jobUseCase = {
         } catch (error) {
             logger.error(`Error reporting job: ${error.message}`);
         }
+    },
+    addReviewAndRating:async(reviewerName,reviewData)=>{
+        try {
+            const {rating,comment,company}=reviewData
+            const result=await jobRepository.addReviewAndRating({
+                reviewerName:reviewerName,
+                rating:rating,
+                comment:comment,
+                company:company
+            })
+            logger.info('Review added successfully for reviewer: ${reviewerName}')
+            await jobRepository.addReviewToCompany(company,result._id)
+               logger.info('Review associated with company successfully')
+               return result
+        } catch (error) {
+            logger.error(`Error adding review and rating': ${error.message}`)
+        }
+      
     }
     
 }

@@ -43,6 +43,10 @@ const ApplicationSchema=new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:'Recruiter'
     },
+    companyId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Company'   
+     },
     resume:{
         type:String
     },
