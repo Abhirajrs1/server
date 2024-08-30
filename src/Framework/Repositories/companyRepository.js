@@ -60,7 +60,7 @@ const companyRepository={
     },
     findCompanyByid:async(id)=>{
         try {
-            const company=await Company.findById({_id:id})
+            const company=await Company.findById({_id:id}).populate('reviewsId')
             if (company) {
                 logger.info(`Company found with id: ${id}`);
               } else {
@@ -103,7 +103,15 @@ const companyRepository={
         } catch (error) {
             logger.error(`Error uploading document for company ID: ${companyId}, error: ${error.message}`);
         }
-    }
+    },
+    // getCompanyDetails:async(id)=>{
+    //     try {
+    //         const company=await Company.findById({_id:id})
+
+    //     } catch (error) {
+            
+    //     }
+    // }
 }
 
 export default companyRepository

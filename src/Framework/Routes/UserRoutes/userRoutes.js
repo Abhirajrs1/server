@@ -49,6 +49,7 @@ router.post('/employee-applyJob',authMiddleware,jobControl.applyJob)
 router.get('/employee-getApplications',authMiddleware,jobControl.getApplications)
 router.post('/employee-jobReport',authMiddleware,jobControl.reportJob)
 router.post('/employee-addReviewAndRating',authMiddleware,jobControl.addReviewAndRating)
+router.get('/employee-getCompanyDetails/:id',userController.getCompanyDetails)
 
 router.get('/employee-getCategories',jobControl.getCategories)
 

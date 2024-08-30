@@ -115,6 +115,20 @@ const companyUseCase={
         } catch (error) {
             logger.error(`Error uploading document for company ID: ${companyId}, error: ${error.message}`);
         }
+    },
+    getCompanyDetails:async(id)=>{
+        try {
+            const company=await companyRepository.findCompanyByid(id)
+            if (company) {
+                logger.info(`Company details retrieved for ID: ${id}`);
+                return company;
+              } else {
+                logger.warn(`No company found with ID: ${id}`);
+                return { message: "Company not found" };
+              }
+        } catch (error) {
+            logger.error(`Error retrieving company details for ID: ${id}, error: ${error.message}`);
+        }
     }
 
 }

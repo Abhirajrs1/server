@@ -1,4 +1,5 @@
 import userUseCase from "../../../Application/Usecase/userUsecase.js";
+import companyUseCase from "../../../Application/Usecase/companyUsecase.js";
 import { generateJWT } from "../../../Framework/Services/jwtServices.js";
 import logger from "../../../Framework/Utilis/logger.js";
 
@@ -309,6 +310,22 @@ const userController = {
         } catch (error) {
             logger.error(`Error retrieving resume URL for user ${userId}: ${error.message}`);
             res.status(500).json({ success: false, message: 'Internal Server Error' });
+        }
+    },
+    getCompanyDetails:async(req,res)=>{
+        try {
+            const {id}=req.params
+            const company=await companyUseCase.getCompanyDetails(id)
+            if (company) {
+                logger.info(`Successfully retrieved company details for ID: ${id}`);
+                res.status(200).json({ success: true, company });
+            } else {
+                logger.warn(`Company not found for ID: ${id}`);
+                res.status(404).json({ success: false, message: 'Company not found' });
+            }
+        } catch (error) {
+            logger.error(`Error retrieving company details for ID: ${id}: ${error.message}`);
+            res.status(500).json({ message: "Internal server error" });
         }
     },
 
