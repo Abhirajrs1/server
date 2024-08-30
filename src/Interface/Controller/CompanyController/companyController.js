@@ -130,6 +130,22 @@ const companyController={
             logger.error(`Error uploading document: ${error.message}`);
             return res.status(500).json({ message: 'Error uploading document' });
         }
+    },
+    getCompanyReviews:async(req,res)=>{
+        try {
+            const id=req.company._id
+            const reviews=await companyUseCase.getCompanyReviews(id)
+            if (reviews) {
+                logger.info(`Successfully fetched reviews for company ID: ${id}`);
+                return res.status(200).json({success:true,message:"Successfully fetched reviews",reviews});
+            } else {
+                logger.warn(`No reviews found for company ID: ${id}`);
+                return res.status(404).json({success:false,message:"Reviews not found"});
+            }
+        } catch (error) {
+            logger.error(`Error fetching reviews for company ID: ${id}, error: ${error.message}`);
+            return res.status(500).json({ success: false, message: 'Internal server error' });
+        }
     }
 
 }

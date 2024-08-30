@@ -1,4 +1,5 @@
 import { Company } from "../../Core/Entities/companyCollection.js";
+import { Review } from "../../Core/Entities/reviewCollection.js";
 import logger from "../Utilis/logger.js";
 
 const companyRepository={
@@ -104,14 +105,20 @@ const companyRepository={
             logger.error(`Error uploading document for company ID: ${companyId}, error: ${error.message}`);
         }
     },
-    // getCompanyDetails:async(id)=>{
-    //     try {
-    //         const company=await Company.findById({_id:id})
-
-    //     } catch (error) {
-            
-    //     }
-    // }
+    getCompanyReviews:async(id)=>{
+        try {
+            const reviews=await Review.find({company:id})
+            if (reviews.length > 0) {
+                logger.info(`Fetched ${reviews.length} reviews for company ID: ${id}`);
+            } else {
+                logger.info(`No reviews found for company ID: ${id}`);
+            }
+            return reviews;
+        } catch (error) {
+            logger.error(`Error fetching reviews for company ID: ${id}, error: ${error.message}`);
+        }
+    }
+    
 }
 
 export default companyRepository

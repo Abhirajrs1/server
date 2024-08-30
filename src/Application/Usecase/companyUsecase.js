@@ -129,6 +129,20 @@ const companyUseCase={
         } catch (error) {
             logger.error(`Error retrieving company details for ID: ${id}, error: ${error.message}`);
         }
+    },
+    getCompanyReviews:async(id)=>{
+        try {
+            const reviews=await companyRepository.getCompanyReviews(id)
+            if (reviews) {
+                logger.info(`Fetched reviews for company ID: ${id}`);
+                return reviews;
+            } else {
+                logger.warn(`No reviews found for company ID: ${id}`);
+                return { message: 'No reviews found' };
+            }
+        } catch (error) {
+            logger.error(`Error fetching reviews for company ID: ${id}, error: ${error.message}`);
+        }
     }
 
 }
