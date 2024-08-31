@@ -4,12 +4,11 @@ const MessageSchema=new mongoose.Schema({
         type:String
     },
     senderId:{
-        type:String
+        type: String
     },
     text:{
         type:String
     },
-
 },{
     timestamps:true
 })

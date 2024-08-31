@@ -3,6 +3,7 @@ import userController from '../../../Interface/Controller/UserController/userCon
 import jobController from '../../../Interface/Controller/RecruiterController/jobController.js'
 import jobControl from '../../../Interface/Controller/UserController/jobControl.js'
 import resumeControl from '../../../Interface/Controller/UserController/resumeControl.js'
+import chatController from '../../../Interface/Controller/UserController/chatControl.js'
 import middleware from '../../../Interface/Middleware/authMiddleware.js'
 import multer from 'multer'
 
@@ -52,6 +53,11 @@ router.post('/employee-addReviewAndRating',authMiddleware,jobControl.addReviewAn
 router.get('/employee-getCompanyDetails/:id',userController.getCompanyDetails)
 
 router.get('/employee-getCategories',jobControl.getCategories)
+
+
+router.post('/employee-chatIntiate',chatController.initiateChat)
+router.post('/employee-createRoom',authMiddleware,chatController.createRoom)
+router.post('/employee-sendMessage',authMiddleware,chatController.saveMessage)
 
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get(
