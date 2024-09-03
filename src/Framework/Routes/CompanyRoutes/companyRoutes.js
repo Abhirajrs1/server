@@ -11,6 +11,9 @@ const router=express.Router()
 router.post('/company-signup',companyController.postCompanySignup)
 router.post('/company-login',companyController.postCompanyLogin)
 router.get('/company-verify',authMiddleware,companyController.companyVerify)
+router.get('/company-getStats',authMiddleware,companyController.getStats)
+
+
 router.get('/get-companies',companyController.getCompanies)
 router.get('/company-getCompanyReviews',authMiddleware,companyController.getCompanyReviews)
 

@@ -143,6 +143,16 @@ const companyUseCase={
         } catch (error) {
             logger.error(`Error fetching reviews for company ID: ${id}, error: ${error.message}`);
         }
+    },
+    getCompanyStats:async(companyName)=>{
+        try {
+            const recruiters=await companyRepository.countRecruiters(companyName)
+            const jobs=await companyRepository.countJobs(companyName)
+            logger.info(`Fetched stats for company: ${companyName} - Recruiters: ${recruiters}, Jobs: ${jobs}`);
+            return {recruiters,jobs}
+        } catch (error) {
+            logger.error(`Error fetching company stats for ${companyName}: ${error.message}`);
+        }
     }
 
 }

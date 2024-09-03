@@ -1,4 +1,6 @@
 import { Company } from "../../Core/Entities/companyCollection.js";
+import { Job } from "../../Core/Entities/jobCollection.js";
+import { Recruiter } from "../../Core/Entities/recruiterCollection.js";
 import { Review } from "../../Core/Entities/reviewCollection.js";
 import logger from "../Utilis/logger.js";
 
@@ -116,6 +118,24 @@ const companyRepository={
             return reviews;
         } catch (error) {
             logger.error(`Error fetching reviews for company ID: ${id}, error: ${error.message}`);
+        }
+    },
+    countRecruiters:async(companyName)=>{
+        try {
+            const recruitersCount = await Recruiter.countDocuments({ companyName: companyName });
+            logger.info(`Counted ${recruitersCount} recruiters for company name: ${companyName}`);
+            return recruitersCount;
+        } catch (error) {
+            logger.error(`Error counting recruiters for company name: ${companyName}, error: ${error.message}`);
+        }
+    },
+    countJobs:async(companyName)=>{
+        try {
+            const jobsCount = await Job.countDocuments({ companyName: companyName });
+            logger.info(`Counted ${jobsCount} jobs for company name: ${companyName}`);
+            return jobsCount;
+        } catch (error) {
+            logger.error(`Error counting jobs for company name: ${companyName}, error: ${error.message}`);
         }
     }
     

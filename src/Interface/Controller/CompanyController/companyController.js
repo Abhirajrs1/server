@@ -146,6 +146,22 @@ const companyController={
             logger.error(`Error fetching reviews for company ID: ${id}, error: ${error.message}`);
             return res.status(500).json({ success: false, message: 'Internal server error' });
         }
+    },
+    getStats:async(req,res)=>{
+        try {
+            let companyName=req.company.companyName
+            let stats=await companyUseCase.getCompanyStats(companyName)
+            if (stats) {
+                logger.info(`Successfully fetched stats for company: ${companyName}`);
+                return res.status(200).json({ success: true, stats });
+            } else {
+                logger.warn(`No stats found for company: ${companyName}`);
+                return res.status(404).json({ success: false, message: "Stats not found" });
+            }
+        } catch (error) {
+            logger.error(`Error fetching stats for company: ${req.company.companyName}, error: ${error.message}`);
+            return res.status(500).json({ success: false, message: 'Internal server error' });
+        }
     }
 
 }

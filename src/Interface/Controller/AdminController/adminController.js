@@ -31,7 +31,24 @@ const adminController = {
       res.status(500).json({ message: "Internal server error" })
     }
   },
+  getCountstatus:async(req,res)=>{
+    try {
+      const stats=await adminUseCase.getAdminStats()
+      if(stats){
+        logger.info(
+          `Admin stats retrieved: Recruiters - ${stats.recruiters}, Candidates - ${stats.candidates}, Jobs - ${stats.jobs}`
+        );
+        return res.status(200).json({success:true,message: "Admin stats retrieved successfully",stats})
+      }else{
+        logger.warn(`Admin stats not found`);
+        res.status(404).json({ success: false, message: "Stats not found" });
+      }
+    } catch (error) {
+      logger.error(`Error retrieving admin stats: ${error.message}`);
+      res.status(500).json({ message: "Internal server error" });
+    }
 
+  },
   adminLogout: async (req, res) => {
     try {
       res.clearCookie('adminaccessToken');

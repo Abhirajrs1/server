@@ -154,6 +154,33 @@ const adminRepository={
       } catch (error) {
         logger.error(`Error retrieving company details by ID: ${id}, error: ${error.message}`);
       }
+    },
+    countRecruiters:async()=>{
+      try {
+        const recruiters=await Recruiter.countDocuments()
+        logger.info(`Total recruiters count: ${recruiters}`);
+        return recruiters
+      } catch (error) {
+        logger.error(`Error counting recruiters: ${error.message}`);
+      }
+    },
+    countCandidates:async()=>{
+      try {
+        const candidates=await User.countDocuments()
+        logger.info(`Total candidates count: ${candidates}`);
+        return candidates
+      } catch (error) {
+      logger.error(`Error counting candidates: ${error.message}`);
+      }
+    },
+    countJobs:async()=>{
+      try {
+        const jobs=await Job.countDocuments()
+        logger.info(`Total jobs count: ${jobs}`);
+        return jobs
+      } catch (error) {
+        logger.error(`Error counting jobs: ${error.message}`);
+      }
     }
 }
 export default adminRepository

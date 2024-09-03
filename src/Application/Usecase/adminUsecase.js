@@ -170,6 +170,18 @@ const adminUseCase = {
       logger.error(`Error retrieving company details by ID: ${id}, error: ${error.message}`);
       return { message: error.message };
     }
+  },
+  getAdminStats:async()=>{
+    try {
+      const recruiters=await adminRepository.countRecruiters()
+      const candidates=await adminRepository.countCandidates()
+      const jobs=await adminRepository.countJobs()
+      logger.info(`Admin stats retrieved - Recruiters: ${recruiters}, Candidates: ${candidates}, Jobs: ${jobs}`);
+      return { recruiters, candidates, jobs };
+    } catch (error) {
+      logger.error(`Error retrieving admin stats: ${error.message}`);
+      return { message: error.message };
+    }
   }
 };
 
