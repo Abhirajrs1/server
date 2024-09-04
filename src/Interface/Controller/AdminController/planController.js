@@ -37,5 +37,37 @@ const planController={
             return res.status(500).json({ success: false, message: "An error occurred while fetching plans" });
         }
     },
+    getPlansForEdit:async(req,res)=>{
+        try {
+            const {id}=req.params
+            const plan=await planUseCase.getPlansForEdit(id)
+            if (!plan) {
+                logger.warn(`No plan found with ID: ${id}`);
+                return res.status(404).json({ success: false, message: "No plan found" });
+            }
+
+            logger.info(`Plan retrieved successfully. ID: ${id}`);
+            return res.status(200).json({ success: true, plan });
+        } catch (error) {
+            logger.error(`Error fetching plan for edit: ${error.message}`, { error });
+            return res.status(500).json({ success: false, message: "An error occurred while fetching the plan" });
+        }
+    },
+    updatePlan:async(req,res)=>{
+        try {
+            const {id}=req.params
+            const {formData}=req.body
+            const result=await planUseCase.updatePlan(id,formData)
+            if (result.message) {
+                logger.warn(`Failed to update plan: ${result.message}`);
+                return res.status(400).json({ success: false, message: result.message });
+            }
+            logger.info(`Plan updated successfully. ID: ${id}`);
+            return res.status(200).json({ success: true, message: "Plan updated successfully", plan: result });
+        } catch (error) {
+            logger.error(`Error updating plan: ${error.message}`, { error });
+            return res.status(500).json({ success: false, message: "An error occurred while updating the plan" });
+        }
+    }
 }
 export default planController

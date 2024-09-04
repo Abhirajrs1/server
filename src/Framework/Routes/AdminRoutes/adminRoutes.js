@@ -33,6 +33,8 @@ router.put('/admin-category/:id',authMiddleware,categoryController.editCategory)
 
 router.post('/admin-addPlans',authMiddleware,planController.addPlans)
 router.get('/admin-plans',authMiddleware,planController.getPlans)
+router.get('/admin-getPlans/:id',authMiddleware,planController.getPlansForEdit)
+router.put('/admin-updatePlan/:id',authMiddleware,planController.updatePlan)
 
 router.get('/admin-companies',authMiddleware,companyControl.getCompanies)
 router.put('/admin-companies/:id/block',authMiddleware,companyControl.activeOrInactiveCompany)

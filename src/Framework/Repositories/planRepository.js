@@ -35,6 +35,30 @@ const planRepository={
             logger.error(`Failed to fetch plans. Error: ${error.message}`, { error, page, limit });
         }
     },
+    getPlanDetails:async(id)=>{
+        try {
+            const plan=await Plans.findById({_id:id})
+            if (!plan) {
+                logger.info(`No plan found with ID: ${id}`);
+            }
+            return plan
+        } catch (error) {
+            logger.error(`Failed to fetch plan details. Error: ${error.message}`, { error, id });
+        }
+    },
+    editPlanDetails:async(id,data)=>{
+        try {
+            const updatedPlan=await Plans.findByIdAndUpdate({_id:id},data,{new:true})
+            if (!updatedPlan) {
+                logger.info(`No plan found to update with ID: ${id}`);
+            }
+            return updatedPlan
+        } catch (error) {
+            logger.error(`Failed to update plan details. Error: ${error.message}`, { error, id });
+        }
+
+
+    },
     getPlansForRecruiter:async()=>{
         try {
             const plans=await Plans.find({})

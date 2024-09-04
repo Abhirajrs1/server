@@ -51,6 +51,47 @@ const planUseCase={
             logger.error(`Failed to fetch plans. Error: ${error.message}`, { error, page, limit });
         }
     },
+    getPlansForEdit:async(id)=>{
+        try {
+            const result=await planRepository.getPlanDetails(id)
+            if (!result){
+                logger.warn(`No plan found with ID: ${id}`);
+                return {message:"No plans found"}
+            }
+            return result
+        } catch (error) {
+            logger.error(`Failed to fetch plan details. Error: ${error.message}`, { error, id });
+            return { message: "Failed to fetch plan details" };
+        }
+    },
+    updatePlan:async(id,formData)=>{
+        try {
+            const {planName,planDescription,planPrice,planType,planDuration}=formData
+            const existingPlan=await planRepository.existingPlan(planName)
+            if(existingPlan){
+                logger.warn(`Failed to edit plan: Plan with name "${planName}" already exists.`);
+                return { message: "Plan with this name already exists."};
+            }
+            const data={
+                planName:planName,
+                amount:planPrice,
+                description:planDescription,
+                planType:planType,
+                planDuration:planDuration
+            }
+            const result=await planRepository.editPlanDetails(id,data)
+            if (!result) {
+                logger.warn(`Failed to update plan with ID: ${id}`);
+                return { message: "Plan update failed." };
+            }
+
+            logger.info(`Plan updated successfully: ${JSON.stringify(result)}`);
+            return result;
+        } catch (error) {
+            logger.error(`Failed to update plan. Error: ${error.message}`, { error, id });
+            return { message: "An error occurred while updating the plan." };
+        }
+    },
     getPlansForRecruiter:async()=>{
         try {
             const plans=await planRepository.getPlansForRecruiter()
