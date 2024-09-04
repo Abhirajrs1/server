@@ -35,6 +35,7 @@ router.post('/admin-addPlans',authMiddleware,planController.addPlans)
 router.get('/admin-plans',authMiddleware,planController.getPlans)
 router.get('/admin-getPlans/:id',authMiddleware,planController.getPlansForEdit)
 router.put('/admin-updatePlan/:id',authMiddleware,planController.updatePlan)
+router.delete('/admin-deletePlan/:id',authMiddleware,planController.deletePlan)
 
 router.get('/admin-companies',authMiddleware,companyControl.getCompanies)
 router.put('/admin-companies/:id/block',authMiddleware,companyControl.activeOrInactiveCompany)

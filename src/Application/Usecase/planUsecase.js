@@ -18,8 +18,6 @@ const planUseCase={
                 const now = new Date();
                 expirationDate = new Date(now.setMonth(now.getMonth() + planDuration));
             }
-
-
             const result=await planRepository.addPlans({
                 planName:planName,
                 amount:planPrice,
@@ -91,6 +89,20 @@ const planUseCase={
             logger.error(`Failed to update plan. Error: ${error.message}`, { error, id });
             return { message: "An error occurred while updating the plan." };
         }
+    },
+    deletePlan:async(id)=>{
+        try {
+            const plan=await planRepository.deletePlans(id)
+            if (!plan) {
+                logger.warn(`No plan found to delete with ID: ${id}`);
+                return { message: "Plan not found." };
+            }
+            logger.info(`Plan deleted successfully with ID: ${id}`);
+            return plan;
+        } catch (error) {
+            logger.error(`Failed to delete plan. Error: ${error.message}`, { error, id });
+        }
+
     },
     getPlansForRecruiter:async()=>{
         try {

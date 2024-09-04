@@ -68,6 +68,21 @@ const planController={
             logger.error(`Error updating plan: ${error.message}`, { error });
             return res.status(500).json({ success: false, message: "An error occurred while updating the plan" });
         }
+    },
+    deletePlan:async(req,res)=>{
+        try {
+            const {id}=req.params
+            const result=await planUseCase.deletePlan(id)
+            if(result.message){
+                logger.warn(`Failed to delete plan: ${result.message}`);
+                return res.status(400).json({success:false,message:result.message})
+            }
+            logger.info(`Plan deleted successfully. ID: ${id}`);
+            return res.status(200).json({ success: true, message: "Plan deleted successfully" });
+        } catch (error) {
+            logger.error(`Error deleting plan: ${error.message}`, { error });
+            return res.status(500).json({ success: false, message: "An error occurred while deleting the plan" });
+        }
     }
 }
 export default planController

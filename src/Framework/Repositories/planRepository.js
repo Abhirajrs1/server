@@ -56,7 +56,19 @@ const planRepository={
         } catch (error) {
             logger.error(`Failed to update plan details. Error: ${error.message}`, { error, id });
         }
-
+    },
+    deletePlans:async(id)=>{
+        try {
+            const deletePlan=await Plans.findByIdAndDelete({_id:id})
+            if(deletePlan){
+                logger.info(`Plan deleted successfully with ID: ${id}`);
+            } else {
+                logger.info(`No plan found to delete with ID: ${id}`);
+            }
+            return deletePlan
+        } catch (error) {
+            logger.error(`Failed to delete plan. Error: ${error.message}`, { error, id });
+        }
 
     },
     getPlansForRecruiter:async()=>{
