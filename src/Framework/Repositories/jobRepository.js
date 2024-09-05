@@ -39,7 +39,7 @@ const jobRepository = {
     },
     getJobDetailsById:async(id)=>{
         try {
-            const job=await Job.findById({_id:id})
+            const job=await Job.findById({_id:id}).populate({path:'jobReports.reportedBy',select:'username email'})
             logger.info(`Retrieved ${id} job`);
             return job
         } catch (error) {
@@ -97,16 +97,10 @@ const jobRepository = {
             const job=await Job.findById({_id:jobId})
             if(job){
                 job.jobReports.push(reportedData);
-                job.reportCount += 1;
-
-                if (job.reportCount > 5) {
-                    await Job.findByIdAndDelete({_id:jobId});
-                    logger.info(`Job removed due to excessive reports: ${jobId}`);
-                    return { removed: true };
-                }
+                job.reportCount += 1
                 await job.save();
                 logger.info(`Job reported successfully: ${jobId}`);
-                return { removed: false, job };
+                return job ;
             }else{
                 logger.warn(`Job with ID: ${jobId} not found`);
             }

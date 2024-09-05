@@ -2,6 +2,7 @@ import logger from "../../../Framework/Utilis/logger.js";
 import jobUseCase from "../../../Application/Usecase/jobUsecase.js";
 import categoryUseCase from "../../../Application/Usecase/categoryUsecase.js";
 import applicationUseCase from "../../../Application/Usecase/applicationUsecase.js";
+import jobRepository from "../../../Framework/Repositories/jobRepository.js";
 
 const jobControl={
     getIndividualJob:async(req,res)=>{
@@ -79,6 +80,19 @@ const jobControl={
             return res.status(200).json({ success: true, message: "Job reported successfully", job: result });
         } catch (error) {
             logger.error(`Error reporting job: ${error.message}`);
+            return res.status(500).json({ message: "Internal server error" });
+        }
+    },
+    checkIfReported:async(req,res)=>{
+        try {
+            const {id}=req.params
+            const userId=req.user.user._id
+            const job=await jobRepository.getJobById(id)
+            const hasReported=job.jobReports.some(report=>report.reportedBy.toString()===userId.toString())
+            logger.info(`Check if reported - User ${userId} has ${hasReported ? '' : 'not '}reported job ${id}`);
+            res.status(200).json({ success: true, hasReported });
+        } catch (error) {
+            logger.error(`Error in checkIfReported: ${error.message}`);
             return res.status(500).json({ message: "Internal server error" });
         }
     },

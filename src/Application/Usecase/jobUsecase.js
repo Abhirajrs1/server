@@ -137,18 +137,25 @@ const jobUseCase = {
     },
     reportJob:async(jobId,userId,reason,description)=>{
         try {
+
+            let job=await jobRepository.getJobById(jobId)
+            if(!job){
+                logger.warn(`Job with ID: ${jobId} not found`);
+                return { message: "Job not found" }
+            }
+            const hasReported=job.jobReports.some(report=>report.reportedBy.toString()===userId.toString())
+            if (hasReported) {
+                logger.info(`User with ID: ${userId} has already reported job with ID: ${jobId}`);
+                return { message: "You have already reported this job." };
+              }
             const reportedData={
                 reportedBy:userId,
                 reason:reason,
                 description:description
             }            
             const result=await jobRepository.reportJob(jobId,reportedData)
-            if(result===null){
-                return { message: "Job not found or reporting failed" };
-            }
-            if(result.removed){
-                logger.info(`Job removed after report count exceeded 5: ${jobId}`);
-                return { message: "Job removed due to excessive reports" };
+            if(!result){
+                return { message: "Job reporting failed" };
             }
             logger.info(`Job reported successfully: ${jobId}`);
             return result.job;
