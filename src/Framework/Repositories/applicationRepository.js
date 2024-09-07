@@ -51,6 +51,19 @@ const applicationRepository={
         } catch (error) {
             logger.error(`Error fetching applications for candidate ID: ${id} - ${error.message}`);
         }
+    },
+    findAlreadyApply:async(jobId,userId)=>{
+        try {
+            const existingApplication=await Application.findOne({jobId:jobId,applicant:userId})
+            if(existingApplication){
+                logger.info(`User ${userId} has already applied for job ${jobId}`);
+            } else {
+                logger.info(`User ${userId} has not applied for job ${jobId}`);
+            }
+            return existingApplication
+        } catch (error) {
+            logger.error(`Error checking application status for user ${userId} on job ${jobId}: ${error.message}`);
+        }
     }
 
 }

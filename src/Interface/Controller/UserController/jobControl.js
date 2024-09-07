@@ -3,6 +3,7 @@ import jobUseCase from "../../../Application/Usecase/jobUsecase.js";
 import categoryUseCase from "../../../Application/Usecase/categoryUsecase.js";
 import applicationUseCase from "../../../Application/Usecase/applicationUsecase.js";
 import jobRepository from "../../../Framework/Repositories/jobRepository.js";
+import mongoose from "mongoose";
 
 const jobControl={
     getIndividualJob:async(req,res)=>{
@@ -23,6 +24,8 @@ const jobControl={
     applyJob:async(req,res)=>{
         try {
             const jobId=req.query.jobid
+            console.log(jobId,"query");
+            
             const recruiterid=req.query.recruiterid
             const jobData={...req.body,applicant:req.user.user._id}
             if (jobData.dob) {
@@ -39,6 +42,27 @@ const jobControl={
         } catch (error) {
             logger.error(`Error in apply job: ${error}`);
             res.status(500).json({ message: "Internal server error" })
+        }
+    },
+    checkAlreadyApplied:async(req,res)=>{
+        try {
+            const jobId=req.params
+            const userId=req.user.user._id
+            const validJobId = mongoose.Types.ObjectId.isValid(jobId) ? new mongoose.Types.ObjectId(jobId) : null;
+            const result=await applicationUseCase.checkAlreadyApplied(validJobId,userId)
+            if (result.error) {
+                logger.warn(`Failed to check if user ${userId} applied for job ${jobId}: ${result.error}`);
+                return res.status(400).json({ success: false, message: result.error });
+            }
+            if (result.hasApplied) {
+                logger.info(`User ${userId} has already applied for job ${validJobId}`);
+                return res.status(200).json({ success: true, hasApplied: true, message: result.message });
+            }
+            logger.info(`User ${userId} has not applied for job ${jobId}`);
+            return res.status(200).json({ success: true, hasApplied: false });
+        } catch (error) {
+            logger.error(`Error checking if user ${userId} applied for job ${jobId}: ${error.message}`);
+            return res.status(500).json({ success: false, message: "Internal server error" });
         }
     },
     getCategories:async(req,res)=>{
@@ -67,20 +91,24 @@ const jobControl={
             return res.status(500).json({ success: false, message: "Internal Server Error" });   
         }
     },
-    reportJob:async(req,res)=>{
+    reportJob: async (req, res) => {
         try {
-            const {jobId,reason,description}=req.body
-            const userId=req.user.user._id            
-            const result=await jobUseCase.reportJob(jobId,userId,reason,description)
-            if(result.message){
+            const { jobId, reason, description } = req.body;
+            const userId = req.user.user._id;
+    
+            const result = await jobUseCase.reportJob(jobId, userId, reason, description);
+    
+            if (!result.success) {
                 logger.warn(result.message);
                 return res.status(400).json({ success: false, message: result.message });
             }
+    
             logger.info(`Job reported successfully: ${jobId}`);
-            return res.status(200).json({ success: true, message: "Job reported successfully", job: result });
+            return res.status(200).json({ success: true, message: "Job reported successfully", job: result.job });
+    
         } catch (error) {
             logger.error(`Error reporting job: ${error.message}`);
-            return res.status(500).json({ message: "Internal server error" });
+            return res.status(500).json({ success: false, message: "Internal server error" });
         }
     },
     checkIfReported:async(req,res)=>{

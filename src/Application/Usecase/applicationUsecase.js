@@ -31,6 +31,20 @@ const applicationUseCase={
             logger.error(`Error fetching application details for application ID: ${id} - ${error.message}`);
         }
     },
+    checkAlreadyApplied:async(jobId,userId)=>{
+        try {
+            const existingApplication=await applicationRepository.findAlreadyApply(jobId,userId)
+            if(existingApplication){
+                logger.info(`User ${userId} has already applied for job with ID: ${jobId}`);
+                return {hasApplied:true, message: "You have already applied for this job" };
+            }
+            logger.info(`User ${userId} has not applied for job with ID: ${jobId}`);
+            return { hasApplied: false };
+        } catch (error) {
+            logger.error(`Error checking if user ${userId} applied for job ${jobId}: ${error.message}`);
+            return { error: "Failed to check job application status" };
+        }
+    },
     getApplicationforCandidates:async(id)=>{
         try {
             const application=await applicationRepository.getApplicationforCandidates(id)

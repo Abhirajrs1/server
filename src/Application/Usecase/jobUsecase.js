@@ -101,13 +101,17 @@ const jobUseCase = {
         }
     },
     applyJob:async(jobId,recruiterid,jobData)=>{
-
         try {
             const {name,email,contact,dob,totalExperience,currentCompany,currentSalary,expectedSalary,preferredLocation,resume,applicant}=jobData
             const job=await Job.findById({_id:jobId})
             if (!job) {
                 logger.warn(`Job not found with ID: ${jobId}`);
                 return { message: "Job not found" };
+            }
+            const existingApplication=await applicationRepository.findAlreadyApply(jobId,applicant)
+            if(existingApplication){
+                logger.info(`User ${applicant} has already applied for job with ID: ${jobId}`);
+                return { message: "You have already applied for this job" };
             }
             const newApplication=await applicationRepository.postApplication({
                 name,
@@ -135,32 +139,40 @@ const jobUseCase = {
             logger.error(`Error in postJobApplication: ${error}`);
         }
     },
-    reportJob:async(jobId,userId,reason,description)=>{
+    reportJob: async (jobId, userId, reason, description) => {
         try {
-
-            let job=await jobRepository.getJobById(jobId)
-            if(!job){
+            let job = await jobRepository.getJobById(jobId);
+            
+            if (!job) {
                 logger.warn(`Job with ID: ${jobId} not found`);
-                return { message: "Job not found" }
+                return { success: false, message: "Job not found" };
             }
-            const hasReported=job.jobReports.some(report=>report.reportedBy.toString()===userId.toString())
+    
+            const hasReported = job.jobReports.some(report => report.reportedBy.toString() === userId.toString());
+    
             if (hasReported) {
                 logger.info(`User with ID: ${userId} has already reported job with ID: ${jobId}`);
-                return { message: "You have already reported this job." };
-              }
-            const reportedData={
-                reportedBy:userId,
-                reason:reason,
-                description:description
-            }            
-            const result=await jobRepository.reportJob(jobId,reportedData)
-            if(!result){
-                return { message: "Job reporting failed" };
+                return { success: false, message: "You have already reported this job." };
             }
+    
+            const reportedData = {
+                reportedBy: userId,
+                reason: reason,
+                description: description
+            };
+    
+            const result = await jobRepository.reportJob(jobId, reportedData);
+    
+            if (!result) {
+                return { success: false, message: "Job reporting failed" };
+            }
+    
             logger.info(`Job reported successfully: ${jobId}`);
-            return result.job;
+            return { success: true, job: result.job };
+    
         } catch (error) {
             logger.error(`Error reporting job: ${error.message}`);
+            return { success: false, message: "Internal server error" };  // Ensure that error returns an object
         }
     },
     addReviewAndRating:async(reviewerName,reviewData)=>{
