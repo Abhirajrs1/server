@@ -162,6 +162,28 @@ const companyController={
             logger.error(`Error fetching stats for company: ${req.company.companyName}, error: ${error.message}`);
             return res.status(500).json({ success: false, message: 'Internal server error' });
         }
+    },
+    uploadLogo:async(req,res)=>{
+        try {
+            const companyId=req.company._id
+            const file=req.file
+            console.log(file,"FILE");
+            
+            if (!file) {
+                logger.warn(`Upload logo failed: No file provided`);
+                return res.status(400).json({ success:false,message: "No file provided" });
+            }
+            const logoUrl=await companyUseCase.uploadLogo(companyId,file)
+            if (!logoUrl) {
+                logger.warn(`Upload logo failed: Company not found with ID: ${companyId}`);
+                return res.status(404).json({ success:false,message: "Company not found" });
+            }
+            logger.info(`Logo uploaded successfully for company ID: ${companyId}`);
+            return res.status(200).json({success:true, message: "Logo uploaded successfully", logoUrl });
+        } catch (error) {
+            logger.error(`Error uploading logo: ${error.message}`);
+            return res.status(500).json({success:false, message: 'Error uploading logo' });
+        }
     }
 
 }

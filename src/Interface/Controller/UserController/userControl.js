@@ -312,6 +312,21 @@ const userController = {
             res.status(500).json({ success: false, message: 'Internal Server Error' });
         }
     },
+    getCompanies:async(req,res)=>{
+        try {
+            const result=await companyUseCase.getCompanies()
+            if (result.message) {
+                logger.warn(`Failed to fetch companies, reason: ${result.message}`);
+                return res.status(404).json({ success: false, message: result.message });
+            } else {
+                logger.info(`Companies retrieved successfully`);
+                return res.status(200).json({ success: true, companies: result });
+            }
+        } catch (error) {
+            logger.error(`Error fetching companies: ${error.message}`);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    },
     getCompanyDetails:async(req,res)=>{
         try {
             const {id}=req.params

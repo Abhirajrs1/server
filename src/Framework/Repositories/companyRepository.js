@@ -107,6 +107,19 @@ const companyRepository={
             logger.error(`Error uploading document for company ID: ${companyId}, error: ${error.message}`);
         }
     },
+    getAllCompaniesForUser:async()=>{
+        try {
+            const companies=await Company.find().populate('reviewsId')
+            if (companies.length > 0) {
+                logger.info(`Fetched ${companies.length} companies with reviews`);
+            } else {
+                logger.info('No companies found');
+            }
+            return companies;
+        } catch (error) {
+            logger.error(`Error fetching companies for user: ${error.message}`);
+        }
+    },
     getCompanyReviews:async(id)=>{
         try {
             const reviews=await Review.find({company:id})
@@ -136,6 +149,19 @@ const companyRepository={
             return jobsCount;
         } catch (error) {
             logger.error(`Error counting jobs for company name: ${companyName}, error: ${error.message}`);
+        }
+    },
+    uploadCompanyLogo:async(companyId,logoUrl)=>{
+        try {
+            const companyLogo=await Company.findByIdAndUpdate(companyId,{logo:logoUrl},{new:true})
+            if (companyLogo) {
+                logger.info(`Company logo updated successfully for company ID: ${companyId}`);
+            } else {
+                logger.warn(`No company found to update logo for ID: ${companyId}`);
+            }
+            return companyLogo
+        } catch (error) {
+            logger.error(`Error uploading company logo for company ID: ${companyId}, error: ${error.message}`);
         }
     }
     

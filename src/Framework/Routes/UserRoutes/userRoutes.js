@@ -52,6 +52,7 @@ router.get('/employee-getApplications',authMiddleware,jobControl.getApplications
 router.post('/employee-jobReport',authMiddleware,jobControl.reportJob)
 router.get('/employee-checkReported/:id',authMiddleware,jobControl.checkIfReported)
 router.post('/employee-addReviewAndRating',authMiddleware,jobControl.addReviewAndRating)
+router.get('/employee-getCompanies',userController.getCompanies)
 router.get('/employee-getCompanyDetails/:id',userController.getCompanyDetails)
 
 router.get('/employee-getCategories',jobControl.getCategories)

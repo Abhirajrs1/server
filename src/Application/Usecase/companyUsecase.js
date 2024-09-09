@@ -116,6 +116,20 @@ const companyUseCase={
             logger.error(`Error uploading document for company ID: ${companyId}, error: ${error.message}`);
         }
     },
+    getCompanies:async()=>{
+        try {
+            const companies = await companyRepository.getAllCompaniesForUser();
+            if (!companies.length) {
+                logger.warn("No companies found");
+                return { message: "Companies not found" };
+            } else {
+                logger.info(`Fetched ${companies.length} companies for users`);
+                return companies;
+            }
+        } catch (error) {
+            logger.error(`Error fetching companies for users: ${error.message}`);
+        }
+    },
     getCompanyDetails:async(id)=>{
         try {
             const company=await companyRepository.findCompanyByid(id)
@@ -153,6 +167,22 @@ const companyUseCase={
         } catch (error) {
             logger.error(`Error fetching company stats for ${companyName}: ${error.message}`);
         }
+    },
+    uploadLogo:async(companyId,file)=>{
+        try {
+            const logoUrl=await uploadFileToS3(file)
+            const result=await companyRepository.uploadCompanyLogo(companyId,logoUrl)
+        if (result) {
+            logger.info(`Logo uploaded successfully for company ID: ${companyId}`);
+            return { message: "Logo uploaded successfully", result };
+        } else {
+            logger.warn(`Logo upload failed for company ID: ${companyId}`);
+            return { message: "Company not found" };
+        }
+        } catch (error) {
+            logger.error(`Error uploading logo for company ID: ${companyId}, error: ${error.message}`);
+        }
+       
     }
 
 }

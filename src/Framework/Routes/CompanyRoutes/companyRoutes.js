@@ -17,9 +17,10 @@ router.get('/company-getStats',authMiddleware,companyController.getStats)
 router.get('/get-companies',companyController.getCompanies)
 router.get('/company-getCompanyReviews',authMiddleware,companyController.getCompanyReviews)
 
+router.put('/company-uploadLogo',upload.single('logo'),authMiddleware,companyController.uploadLogo)
 router.put('/company-updateContact/:email',authMiddleware,companyController.updateProfile)
 router.put('/company-updateAboutDetails/:email',authMiddleware,companyController.updateAboutDetails)
-router.post('/company-uploaDocuments',upload.single('file'),authMiddleware,companyController.uploadCompanyDocuments)
+router.post('/company-uploadDocuments',upload.single('file'),authMiddleware,companyController.uploadCompanyDocuments)
 
 router.get('/company-logout',authMiddleware,companyController.logOut)
 export {router as CompanyRouter}
