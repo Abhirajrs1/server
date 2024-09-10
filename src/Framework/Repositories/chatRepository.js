@@ -2,36 +2,39 @@ import { Chat } from "../../Core/Entities/chatCollection.js";
 import logger from "../Utilis/logger.js";
 
 const chatRepository = {
-    createRoom:async(jobId,employerId,userId)=>{
-        try {
-            const newChat=new Chat({
-                members:[userId,employerId],
-                jobId
-            })
-            return await newChat.save()
-        } catch (error) {
+    // createRoom:async(jobId,employerId,userId)=>{
+    //     try {
+    //         const newChat=new Chat({
+    //             members:[userId,employerId],
+    //             jobId
+    //         })
+    //         return await newChat.save()
+    //     } catch (error) {
             
-        }
+    //     }
+    // },
+    // existingRoom:async(jobId,employerId,userId)=>{
+    //     try {
+    //         const existingRoom=await Chat.findOne({
+    //             jobId,
+    //             members:{$all:[userId,employerId]}
+    //         })
+    //         return existingRoom
+    //     } catch (error) {
+            
+    //     }
 
-    },
-    existingRoom:async(jobId,employerId,userId)=>{
+    // },
+    findChat: async (jobId,userId,recruiterId) => {
         try {
             const existingRoom=await Chat.findOne({
                 jobId,
-                members:{$all:[userId,employerId]}
+                members:{$all:[userId,recruiterId]}
             })
+            logger.info(`Chat found for jobId: ${jobId}, userId: ${userId}, recruiterId: ${recruiterId}`);
             return existingRoom
-        } catch (error) {
-            
-        }
-
-    },
-    findChat: async (jobId, userId) => {
-        try {
-            return await Chat.findOne({ jobId, members: userId }).populate('members');
-        } catch (error) {
+            } catch (error) {
             logger.error(`Error finding chat: ${error.message}`);
-            throw error;
         }
     },
     createChat: async (jobId, userId, recruiterId) => {
@@ -40,10 +43,11 @@ const chatRepository = {
                 members: [userId, recruiterId],
                 jobId
             });
-            return await newChat.save();
+            const savedChat = await newChat.save();
+            logger.info(`Chat created successfully for jobId: ${jobId}, userId: ${userId}, recruiterId: ${recruiterId}`);
+            return savedChat;        
         } catch (error) {
             logger.error(`Error creating chat: ${error.message}`);
-            throw error;
         }
     },
     getChatsByUser: async (userId) => {

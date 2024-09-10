@@ -58,9 +58,10 @@ router.get('/employee-getCompanyDetails/:id',userController.getCompanyDetails)
 router.get('/employee-getCategories',jobControl.getCategories)
 
 
-router.post('/employee-chatIntiate',chatController.initiateChat)
+router.get('/employee-getChatRoom/:jobId/:employerId',authMiddleware,chatController.getChatRoom)
 router.post('/employee-createRoom',authMiddleware,chatController.createRoom)
 router.post('/employee-sendMessage',authMiddleware,chatController.saveMessage)
+router.get('/employee-getMessages/:chatId',authMiddleware,chatController.getMessages)
 
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get(

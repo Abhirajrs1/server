@@ -6,27 +6,49 @@ const chatController = {
         try {
             const {jobId,employerId}=req.body
             const userId=req.user.user._id
-            const room=await chatUseCase.createRoom(jobId,employerId,userId)
-            if (room){
-                return res.status(200).json({success:true,message:"Room data",room})
+            const room=await chatUseCase.createRoom(jobId,userId,employerId)
+            if (room) {
+                logger.info('Chat room created successfully', { room });
+                return res.status(200).json({ success: true, message: "Room data", room });
+            } else {
+                logger.warn('Failed to create chat room', { jobId, employerId, userId });
+                return res.status(400).json({ success: false, message: 'Failed to create room' });
             }
         } catch (error) {
-            console.log(error);
-            
+            logger.error(`Error creating chat room: ${error.message}`, { error });
+            res.status(500).json({ success: false, message: 'Error creating chat room' });            
         }
     },
-    initiateChat: async (req, res) => {
+    getChatRoom:async(req,res)=>{
         try {
-            console.log("FIND MESSAGES");
-            const {room} = req.body            
+            const {jobId,employerId}=req.params
             const userId=req.user.user._id
-            const chat = await chatUseCase.initiateChat(jobId, userId, recruiterId);
-            res.status(200).json({ success: true, chat });
+            const room=await chatUseCase.findChatRoom(jobId,userId,employerId)
+            if (room) {
+                logger.info('Chat room found', { room });
+                return res.status(200).json({ success: true, room });
+            } else {
+                logger.warn('Chat room not found', { jobId, employerId, userId });
+                return res.status(404).json({ success: false, message: 'No chat room found' });
+            }
         } catch (error) {
-            logger.error(`Error initiating chat: ${error.message}`);
-            res.status(500).json({ success: false, message: 'Error initiating chat' });
+            logger.error(`Error getting chat room: ${error.message}`);
+            res.status(500).json({ success: false, message: 'Error getting chat room' });
         }
     },
+    // initiateChat: async (req, res) => {
+    //     try {
+    //         const {room} = req.body       
+    //         const userId=req.user.user._id
+    //         const recruiterId=room.members.find(member=>member!==userId)            
+    //         const jobId=room.jobId  
+    //         const chat = await chatUseCase.initiateChat(jobId ,userId,recruiterId);
+    //         res.status(200).json({ success: true, chat });
+    //     } catch (error) {
+    //         logger.error(`Error initiating chat: ${error.message}`);
+    //         res.status(500).json({ success: false, message: 'Error initiating chat' });
+    //     }
+    // },
     saveMessage:async(req,res)=>{
         try {
             const {message,room}=req.body
@@ -76,7 +98,6 @@ const chatController = {
             res.status(500).json({ success: false, message: 'Error sending message' });
         }
     },
-
     getMessages: async (req, res) => {
         try {
             const { chatId } = req.params;

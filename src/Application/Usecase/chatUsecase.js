@@ -3,30 +3,44 @@ import messageRepository from "../../Framework/Repositories/messageRepository.js
 import logger from "../../Framework/Utilis/logger.js";
 
 const chatUseCase = {
-    createRoom:async(jobId,employerId,userId)=>{
+    createRoom:async(jobId,userId,employerId)=>{
         try {
-            const existingRoom=await chatRepository.existingRoom(jobId,employerId,userId)
-            if(existingRoom){
-                return existingRoom
+            const existingRoom=await chatRepository.findChat(jobId,userId,employerId)
+            if (existingRoom) {
+                logger.info('Chat room already exists', { existingRoom });
+                return existingRoom;
             }
-            return await chatRepository.createRoom(jobId,employerId,userId)
+            const newRoom = await chatRepository.createChat(jobId, userId, employerId);
+            logger.info('Chat room created successfully', { newRoom });
+            return newRoom;
         } catch (error) {
-            
-        }
-
-    },
-
-    initiateChat: async (jobId, userId, recruiterId) => {
-        try {
-            let chat = await chatRepository.findChat(jobId, userId);
-            if (!chat) {
-                chat = await chatRepository.createChat(jobId, userId, recruiterId);
-            }
-            return chat;
-        } catch (error) {
-            logger.error(`Error in initiateChat use case: ${error.message}`);
+            logger.error(`Error creating chat room: ${error.message}`, { jobId, userId, employerId, error });
         }
     },
+    findChatRoom:async(jobId,userId,employerId)=>{
+        try {
+            const room=await chatRepository.findChat(jobId,userId,employerId)
+            if (room) {
+                logger.info('Chat room found', { room });
+            } else {
+                logger.warn('No chat room found', { jobId, userId, employerId });
+            }
+            return room
+        } catch (error) {
+            logger.error(`Error finding chat room: ${error.message}`, { jobId, userId, employerId, error });
+        }
+    },
+    // initiateChat: async (jobId,userId,recruiterId) => {
+    //     try {
+    //         let chat = await chatRepository.findChat(jobId,userId,recruiterId);
+    //         if (!chat) {
+    //             chat = await chatRepository.createChat(jobId, userId, recruiterId);
+    //         }
+    //         return chat;
+    //     } catch (error) {
+    //         logger.error(`Error in initiateChat use case: ${error.message}`);
+    //     }
+    // },
     saveMessages: async (message, id, userId) => {
         try {            
             const savedMessage = await messageRepository.saveMessage(message, id, userId);
