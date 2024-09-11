@@ -1,4 +1,6 @@
 import { Chat } from "../../Core/Entities/chatCollection.js";
+import { User } from "../../Core/Entities/userCollection.js";
+import { Recruiter } from "../../Core/Entities/recruiterCollection.js";
 import logger from "../Utilis/logger.js";
 
 const chatRepository = {
@@ -9,8 +11,18 @@ const chatRepository = {
                 jobId,
                 members:{$all:[userId,recruiterId]}
             })
+            if (!existingRoom) {
+                logger.info(`Chat not found for jobId: ${jobId}, userId: ${userId}, recruiterId: ${recruiterId}`);
+                return null;
+            }
+            const recruiter = await Recruiter.findById(recruiterId).select('recruitername email _id');
+
+
             logger.info(`Chat found for jobId: ${jobId}, userId: ${userId}, recruiterId: ${recruiterId}`);
-            return existingRoom
+            return {
+                chatRoom: existingRoom,
+                recruiter
+            };
             } catch (error) {
             logger.error(`Error finding chat: ${error.message}`);
         }
@@ -23,8 +35,13 @@ const chatRepository = {
                 jobId
             });
             const savedChat = await newChat.save();
+            const recruiter = await Recruiter.findById(recruiterId).select('recruitername email _id');
+
             logger.info(`Chat created successfully for jobId: ${jobId}, userId: ${userId}, recruiterId: ${recruiterId}`);
-            return savedChat;        
+            return {
+                chatRoom: savedChat,
+                recruiter
+            };        
         } catch (error) {
             logger.error(`Error creating chat: ${error.message}`);
         }
@@ -33,7 +50,11 @@ const chatRepository = {
     // U
     getChatsByRecruiter: async (recruiterId) => {
         try {
-            return await Chat.find({ members: recruiterId })
+            return await Chat.find({ members: recruiterId }).populate({
+                path:'members',
+                select:'username email',
+                model:User
+            })
         } catch (error) {
             logger.error(`Error getting chats for recruiter: ${error.message}`);
             throw error;
