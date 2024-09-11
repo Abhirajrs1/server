@@ -3,6 +3,7 @@ import messageRepository from "../../Framework/Repositories/messageRepository.js
 import logger from "../../Framework/Utilis/logger.js";
 
 const chatUseCase = {
+    // U
     createRoom:async(jobId,userId,employerId)=>{
         try {
             const existingRoom=await chatRepository.findChat(jobId,userId,employerId)
@@ -17,6 +18,7 @@ const chatUseCase = {
             logger.error(`Error creating chat room: ${error.message}`, { jobId, userId, employerId, error });
         }
     },
+    // U
     findChatRoom:async(jobId,userId,employerId)=>{
         try {
             const room=await chatRepository.findChat(jobId,userId,employerId)
@@ -30,17 +32,7 @@ const chatUseCase = {
             logger.error(`Error finding chat room: ${error.message}`, { jobId, userId, employerId, error });
         }
     },
-    // initiateChat: async (jobId,userId,recruiterId) => {
-    //     try {
-    //         let chat = await chatRepository.findChat(jobId,userId,recruiterId);
-    //         if (!chat) {
-    //             chat = await chatRepository.createChat(jobId, userId, recruiterId);
-    //         }
-    //         return chat;
-    //     } catch (error) {
-    //         logger.error(`Error in initiateChat use case: ${error.message}`);
-    //     }
-    // },
+    // U
     saveMessages: async (message, id, userId) => {
         try {            
             const savedMessage = await messageRepository.saveMessage(message, id, userId);
@@ -49,36 +41,25 @@ const chatUseCase = {
             console.error('Error saving message in use case:', error);
         }
     },
-    
-
-    getChatsByUser: async (userId) => {
-        try {
-            return await chatRepository.getChatsByUser(userId);
-        } catch (error) {
-            logger.error(`Error in getChatsByUser use case: ${error.message}`);
-        }
-    },
-    getChatsByRecruiter: async (recruiterId) => {
-        try {
-            return await chatRepository.getChatsByRecruiter(recruiterId);
-        } catch (error) {
-            logger.error(`Error in getChatsByRecruiter use case: ${error.message}`);
-        }
-    },
-    sendMessage: async (chatId, senderId, text) => {
-        try {
-            return await messageRepository.createMessage(chatId, senderId, text);
-        } catch (error) {
-            logger.error(`Error in sendMessage use case: ${error.message}`);
-        }
-    },
+    // U
     getMessages: async (chatId) => {
         try {
             return await messageRepository.getMessagesByChatId(chatId);
         } catch (error) {
             logger.error(`Error in getMessages use case: ${error.message}`);
         }
-    }
+    },
+    // U
+    getChatsByRecruiter: async (recruiterId) => {
+        try {
+            const chats=await chatRepository.getChatsByRecruiter(recruiterId);
+            logger.info(`Fetched chats for recruiter ${recruiterId}`);
+            return chats;
+        } catch (error) {
+            logger.error(`Error in getChatsByRecruiter use case: ${error.message}`);
+        }
+    },
+   
 };
 
 export default chatUseCase;

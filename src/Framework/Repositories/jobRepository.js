@@ -2,7 +2,7 @@ import { Job } from "../../Core/Entities/jobCollection.js";
 import { Company } from "../../Core/Entities/companyCollection.js";
 import logger from "../Utilis/logger.js";
 import { Review } from "../../Core/Entities/reviewCollection.js";
-
+import mongoose from "mongoose";
 const jobRepository = {
 
     createJob: async (jobDetails) => {
@@ -129,6 +129,49 @@ const jobRepository = {
            return result
         } catch (error) {
             logger.error(`Error add review to company: ${error.message}`);
+        }
+    },
+    getIndividualReviewsOfUser:async(userId)=>{
+        try {
+            const reviews = await Review.find({ reviewerId: userId }).populate('company', 'companyName');
+            if (reviews.length > 0) {
+                logger.info(`Retrieved ${reviews.length} reviews for user: ${userId}`);
+                return reviews;
+            } else {
+                logger.warn(`No reviews found for user: ${userId}`);
+                return [];
+            }     
+           } catch (error) {
+            logger.error(`Error retrieving individual reviews for user ${userId}: ${error.message}`);
+        }
+    },
+    deleteReview:async(reviewId)=>{ 
+        try {
+            const objectId = mongoose.Types.ObjectId.isValid(reviewId) ? new mongoose.Types.ObjectId(reviewId) : null;
+            const review=await Review.findByIdAndDelete({_id:objectId})
+            if (review) {
+                logger.info(`Review with ID ${reviewId} deleted successfully.`);
+                return review;
+            } else {
+                logger.warn(`Review with ID ${reviewId} not found.`);
+                return null;
+            }
+            } catch (error) {
+                logger.error(`Error deleting review with ID ${reviewId}: ${error.message}`);
+        }
+    },
+    updateReviewById:async(reviewId, updateData)=>{
+        try {
+            const updatedReview = await Review.findByIdAndUpdate(reviewId, { $set: updateData }, { new: true });
+            if (updatedReview) {
+                logger.info(`Successfully updated review with ID: ${reviewId}`, { updatedReview });
+                return updatedReview;
+            } else {
+                logger.warn(`Review with ID: ${reviewId} not found`);
+                return null;
+            }
+        } catch (error) {
+            logger.error(`Error updating review with ID ${reviewId}: ${error.message}`);
         }
     }
 

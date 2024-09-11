@@ -3,6 +3,10 @@ const ReviewSchema=new mongoose.Schema({
     reviewerName:{
         type:String
     },
+    reviewerId:{
+        type:mongoose.Schema.ObjectId,
+        ref:'User'
+    },
     rating:{
         type:Number
     },

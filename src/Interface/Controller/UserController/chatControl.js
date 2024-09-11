@@ -36,66 +36,22 @@ const chatController = {
             res.status(500).json({ success: false, message: 'Error getting chat room' });
         }
     },
-    // initiateChat: async (req, res) => {
-    //     try {
-    //         const {room} = req.body       
-    //         const userId=req.user.user._id
-    //         const recruiterId=room.members.find(member=>member!==userId)            
-    //         const jobId=room.jobId  
-    //         const chat = await chatUseCase.initiateChat(jobId ,userId,recruiterId);
-    //         res.status(200).json({ success: true, chat });
-    //     } catch (error) {
-    //         logger.error(`Error initiating chat: ${error.message}`);
-    //         res.status(500).json({ success: false, message: 'Error initiating chat' });
-    //     }
-    // },
     saveMessage:async(req,res)=>{
         try {
             const {message,room}=req.body
             const id=room._id
-            const userId=req.user.user._id
-            console.log(message,"MESSAGE");
-            
+            const userId=req.user.user._id            
             const result=await chatUseCase.saveMessages(message,id,userId)
+            if (result) {
+                logger.info('Message saved successfully', { message, id, userId });
+                return res.status(200).json({ success: true, message: 'Message saved', result });
+            } else {
+                logger.warn('Failed to save message', { message, id, userId });
+                return res.status(400).json({ success: false, message: 'Failed to save message' });
+            }
         } catch (error) {
-            console.log(error);
-            
-        }
-    
-        
-
-    },
-
-    getChatsByUser: async (req, res) => {
-        try {
-            const { userId } = req.params;
-            const chats = await chatUseCase.getChatsByUser(userId);
-            res.status(200).json({ success: true, chats });
-        } catch (error) {
-            logger.error(`Error fetching chats: ${error.message}`);
-            res.status(500).json({ success: false, message: 'Error fetching chats' });
-        }
-    },
-
-    getChatsByRecruiter: async (req, res) => {
-        try {
-            const { recruiterId } = req.params;
-            const chats = await chatUseCase.getChatsByRecruiter(recruiterId);
-            res.status(200).json({ success: true, chats });
-        } catch (error) {
-            logger.error(`Error fetching chats: ${error.message}`);
-            res.status(500).json({ success: false, message: 'Error fetching chats' });
-        }
-    },
-
-    sendMessage: async (req, res) => {
-        try {
-            const { chatId, senderId, text } = req.body;
-            const message = await chatUseCase.sendMessage(chatId, senderId, text);
-            res.status(200).json({ success: true, message });
-        } catch (error) {
-            logger.error(`Error sending message: ${error.message}`);
-            res.status(500).json({ success: false, message: 'Error sending message' });
+            logger.error(`Error saving message: ${error.message}`, { error });
+            res.status(500).json({ success: false, message: 'Error saving message' });            
         }
     },
     getMessages: async (req, res) => {

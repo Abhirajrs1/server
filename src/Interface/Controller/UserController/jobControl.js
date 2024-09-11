@@ -127,8 +127,9 @@ const jobControl={
     addReviewAndRating:async(req,res)=>{
         try {
             const reviewerName=req.user.user.username
+            const reviewerId=req.user.user._id
             const {reviewData}=req.body
-            const result=await jobUseCase.addReviewAndRating(reviewerName,reviewData)            
+            const result=await jobUseCase.addReviewAndRating(reviewerName,reviewerId,reviewData)            
             if(result){
                 logger.info('Review added successfully');
                 return res.status(200).json({success:true,message:"Review added successfully"})
@@ -138,6 +139,55 @@ const jobControl={
             }
         } catch (error) {
             logger.error(`Error adding review: ${error.message}`);
+            return res.status(500).json({ message: "Internal server error" });
+        }
+    },
+    getIndividualReviews:async(req,res)=>{
+        try {
+            const userId=req.user.user._id
+            const result=await jobUseCase.getIndividualReviews(userId)
+            if (result) {
+                logger.info(`Reviews fetched successfully for user ID: ${userId}`);
+                return res.status(200).json({ success: true, reviews: result });
+            } else {
+                logger.warn(`No reviews found for user ID: ${userId}`);
+                return res.status(404).json({ success: false, message: "No reviews found" });
+            }
+        } catch (error) {
+            logger.error(`Error in getIndividualReviews: ${error.message}`);
+            return res.status(500).json({ message: "Internal server error" });
+        }
+    },
+    deleteIndividualReview:async(req,res)=>{
+        try {
+            const {reviewId}=req.params
+            const result=await jobUseCase.deleteIndividualReview(reviewId)
+            if (result) {
+                logger.info(`Review ID: ${reviewId} deleted successfully`);
+                return res.status(200).json({ success: true, message: "Review deleted successfully" });
+            } else {
+                logger.warn(`Failed to delete review ID: ${reviewId}`);
+                return res.status(400).json({ success: false, message: "Review not found" });
+            }
+        } catch (error) {
+            logger.error(`Error in deleteIndividualReview: ${error.message}`);
+            return res.status(500).json({ message: "Internal server error" });
+        }
+    },
+    updateReview:async(req,res)=>{
+        try {
+            const{reviewId}=req.params
+            const {rating,comment}=req.body
+            const updatedReview=await jobUseCase.updateReview(reviewId,rating,comment)
+            if (updatedReview) {
+                logger.info(`Review ID: ${reviewId} updated successfully`);
+                return res.status(200).json({ success: true, message: "Review updated successfully" });
+            } else {
+                logger.warn(`Failed to update review ID: ${reviewId}`);
+                return res.status(400).json({ success: false, message: "Review not found" });
+            }
+        } catch (error) {
+            logger.error(`Error updating review ID: ${reviewId}: ${error.message}`);
             return res.status(500).json({ message: "Internal server error" });
         }
     }

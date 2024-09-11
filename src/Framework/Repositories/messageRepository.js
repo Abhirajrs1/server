@@ -3,38 +3,33 @@ import logger from "../Utilis/logger.js";
 
 const messageRepository = {
 
+    // U
     saveMessage: async (message, id, userId) => {
         try {
-            console.log(message, id, userId, "ID");
             const newMessage = new Message({
                 text: message,
                 chatId: id,
                 senderId: userId
             });
-            return await newMessage.save();
-        } catch (error) {
-            console.error('Error saving message in repository:', error);
+            const savedMessage = await newMessage.save();
+            logger.info(`Message saved successfully for chatId: ${id}`, { message: savedMessage });
+            return savedMessage;
+            } catch (error) {
+                logger.error(`Error saving message for chatId: ${id}, userId: ${userId}: ${error.message}`);            
         }
     },
-    // createMessage: async (chatId, senderId, text) => {
-    //     try {
-    //         const newMessage = new Message({
-    //             chatId,
-    //             senderId,
-    //             text
-    //         });
-    //         return await newMessage.save();
-    //     } catch (error) {
-    //         logger.error(`Error creating message: ${error.message}`);
-    //         throw error;
-    //     }
-    // },
+    // U
     getMessagesByChatId: async (chatId) => {
         try {
-            return await Message.find({ chatId }).sort({ createdAt: 1 }).populate('senderId');
-        } catch (error) {
+            const messages = await Message.find({ chatId }).sort({ createdAt: 1 });
+            if (messages.length) {
+                logger.info(`Messages fetched successfully for chatId: ${chatId}`, { messages });
+            } else {
+                logger.warn(`No messages found for chatId: ${chatId}`);
+            }
+            return messages;
+          } catch (error) {
             logger.error(`Error getting messages for chatId: ${chatId}: ${error.message}`);
-            throw error;
         }
     }
 };

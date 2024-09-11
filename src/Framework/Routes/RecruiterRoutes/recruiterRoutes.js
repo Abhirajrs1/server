@@ -5,6 +5,7 @@ import categoryController from '../../../Interface/Controller/RecruiterControlle
 import Middleware from '../../../Interface/Middleware/authMiddleware.js'
 import applicationController from '../../../Interface/Controller/RecruiterController/applicationController.js'
 import planControl from '../../../Interface/Controller/RecruiterController/planController.js'
+import chatController from '../../../Interface/Controller/RecruiterController/chatController.js'
 const authMiddleware=Middleware.recruiterMiddleware
 
 const router=express.Router()
@@ -35,6 +36,10 @@ router.get('/recruiter-getApplicationDetails/:id',authMiddleware,applicationCont
 router.get('/recruiter-getPlans',planControl.getPlansForRecruiter)
 router.post('/recruiter-createOrder',recruiterController.createOrder)
 router.post('/recruiter-verifyPayment',recruiterController.verifyPayment)
+
+router.get('/recruiter-chats',authMiddleware,chatController.getChatByRecruiter)
+router.post('/recruiter-sendMessage',authMiddleware,chatController.sendMessage)
+router.get('/recruiter-getMessages/:chatId',authMiddleware,chatController.getMessagesByChat)
 
 
 export {router as RecruiterRouter}

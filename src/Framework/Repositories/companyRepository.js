@@ -163,6 +163,18 @@ const companyRepository={
         } catch (error) {
             logger.error(`Error uploading company logo for company ID: ${companyId}, error: ${error.message}`);
         }
+    },
+    deleteReviewFromCompany:async(reviewId)=>{
+        try {
+            const result=await Company.updateMany(
+                {reviewsId:reviewId},
+                {$pull:{reviewsId:reviewId}}
+                 )
+                 logger.info(`Removed review with ID ${reviewId} from companies.`);
+            return result;
+        } catch (error) {
+            logger.error(`Error removing review from companies: ${error.message}`);
+        }
     }
     
 }

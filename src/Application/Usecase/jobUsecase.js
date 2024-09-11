@@ -4,6 +4,7 @@ import applicationRepository from "../../Framework/Repositories/applicationRepos
 import uploadFileToS3 from "../../Framework/Services/s3.js";
 import logger from "../../Framework/Utilis/logger.js";
 import { Job } from "../../Core/Entities/jobCollection.js";
+import companyRepository from "../../Framework/Repositories/companyRepository.js";
 
 const jobUseCase = {
     postJob: async (jobData) => {
@@ -175,11 +176,12 @@ const jobUseCase = {
             return { success: false, message: "Internal server error" };  // Ensure that error returns an object
         }
     },
-    addReviewAndRating:async(reviewerName,reviewData)=>{
+    addReviewAndRating:async(reviewerName,reviewerId,reviewData)=>{
         try {
             const {rating,comment,company}=reviewData
             const result=await jobRepository.addReviewAndRating({
                 reviewerName:reviewerName,
+                reviewerId:reviewerId,
                 rating:rating,
                 comment:comment,
                 company:company
@@ -191,7 +193,49 @@ const jobUseCase = {
         } catch (error) {
             logger.error(`Error adding review and rating': ${error.message}`)
         }
-      
+    },
+    getIndividualReviews:async(userId)=>{
+        try {
+            const reviews=await jobRepository.getIndividualReviewsOfUser(userId)
+            if (!reviews) {
+                logger.warn(`No reviews found for user ID: ${userId}`);
+                return { message: "No reviews found" };
+            }
+            logger.info(`Retrieved reviews for user ID: ${userId}`);
+            return reviews;
+        } catch (error) {
+            logger.error(`Error in getIndividualReviews: ${error.message}`);
+            return { message: "Internal server error" };
+        }
+    },
+    deleteIndividualReview:async(reviewId)=>{
+        try {
+            const reviewDeleted=await jobRepository.deleteReview(reviewId)
+            if (!reviewDeleted) {
+                logger.warn(`Review with ID: ${reviewId} not found or failed to delete`);
+                return { message: "Review not found or failed to delete" };
+            }
+            await companyRepository.deleteReviewFromCompany(reviewId)
+            logger.info(`Successfully deleted review with ID: ${reviewId}`);
+            return { message: "Review deleted successfully" }
+        } catch (error) {
+            logger.error(`Error deleting review with ID: ${reviewId}. Error: ${error.message}`);
+            return { message: "Internal server error" };
+        }
+    },
+    updateReview:async(reviewId,rating,comment)=>{
+        try {
+            const updatedReview = await jobRepository.updateReviewById(reviewId, { rating, comment });
+            if (!updatedReview) {
+                logger.warn(`Review with ID: ${reviewId} not found`);
+                return { message: "Review not found" };
+            }
+            logger.info(`Successfully updated review with ID: ${reviewId}`);
+            return updatedReview;
+        } catch (error) {
+            logger.error(`Error updating review with ID: ${reviewId}: ${error.message}`);
+            return { message: "Internal server error" };
+        }
     }
     
 }
