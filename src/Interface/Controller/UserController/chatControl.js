@@ -9,10 +9,10 @@ const chatController = {
             const room=await chatUseCase.createRoom(jobId,userId,employerId)
             if (room) {
                 logger.info('Chat room created successfully', { room });
-                return res.status(200).json({ success: true, message: "Room data", room });
+                return res.status(201).json({ success: true, message: "Room data", room });
             } else {
                 logger.warn('Failed to create chat room', { jobId, employerId, userId });
-                return res.status(400).json({ success: false, message: 'Failed to create room' });
+                return res.json({ success: false, message: 'Failed to create room' });
             }
         } catch (error) {
             logger.error(`Error creating chat room: ${error.message}`, { error });
@@ -29,7 +29,7 @@ const chatController = {
                 return res.status(200).json({ success: true, room });
             } else {
                 logger.warn('Chat room not found', { jobId, employerId, userId });
-                return res.status(404).json({ success: false, message: 'No chat room found' });
+                return res.json({ success: false, message: 'No chat room found' });
             }
         } catch (error) {
             logger.error(`Error getting chat room: ${error.message}`);
@@ -38,8 +38,11 @@ const chatController = {
     },
     saveMessage:async(req,res)=>{
         try {
-            const {message,room}=req.body
-            const id=room._id
+            const messageData=req.body
+            const {message,room}=messageData
+
+            const id=room
+            console.log("roooom",id)
             const userId=req.user.user._id            
             const result=await chatUseCase.saveMessages(message,id,userId)
             if (result) {

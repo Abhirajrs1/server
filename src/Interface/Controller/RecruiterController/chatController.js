@@ -21,8 +21,6 @@ const chatController={
     sendMessage:async(req,res)=>{
         try {
             const {chatId,message}=req.body
-            console.log(chatId,"CHATID");
-            console.log(message,"MESSAGE");
             const recruiterId=req.recruiter.recruiter._id.toString()
             const newMessage=await chatUseCase.saveMessages(message,chatId,recruiterId)            
             if (newMessage) {
@@ -40,10 +38,7 @@ const chatController={
     getMessagesByChat:async(req,res)=>{
         try {
             const { chatId } = req.params;
-            console.log(chatId,"CHATID");
-            
             const messages = await chatUseCase.getMessages(chatId);
-            console.log(messages,"MESSAGES");
             if (messages) {
                 logger.info(`Messages fetched successfully for chat: ${chatId}`, { messages });
                 return res.status(200).json({ success: true, messages });

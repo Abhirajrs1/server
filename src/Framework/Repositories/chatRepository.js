@@ -16,8 +16,6 @@ const chatRepository = {
                 return null;
             }
             const recruiter = await Recruiter.findById(recruiterId).select('recruitername email _id');
-
-
             logger.info(`Chat found for jobId: ${jobId}, userId: ${userId}, recruiterId: ${recruiterId}`);
             return {
                 chatRoom: existingRoom,
@@ -36,7 +34,6 @@ const chatRepository = {
             });
             const savedChat = await newChat.save();
             const recruiter = await Recruiter.findById(recruiterId).select('recruitername email _id');
-
             logger.info(`Chat created successfully for jobId: ${jobId}, userId: ${userId}, recruiterId: ${recruiterId}`);
             return {
                 chatRoom: savedChat,
@@ -50,14 +47,15 @@ const chatRepository = {
     // U
     getChatsByRecruiter: async (recruiterId) => {
         try {
-            return await Chat.find({ members: recruiterId }).populate({
+            const chats= await Chat.find({ members: recruiterId }).populate({
                 path:'members',
                 select:'username email',
                 model:User
             })
+            logger.info('Fetched chats for recruiter successfully', { recruiterId, chatCount: chats.length });
+            return chats;
         } catch (error) {
             logger.error(`Error getting chats for recruiter: ${error.message}`);
-            throw error;
         }
     }
 };
