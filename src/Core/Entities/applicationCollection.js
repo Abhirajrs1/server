@@ -50,6 +50,10 @@ const ApplicationSchema=new mongoose.Schema({
     resume:{
         type:String
     },
+    status:{
+        type:String,
+        default:'Applied'
+    },
 },
 { timestamps: true,
     toJSON: {

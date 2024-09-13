@@ -23,9 +23,7 @@ const jobControl={
     },
     applyJob:async(req,res)=>{
         try {
-            const jobId=req.query.jobid
-            console.log(jobId,"query");
-            
+            const jobId=req.query.jobid            
             const recruiterid=req.query.recruiterid
             const jobData={...req.body,applicant:req.user.user._id}
             if (jobData.dob) {

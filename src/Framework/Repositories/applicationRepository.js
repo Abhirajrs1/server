@@ -15,7 +15,7 @@ const applicationRepository={
     },
     getApplicationByRecruiter:async(id)=>{
         try {
-            const application=await Application.find({employerId:id})
+            const application=await Application.find({employerId:id}).populate('jobId')
             if(!application){
                 logger.warn(`No applications found for recruiter ID: ${id}`);
             }else{
@@ -28,7 +28,7 @@ const applicationRepository={
     },
     getApplicationDetails:async(id)=>{
         try {
-            const application=await Application.findOne({_id:id})
+            const application=await Application.findOne({_id:id}).populate('jobId')
             if(!application){
                 logger.warn(`No application found for application ID: ${id}`);
             } else {
