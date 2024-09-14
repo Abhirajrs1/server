@@ -35,11 +35,12 @@ const chatUseCase = {
     // U
     saveMessages: async (message, id, userId) => {
         try {            
+           
             const savedMessage = await messageRepository.saveMessage(message, id, userId);
-            logger.info('Message saved successfully', { messageId: savedMessage._id, chatId, userId });
+            logger.info('Message saved successfully', { messageId: savedMessage._id, id, userId });
             return savedMessage;
         } catch (error) {
-            logger.error('Error saving message', { chatId, userId, message, error: error.message });      
+            logger.error('Error saving message', { id, userId, message, error: error.message });      
         }
     },
     // U
