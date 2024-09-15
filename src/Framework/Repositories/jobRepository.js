@@ -108,6 +108,15 @@ const jobRepository = {
             logger.error(`Error reporting job: ${error.message}`);
         }
     },
+    findUserReviewForCompany:async(reviewerId,companyId)=>{
+        try {
+            const existingReview=await Review.findOne({reviewerId:reviewerId,company:companyId})
+            return existingReview
+        } catch (error) {
+            logger.error(`Error finding user review: ${error.message}`);
+        }
+
+    },
     addReviewAndRating:async(data)=>{
         try {
             let result=new Review(data)

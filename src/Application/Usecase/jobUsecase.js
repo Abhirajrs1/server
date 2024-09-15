@@ -161,19 +161,28 @@ const jobUseCase = {
                 reason: reason,
                 description: description
             };
-    
-            const result = await jobRepository.reportJob(jobId, reportedData);
-    
+            const result = await jobRepository.reportJob(jobId, reportedData)
             if (!result) {
                 return { success: false, message: "Job reporting failed" };
             }
-    
             logger.info(`Job reported successfully: ${jobId}`);
             return { success: true, job: result.job };
     
         } catch (error) {
             logger.error(`Error reporting job: ${error.message}`);
-            return { success: false, message: "Internal server error" };  // Ensure that error returns an object
+            return { success: false, message: "Internal server error" };  
+        }
+    },
+    checkUserReviewExists:async(reviewerId,companyId)=>{
+        try {
+            const existingReview=await jobRepository.findUserReviewForCompany(reviewerId,companyId)
+            if (existingReview) {
+                logger.info(`User ${reviewerId} has already submitted a review for company ${companyId}`);
+                return true;
+              }
+              return false;
+        } catch (error) {
+            logger.error(`Error checking user review: ${error.message}`);
         }
     },
     addReviewAndRating:async(reviewerName,reviewerId,reviewData)=>{

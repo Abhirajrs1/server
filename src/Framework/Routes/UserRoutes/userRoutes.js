@@ -51,6 +51,7 @@ router.get('/employee-checkApplied/:id',authMiddleware,jobControl.checkAlreadyAp
 router.get('/employee-getApplications',authMiddleware,jobControl.getApplications)
 router.post('/employee-jobReport',authMiddleware,jobControl.reportJob)
 router.get('/employee-checkReported/:id',authMiddleware,jobControl.checkIfReported)
+router.get('/employee-checkReview/:companyId',authMiddleware,jobControl.checkReviewExists)
 router.post('/employee-addReviewAndRating',authMiddleware,jobControl.addReviewAndRating)
 router.get('/employee-individualReviews',authMiddleware,jobControl.getIndividualReviews)
 router.delete('/employee-deleteIndividualReviews/:reviewId',authMiddleware,jobControl.deleteIndividualReview)

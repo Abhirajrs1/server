@@ -31,6 +31,20 @@ const applicationUseCase={
             logger.error(`Error fetching application details for application ID: ${id} - ${error.message}`);
         }
     },
+    updateStatus:async(id,status)=>{
+        try {
+            const result=await applicationRepository.updateApplicationStatus(id,status)
+            if (!result) {
+                logger.warn(`Failed to update status for application ID: ${id}`);
+                return { message: "Failed to update status" };
+            } else {
+                logger.info(`Status updated successfully for application ID: ${id}`);
+                return result;
+            }
+        } catch (error) {
+            logger.error("Error on update status")
+        }
+    },
     checkAlreadyApplied:async(jobId,userId)=>{
         try {
             const existingApplication=await applicationRepository.findAlreadyApply(jobId,userId)

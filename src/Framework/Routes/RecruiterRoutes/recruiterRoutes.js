@@ -32,6 +32,7 @@ router.get('/recruiter-getAllCategories',authMiddleware,categoryController.getAl
 
 router.get('/recruiter-getApplication/:id',authMiddleware,applicationController.getApplication)
 router.get('/recruiter-getApplicationDetails/:id',authMiddleware,applicationController.getApplicationDetails)
+router.put('/recruiter-updateApplicationStatus/:id',authMiddleware,applicationController.updateStatus)
 
 router.get('/recruiter-getPlans',planControl.getPlansForRecruiter)
 router.post('/recruiter-createOrder',recruiterController.createOrder)

@@ -26,6 +26,20 @@ const applicationRepository={
             logger.error(`Error fetching applications for recruiter ID: ${id} - ${error.message}`);
         }
     },
+    updateApplicationStatus:async(id,status)=>{
+        try {
+            const updatedStatus=await Application.findByIdAndUpdate({_id:id},{status:status},{new:true})
+            if (!updatedStatus) {
+                logger.warn(`Application with ID: ${id} not found for status update`);
+            } else {
+                logger.info(`Application status updated successfully for ID: ${id} to ${status}`);
+            }
+            return updatedStatus
+        } catch (error) {
+            logger.error(`Error updating application status for ID: ${id} - ${error.message}`);
+        }
+
+    },
     getApplicationDetails:async(id)=>{
         try {
             const application=await Application.findOne({_id:id}).populate('jobId')

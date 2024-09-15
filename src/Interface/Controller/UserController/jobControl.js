@@ -122,11 +122,33 @@ const jobControl={
             return res.status(500).json({ message: "Internal server error" });
         }
     },
+    checkReviewExists:async(req,res)=>{
+        try {
+            const reviewerId=req.user.user._id
+            const {companyId}=req.params
+            const existingReview=await jobUseCase.checkUserReviewExists(reviewerId,companyId)
+            if (existingReview) {
+                logger.info(`User ${reviewerId} has already added a review for company ${companyId}`);
+                return res.status(200).json({ success: true, message: "Review already exists", hasReviewed: true });
+            } else {
+                logger.info(`User ${reviewerId} has not added a review for company ${companyId}`);
+                return res.status(200).json({ success: true, message: "No review exists", hasReviewed: false });
+            }
+        } catch (error) {
+            logger.error(`Error checking if review exists: ${error.message}`);
+            return res.status(500).json({ message: "Internal server error" });
+        }
+    },
     addReviewAndRating:async(req,res)=>{
         try {
             const reviewerName=req.user.user.username
             const reviewerId=req.user.user._id
             const {reviewData}=req.body
+            const existingReview=await jobUseCase.checkUserReviewExists(reviewerId,reviewData.company)
+            if (existingReview) {
+                logger.warn('User has already submitted a review for this company');
+                return res.status(400).json({ success: false, message: 'You have already submitted a review for this company' });
+              }
             const result=await jobUseCase.addReviewAndRating(reviewerName,reviewerId,reviewData)            
             if(result){
                 logger.info('Review added successfully');
