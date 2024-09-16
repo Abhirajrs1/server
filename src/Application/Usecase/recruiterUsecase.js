@@ -8,6 +8,7 @@ import logger from "../../Framework/Utilis/logger.js";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
+import orderRepository from "../../Framework/Repositories/orderRepository.js";
 dotenv.config()
 
 const emailService = new EmailService()
@@ -157,17 +158,37 @@ const recruiterUseCase = {
             logger.error(`Failed to create order. Error: ${error.message}`, { error });
         }
     },
-    verifyPayment:async(paymentId,orderId,signature,email)=>{
+    verifyPayment:async(paymentId,orderId,signature,email,amount,planId)=>{
         try {
             const verification=await paymentService.verifyPayment(paymentId, orderId, signature)
-            if(verification.success){
-                await recruiterRepository.updateRecruiterSubscription(email,true)
-                logger.info(`Payment verified successfully for email: ${email}`);
-                return { success: true, message: 'Payment verified and subscription updated' };
-            }else{
+            if(!verification.success){
                 logger.warn(`Invalid signature for payment ID: ${paymentId}`);
                 return { success: false, message: 'Invalid signature' };
             }
+                const subscriptionUpdated= await recruiterRepository.updateRecruiterSubscription(email,true)
+                if(!subscriptionUpdated){
+                    logger.warn(`Failed to update subscription for email: ${email}`);
+                    return { success: false, message: 'Failed to update subscription' };
+                }
+                logger.info(`Payment verified successfully for email: ${email}`);
+                const recruiter=await recruiterRepository.findRecruiterByEmail(email)
+                if (!recruiter) {
+                    logger.warn(`Recruiter with email ${email} not found.`);
+                    return { success: false, message: 'Recruiter not found' };
+                }
+                const order = {
+                    userId: recruiter._id, 
+                    planId: planId,
+                    amount: amount,
+                    orderDate: new Date()   
+                };
+                const savedOrder=await orderRepository.createNewOrder(order)
+                if (!savedOrder) {
+                    logger.warn(`Failed to create order for recruiter ${email}`);
+                    return { success: false, message: 'Failed to create order' };
+                }
+                logger.info(`Order created for recruiter ${email} with order ID: ${savedOrder._id}`);
+                return { success: true, message: 'Payment verified, subscription updated, and order created' };
         } catch (error) {
             logger.error(`Failed to verify payment. Error: ${error.message}`, { error });
         }

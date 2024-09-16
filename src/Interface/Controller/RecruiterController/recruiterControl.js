@@ -164,8 +164,8 @@ const recruiterController = {
     },
     verifyPayment:async(req,res)=>{
         try {
-            const { paymentId, orderId, signature, email } = req.body;
-            const result=await recruiterUseCase.verifyPayment(paymentId, orderId, signature, email)
+            const { paymentId, orderId, signature, email,amount,planId } = req.body;
+            const result=await recruiterUseCase.verifyPayment(paymentId, orderId, signature, email,amount,planId)
             if (result.success) {
                 res.status(200).json(result);
               } else {
