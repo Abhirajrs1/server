@@ -15,6 +15,7 @@ router.post('/admin-login',adminController.postLogin)
 router.get('/admin-verify',authMiddleware,adminController.adminVerified)
 router.get('/admin-logout',authMiddleware,adminController.adminLogout)
 router.get('/admin-getStats',authMiddleware,adminController.getCountstatus)
+router.get('/admin-getCategoryStats',authMiddleware,adminController.getCategoryStats)
 
 router.get('/admin-candidates',authMiddleware,userController.getAllCandidates)
 router.put('/admin-candidates/:id/block',authMiddleware,userController.blockOrUnblockUser)

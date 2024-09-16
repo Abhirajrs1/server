@@ -4,6 +4,7 @@ import { Recruiter } from "../../Core/Entities/recruiterCollection.js";
 import { Job } from "../../Core/Entities/jobCollection.js";
 import { Company } from "../../Core/Entities/companyCollection.js";
 import logger from "../Utilis/logger.js";
+import { Category } from "../../Core/Entities/categoryCollection.js";
 
 const adminRepository={
    findAdminByEmail:async(email)=>{
@@ -180,6 +181,26 @@ const adminRepository={
         return jobs
       } catch (error) {
         logger.error(`Error counting jobs: ${error.message}`);
+      }
+    },
+    getCategoryStats:async()=>{
+      try {
+        const categories = await Category.aggregate([
+          {
+            $group: {
+              _id: "$categoryName",  
+              count: { $sum: 1 }     
+            }
+          }
+        ]);
+    
+        logger.info(`Category stats retrieved successfully`);
+        return categories.map((cat) => ({
+          name: cat._id,  
+          count: cat.count, 
+        }));
+      } catch (error) {
+        logger.error(`Error fetching category stats: ${error.message}`);
       }
     }
 }

@@ -182,6 +182,21 @@ const adminUseCase = {
       logger.error(`Error retrieving admin stats: ${error.message}`);
       return { message: error.message };
     }
+  },
+  getCategoryStats:async()=>{
+    try {
+      const categories=await adminRepository.getCategoryStats()
+      if (categories) {
+        logger.info(`Category stats retrieved successfully: ${categories.length} categories found.`);
+        return categories;
+      } else {
+        logger.warn("No categories found.");
+        return { message: "No categories found" };
+      }  
+      } catch (error) {
+        logger.error(`Error retrieving category statistics: ${error.message}`);
+        return { message: error.message };
+    }
   }
 };
 
