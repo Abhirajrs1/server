@@ -13,7 +13,17 @@ const orderRepository={
         } catch (error) {
             logger.error(`Failed to create a new order for user: ${orderData.userId}. Error: ${error.message}`, { error });
         }
-
+    },
+    getOrders:async(page,limit)=>{
+        try {
+            const skip=(page-1)*limit
+            const orders=await Orders.find().populate('userId','recruitername companyName').populate('planId','planName').skip(skip).limit(limit)
+            const total=await Orders.countDocuments()
+            logger.info(`Fetched ${orders.length} orders from page ${page} with limit ${limit}`);
+            return {orders,total}
+        } catch (error) {
+            logger.error(`Failed to fetch orders for page ${page}. Error: ${error.message}`, { error });
+        }
     }
 
 }

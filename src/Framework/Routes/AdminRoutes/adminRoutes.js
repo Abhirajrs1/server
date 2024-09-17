@@ -7,6 +7,7 @@ import jobController from '../../../Interface/Controller/AdminController/jobCont
 import categoryController from '../../../Interface/Controller/AdminController/categoryController.js'
 import planController from '../../../Interface/Controller/AdminController/planController.js'
 import companyControl from '../../../Interface/Controller/AdminController/companyControl.js'
+import orderController from '../../../Interface/Controller/AdminController/orderController.js'
 const authMiddleware=Middleware.adminMiddleware
 
 const router=express.Router()
@@ -41,6 +42,8 @@ router.delete('/admin-deletePlan/:id',authMiddleware,planController.deletePlan)
 router.get('/admin-companies',authMiddleware,companyControl.getCompanies)
 router.put('/admin-companies/:id/block',authMiddleware,companyControl.activeOrInactiveCompany)
 router.get('/admin-companyDetails/:id',authMiddleware,companyControl.getCompanyDetails)
+
+router.get('/admin-orders',authMiddleware,orderController.getOrders)
 
 
 export {router as AdminRouter}
