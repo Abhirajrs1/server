@@ -24,6 +24,15 @@ const orderRepository={
         } catch (error) {
             logger.error(`Failed to fetch orders for page ${page}. Error: ${error.message}`, { error });
         }
+    },
+    getTotalOrders:async()=>{
+        try {
+            const totalOrders = await Orders.countDocuments({});
+            logger.info(`Total orders count: ${totalOrders}`);
+            return totalOrders;
+        } catch (error) {
+            logger.error('Error fetching total orders', error);
+        }
     }
 
 }

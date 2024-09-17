@@ -44,6 +44,7 @@ router.put('/admin-companies/:id/block',authMiddleware,companyControl.activeOrIn
 router.get('/admin-companyDetails/:id',authMiddleware,companyControl.getCompanyDetails)
 
 router.get('/admin-orders',authMiddleware,orderController.getOrders)
+router.get('/admin-getOrderStats',authMiddleware,orderController.getOrderStats)
 
 
 export {router as AdminRouter}

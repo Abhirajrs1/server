@@ -15,6 +15,17 @@ const orderUseCase={
         } catch (error) {
             logger.error(`Error fetching orders for Page: ${page}, Limit: ${limit}. Error: ${error.message}`, { error });
         }
+    },
+    getOrderStats:async(month,week)=>{
+        try {
+            const [totalOrders]=await Promise.all([
+                orderRepository.getTotalOrders()
+            ])
+            logger.info(`Order statistics fetched - Total Orders: ${totalOrders}`);
+            return { totalOrders };
+        } catch (error) {
+            logger.error(`Error fetching order statistics. Error: ${error.message}`, { error });
+        }
     }
 
 

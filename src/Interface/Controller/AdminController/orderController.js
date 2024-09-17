@@ -17,6 +17,16 @@ const orderController={
             logger.error(`Error occurred while retrieving orders. Page: ${page}, Limit: ${limit}, Error: ${error.message}`, { error });
             return res.status(500).json({ success: false, message: 'Error retrieving orders' });
         }
+    },
+    getOrderStats:async(req,res)=>{
+        try {
+            const orderStats=await orderUseCase.getOrderStats()
+            logger.info('Order statistics retrieved successfully');
+            return res.status(200).json({ success: true,totalOrders:orderStats.totalOrders });
+        } catch (error) {
+            logger.error(`Error occurred while retrieving order statistics. Error: ${error.message}`, { error });
+            return res.status(500).json({ success: false, message: 'Error retrieving order statistics' });
+        }
     }
 
 }
