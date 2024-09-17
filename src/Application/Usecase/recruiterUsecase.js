@@ -92,7 +92,7 @@ const recruiterUseCase = {
                 logger.warn(`Incorrect password for recruiter: ${email}`);
                 return { message: "Incorrect password" }
             }
-            const token = await generateJWT(recruiter.email)
+            const token = await generateJWT(recruiter.email,recruiter.role)
             logger.info(`Recruiter logged in: ${email}`);
             return { recruiter, token }
         } catch (error) {

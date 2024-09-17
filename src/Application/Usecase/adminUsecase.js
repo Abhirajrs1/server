@@ -17,7 +17,7 @@ const adminUseCase = {
         logger.warn(`Incorrect password for admin: ${email}`);
         return { message: "Incorrect password" };
       }
-      const token = await generateJWT(admin.email);
+      const token = await generateJWT(admin.email,admin.role);
       logger.info(`Admin login successful: ${email}`);
       return { admin, token };
     } catch (error) {

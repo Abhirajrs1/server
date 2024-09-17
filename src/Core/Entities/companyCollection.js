@@ -47,6 +47,10 @@ const CompanySchema=new mongoose.Schema({
     missionStatement:{
         type:String
     },
+    role:{
+        type:String,
+        default:'company'
+    },
     companyaddress:[{
         id:{
             type:String,

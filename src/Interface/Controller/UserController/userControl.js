@@ -71,7 +71,7 @@ const userController = {
                 logger.warn(`Login failed for email: ${email}, reason: ${loginResult.message}`);
                 return res.status(400).json({ success: false, message: loginResult.message });
             } 
-            const { user, token } = loginResult; 
+            const { user, token } = loginResult;             
             if(user.block){
                 logger.warn(`Blocked user tried to login: ${email}`);
                 res.clearCookie('accessToken');

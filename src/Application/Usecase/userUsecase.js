@@ -87,7 +87,7 @@ const userUseCase={
             logger.warn(`Login failed for email: ${email}, reason: Incorrect password`)
             return {message:"Incorrect password"}
            }
-           const token=await generateJWT(user.email)
+           const token=await generateJWT(user.email,user.role)
            logger.info(`User login successfully ${email}`)
            return {user,token}
         } catch (error) {

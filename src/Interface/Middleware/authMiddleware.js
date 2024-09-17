@@ -23,7 +23,7 @@ const Middleware={
                 res.clearCookie('accessToken');
                 return res.status(403).json({ message: 'Your account has been blocked. Please contact support.' });
             }
-            req.user=user
+            req.user={...user,role:decoded.role}
             next()
         } catch (error) {
             console.log(error);
@@ -47,7 +47,8 @@ const Middleware={
             }
             req.recruiter = {
                 ...recruiter,
-                email: decoded.email 
+                email: decoded.email,
+                role:decoded.role
             };
             next()
     
@@ -69,7 +70,8 @@ const Middleware={
             }
             req.admin={
                 ...admin,
-                email: decoded.email 
+                email: decoded.email,
+                role:decoded.role 
             }
             next()
         } catch (error) {
@@ -83,7 +85,7 @@ const Middleware={
         if(!token){
             return res.status(400).json({message:"Access denied. No token found"})
         }
-        const decoded=jwt.verify(token,process.env.KEY)        
+        const decoded=jwt.verify(token,process.env.KEY)                
         const company=await companyUseCase.getCompanyByEmail(decoded.email)                
         if(!company){
             return res.status(401).json({message:"Company not found"})
@@ -92,7 +94,10 @@ const Middleware={
             res.clearCookie('companyaccessToken');
             return res.status(403).json({ message: 'Your account has been blocked. Please contact support.'});
         }
-        req.company=company
+        req.company={
+            ...company,
+            role:decoded.role
+        }
         next()
         } catch (error) {
             console.log(error);

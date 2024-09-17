@@ -44,7 +44,7 @@ const companyUseCase={
                 logger.warn(`Login failed: Incorrect password for company with email ${email}`);
                 return {message:"Incorrect password"}
            }
-           const token=await generateJWT(company.email)
+           const token=await generateJWT(company.email,company.role)
            logger.info(`Login successful for company: ${company.email}`);
            return {company,token}
         } catch (error) {
