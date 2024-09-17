@@ -68,7 +68,7 @@ const recruiterController = {
                     res.clearCookie('recruiteraccessToken');
                     return res.status(403).json({ success: false, message: 'Your account has been blocked. Please contact support.' });
                 }
-                res.cookie('recruiteraccessToken', String(token), { httpOnly: true, maxAge: 3600000 })
+                res.cookie('recruiteraccessToken', String(token), { httpOnly:false, maxAge: 3600000 })
                 logger.info(`Recruiter logged in successfully: ${email}`);
                 res.status(200).json({ success: true, message: "Recruiter login successfully", recruiter, token })
             }

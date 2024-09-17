@@ -20,7 +20,7 @@ const chatController={
     },
     sendMessage:async(req,res)=>{
         try {
-            const {chatId,message}=req.body
+            const {chatId,message}=req.body            
             const recruiterId=req.recruiter.recruiter._id.toString()
             const newMessage=await chatUseCase.saveMessages(message,chatId,recruiterId)            
             if (newMessage) {

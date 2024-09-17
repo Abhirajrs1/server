@@ -77,7 +77,7 @@ const userController = {
                 res.clearCookie('accessToken');
                 return res.status(403).json({ success: false, message: 'Your account has been blocked. Please contact support.' });              
             }
-            res.cookie('accessToken', String(token), { httpOnly: true, maxAge: 3600000 });
+            res.cookie('accessToken', String(token), { httpOnly: false, maxAge: 3600000 });
             logger.info(`User successfully logged in: ${email}`);
             res.status(200).json({ success: true, message: "User login successfully", user, token });
         } catch (error) {
@@ -133,7 +133,7 @@ const userController = {
     // User verification
     isVerified: async (req, res) => {
         try {
-            logger.info(`User verified: ${req.user.email}`);            
+            logger.info(`User verified: ${req.user.user.email}`);            
             res.status(200).json({ success: true, message: "Verified user", user: req.user });
         } catch (error) {
             logger.error(`Verification error: ${error.message}`);

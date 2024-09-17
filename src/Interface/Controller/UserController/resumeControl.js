@@ -36,6 +36,7 @@ const resumeControl={
     getResumeEducation:async(req,res)=>{
         try {
             const id=req.user.user._id
+            console.log(id,"USER ID")
             const result=await userUseCase.getResumeEducation(id)
             if(result){
                 logger.info(`Successfully retrieved education details for candidate ID: ${id}`);

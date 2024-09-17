@@ -94,10 +94,7 @@ const Middleware={
             res.clearCookie('companyaccessToken');
             return res.status(403).json({ message: 'Your account has been blocked. Please contact support.'});
         }
-        req.company={
-            ...company,
-            role:decoded.role
-        }
+        req.company= company
         next()
         } catch (error) {
             console.log(error);
