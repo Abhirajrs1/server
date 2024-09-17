@@ -1,6 +1,7 @@
 import userUseCase from "../../../Application/Usecase/userUsecase.js";
 import companyUseCase from "../../../Application/Usecase/companyUsecase.js";
 import { generateJWT } from "../../../Framework/Services/jwtServices.js";
+import { generateRefreshToken } from "../../../Framework/Services/jwtServices.js";
 import logger from "../../../Framework/Utilis/logger.js";
 
 const userController = {

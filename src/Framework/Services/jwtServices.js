@@ -10,3 +10,12 @@ export const generateJWT=async(email,role)=>{
         console.log(error);
     }
 }
+
+export const generateRefreshToken=async(email)=>{
+    try {
+        const refreshToken=jwt.sign({email:email},process.env.REFRESH_TOKEN_KEY,{expiresIn:'7d'})
+        return refreshToken
+    } catch (error) {
+        console.log(error);
+    }
+}

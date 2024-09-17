@@ -2,6 +2,7 @@ import userRepository from "../../Framework/Repositories/userRepository.js";
 import generateOTP from "../../Framework/Services/otpServices.js";
 import EmailService from "../../Framework/Services/mailerServices.js";
 import { generateJWT } from "../../Framework/Services/jwtServices.js";
+import { generateRefreshToken } from "../../Framework/Services/jwtServices.js";
 import sendEmail from "../../Framework/Services/forgotPasswordMail.js";
 import uploadFileToS3 from "../../Framework/Services/s3.js";
 import logger from "../../Framework/Utilis/logger.js";
@@ -88,8 +89,9 @@ const userUseCase={
             return {message:"Incorrect password"}
            }
            const token=await generateJWT(user.email,user.role)
+           const refreshToken=await generateRefreshToken(user.email)
            logger.info(`User login successfully ${email}`)
-           return {user,token}
+           return {user,token,refreshToken}
         } catch (error) {
             logger.error(`Login error for email: ${email}, error: ${error.message}`);        }
     },
