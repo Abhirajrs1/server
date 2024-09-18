@@ -4,6 +4,8 @@ import userUseCase from '../../Application/Usecase/userUsecase.js'
 import recruiterUseCase from '../../Application/Usecase/recruiterUsecase.js'
 import adminUseCase from '../../Application/Usecase/adminUsecase.js'
 import companyUseCase from '../../Application/Usecase/companyUsecase.js'
+import { generateJWT } from '../../Framework/Services/jwtServices.js'
+import { generateRefreshToken } from '../../Framework/Services/jwtServices.js'
 dotenv.config()
 
 const Middleware={
@@ -11,23 +13,57 @@ const Middleware={
     authMiddleware:async(req,res,next)=>{
         try {
             const token=req.cookies.accessToken
-            if(!token){
+            const refreshToken=req.cookies.refreshToken
+            if(!token && !refreshToken){
                 return res.status(400).json({message:"Access denied. No token found"})
             }
-            const decoded=jwt.verify(token,process.env.KEY)
+            try {
+                const decoded=jwt.verify(token,process.env.KEY)
+                const user=await userUseCase.getUserByEmail(decoded.email)
+                if(!user){
+                    return res.status(401).json({message:"User not found"})
+                }
+                if (user.block) {
+                    res.clearCookie('accessToken');
+                    res.clearCookie('refreshToken')
+                    return res.status(403).json({ message: 'Your account has been blocked. Please contact support.' });
+                }
+                req.user={...user,role:decoded.role}
+                next()
+            } catch (error) {
+              if(refreshToken){
+                const newTokens=await refreshTokens(refreshToken)
+                if(newTokens){
+                    res.cookie('accessToken', newTokens.token, { httpOnly: false, maxAge: 3600000 });
+                    res.cookie('refreshToken', newTokens.refreshToken, { httpOnly: false, maxAge: 7 * 24 * 60 * 60 * 1000 });
+                    req.user = { ...newTokens.user };
+                    next();
+                }else{
+                    return res.status(401).json({ message: 'Invalid refresh token' });
+                }
+              }else{
+                return res.status(401).json({ message: 'Invalid token' });
+              }
+            }   
+            } catch (error) {
+                console.log(error);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+         
+    },
+    refreshTokens:async(refreshToken)=>{
+        try {
+            const decoded=jwt.verify(refreshToken,process.env.REFRESH_TOKEN_SECRET)
             const user=await userUseCase.getUserByEmail(decoded.email)
-            if(!user){
-                return res.status(401).json({message:"User not found"})
+            if(!user || user.block){
+                return null
             }
-            if (user.block) {
-                res.clearCookie('accessToken');
-                return res.status(403).json({ message: 'Your account has been blocked. Please contact support.' });
-            }
-            req.user={...user,role:decoded.role}
-            next()
+            const newAccessToken = await generateJWT(user.email, user.role);
+            const newRefreshToken = await generateRefreshToken(user.email);
+            return { token: newAccessToken, refreshToken: newRefreshToken, user };
         } catch (error) {
-            console.log(error);
-            return res.status(401).json({ message: 'Invalid token' });
+            console.error('Error refreshing tokens:', error);
+            return null;
         }
     },
     recruiterMiddleware:async(req,res,next)=>{

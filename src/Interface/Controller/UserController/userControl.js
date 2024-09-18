@@ -72,13 +72,15 @@ const userController = {
                 logger.warn(`Login failed for email: ${email}, reason: ${loginResult.message}`);
                 return res.status(400).json({ success: false, message: loginResult.message });
             } 
-            const { user, token } = loginResult;             
+            const { user, token,refreshToken } = loginResult;             
             if(user.block){
                 logger.warn(`Blocked user tried to login: ${email}`);
                 res.clearCookie('accessToken');
+                res.clearCookie('refreshToken')
                 return res.status(403).json({ success: false, message: 'Your account has been blocked. Please contact support.' });              
             }
             res.cookie('accessToken', String(token), { httpOnly: false, maxAge: 3600000 });
+            res.cookie('refreshToken', refreshToken, { httpOnly: false, maxAge: 7 * 24 * 60 * 60 * 1000 });
             logger.info(`User successfully logged in: ${email}`);
             res.status(200).json({ success: true, message: "User login successfully", user, token });
         } catch (error) {
@@ -368,6 +370,7 @@ const userController = {
     postLogout: async (req, res) => {
         try {
             res.clearCookie('accessToken');
+            res.clearCookie('refreshToken');
             logger.info(`User successfully logged out: ${req.user.user.email}`);
             res.status(200).json({ success: true, message: "User logout successfully" });
         } catch (error) {
