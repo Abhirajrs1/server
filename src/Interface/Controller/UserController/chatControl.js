@@ -36,13 +36,23 @@ const chatController = {
             res.status(500).json({ success: false, message: 'Error getting chat room' });
         }
     },
+    // sendFileMessage:async(req,res)=>{
+    //     try {
+    //         const file=req.file
+        
+    //         console.log(file,"FILE");
+            
+    //     } catch (error) {
+            
+    //     }
+
+    // },
+
     saveMessage:async(req,res)=>{
         try {
             const messageData=req.body
             const {message,room}=messageData
-
             const id=room
-            console.log("roooom",id)
             const userId=req.user.user._id            
             const result=await chatUseCase.saveMessages(message,id,userId)
             if (result) {
