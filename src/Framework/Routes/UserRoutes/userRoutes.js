@@ -65,6 +65,7 @@ router.get('/employee-getChatRoom/:jobId/:employerId',authMiddleware,chatControl
 router.post('/employee-createRoom',authMiddleware,chatController.createRoom)
 router.post('/employee-sendMessage',authMiddleware,chatController.saveMessage)
 router.get('/employee-getMessages/:chatId',authMiddleware,chatController.getMessages)
+router.post('/employee-uploadChatfile',upload.single('file'),authMiddleware)
 
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get(

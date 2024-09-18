@@ -2,6 +2,7 @@ import { Chat } from "../../Core/Entities/chatCollection.js";
 import { User } from "../../Core/Entities/userCollection.js";
 import { Recruiter } from "../../Core/Entities/recruiterCollection.js";
 import logger from "../Utilis/logger.js";
+import { Message } from "../../Core/Entities/messageCollection.js";
 
 const chatRepository = {
     // U
@@ -44,7 +45,14 @@ const chatRepository = {
         }
     },
 
-    // U
+    getLatestMessageTimestamp:async(chatId)=>{
+        try {
+            const lastMessage=await Message.findOne({chatId}).sort({createdAt:-1})
+            return lastMessage ? lastMessage.createdAt : null;
+        } catch (error) {
+            
+        }
+    },
     getChatsByRecruiter: async (recruiterId) => {
         try {
             const chats= await Chat.find({ members: recruiterId }).populate({
@@ -52,6 +60,10 @@ const chatRepository = {
                 select:'username email',
                 model:User
             })
+            for (let chat of chats){
+                chat.latestMessageTimestamp =await chatRepository.getLatestMessageTimestamp(chat._id)
+            }
+            chats.sort((a, b) => (b.latestMessageTimestamp || 0) - (a.latestMessageTimestamp || 0));
             logger.info('Fetched chats for recruiter successfully', { recruiterId, chatCount: chats.length });
             return chats;
         } catch (error) {
