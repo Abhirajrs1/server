@@ -181,8 +181,37 @@ const companyUseCase={
         }
         } catch (error) {
             logger.error(`Error uploading logo for company ID: ${companyId}, error: ${error.message}`);
+        } 
+    },
+    getRecruiters:async(companyName,page,limit)=>{
+        try {
+            const {recruiters,total}= await companyRepository.getRecruiters(companyName,page,limit) 
+            if (!recruiters) {
+                logger.warn(`Recruiters not found`);
+                return { message: "Recruiters not found" };
+              } else {
+                logger.info(`Found ${recruiters.length} recruiters`);
+                return {recruiters,total,page,limit};
+              }
+        } catch (error) {
+            logger.error(`Error fetching recruiters: ${error.message}`);
+            return { message: error.message };
         }
-       
+    },
+    deleteRecruiter:async(id)=>{
+        try {
+            const result=await companyRepository.deleteRecruiterById(id)
+            if (result) {
+                logger.info(`Recruiter with ID: ${id} deleted successfully.`);
+                return { message: "Recruiter deleted successfully", result };
+            } else {
+                logger.warn(`Deletion failed: Recruiter with ID: ${id} not found.`);
+                return { message: "Recruiter not found" };
+            }
+        } catch (error) {
+            logger.error(`Error deleting recruiter with ID: ${id}, error: ${error.message}`);
+            return { message: "Error deleting recruiter", error: error.message };
+        }
     }
 
 }

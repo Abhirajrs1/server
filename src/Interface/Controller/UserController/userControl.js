@@ -229,6 +229,23 @@ const userController = {
             res.status(500).json({ message: "Internal server error" });
         }
     },
+    deleteSkill:async(req,res)=>{
+        try {
+            const email=req.user.user.email
+            const skill=req.params.skill
+            const updatedUser=await userUseCase.deleteSkill(email,skill)
+            if(updatedUser.message=="Skill removed successfully"){
+                logger.info(`Successfully deleted skill '${skill}' for user with email: ${email}`);
+                res.status(200).json({ success: true, message: updatedUser.message,user:updatedUser.user});
+            }else {
+                logger.warn(`Failed to delete skill '${skill}' for user with email: ${email}, reason: ${updateUser.message}`);
+                res.status(400).json({ success: false, message: updatedUser.message});
+            }
+        } catch (error) {
+            logger.error(`Error deleting skill '${req.params.skill}' for user with email: ${req.user.user.email}, error: ${error.message}`);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    },
     addDescription:async(req,res)=>{
         try {
             const {userId,description}=req.body

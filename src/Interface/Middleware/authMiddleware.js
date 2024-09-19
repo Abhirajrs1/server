@@ -9,6 +9,21 @@ import { generateRefreshToken } from '../../Framework/Services/jwtServices.js'
 dotenv.config()
 
 const Middleware={
+    refreshTokens:async(refreshToken)=>{
+        try {
+            const decoded=jwt.verify(refreshToken,process.env.REFRESH_TOKEN_SECRET)
+            const user=await userUseCase.getUserByEmail(decoded.email)
+            if(!user || user.block){
+                return null
+            }
+            const newAccessToken = await generateJWT(user.email, user.role);
+            const newRefreshToken = await generateRefreshToken(user.email);
+            return { token: newAccessToken, refreshToken: newRefreshToken, user };
+        } catch (error) {
+            console.error('Error refreshing tokens:', error);
+            return null;
+        }
+    },
 
     authMiddleware:async(req,res,next)=>{
         try {
@@ -50,21 +65,6 @@ const Middleware={
                 return res.status(500).json({ message: 'Internal server error' });
             }
          
-    },
-    refreshTokens:async(refreshToken)=>{
-        try {
-            const decoded=jwt.verify(refreshToken,process.env.REFRESH_TOKEN_SECRET)
-            const user=await userUseCase.getUserByEmail(decoded.email)
-            if(!user || user.block){
-                return null
-            }
-            const newAccessToken = await generateJWT(user.email, user.role);
-            const newRefreshToken = await generateRefreshToken(user.email);
-            return { token: newAccessToken, refreshToken: newRefreshToken, user };
-        } catch (error) {
-            console.error('Error refreshing tokens:', error);
-            return null;
-        }
     },
     recruiterMiddleware:async(req,res,next)=>{
         try {

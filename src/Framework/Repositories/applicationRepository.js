@@ -55,7 +55,7 @@ const applicationRepository={
     },
     getApplicationforCandidates:async(id)=>{
         try {
-            const application=await Application.find({applicant:id}).populate('jobId')
+            const application=await Application.find({applicant:id}).populate('jobId').sort({ createdAt: -1 });
             if(!application){
                 logger.warn(`No applications found for candidate ID: ${id}`);
             }else{

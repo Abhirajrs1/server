@@ -175,6 +175,33 @@ const companyRepository={
         } catch (error) {
             logger.error(`Error removing review from companies: ${error.message}`);
         }
+    },
+    getRecruiters:async(companyName,page,limit)=>{
+        try {
+        const skip=(page-1)*limit
+        const recruiters=await Recruiter.find({companyName:companyName}).skip(skip).limit(limit)
+        const total=await Recruiter.countDocuments({companyName:companyName})
+        if (recruiters.length > 0) {
+            logger.info(`Fetched ${recruiters.length} recruiters for company name: ${companyName}, page: ${page}, limit: ${limit}`);
+        } else {
+            logger.info(`No recruiters found for company name: ${companyName}, page: ${page}`);
+        }
+        return {recruiters,total}
+        } catch (error) {
+            logger.error(`Error fetching recruiters for company name: ${companyName}, error: ${error.message}`);
+        }   
+    },
+    deleteRecruiterById:async(id)=>{
+        try {
+            const recruiter=await Recruiter.findByIdAndDelete({_id:id})
+            if (!recruiter) {
+                logger.error(`Recruiter with ID ${id} not found`);
+            }
+            logger.info(`Recruiter with ID ${id} successfully deleted`);
+            return recruiter
+        } catch (error) {
+            logger.error(`Error deleting recruiter with ID ${id}: ${error.message}`);
+        }
     }
     
 }

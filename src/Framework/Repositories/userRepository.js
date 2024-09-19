@@ -133,6 +133,19 @@ const userRepository={
         logger.error(`Error during adding skill for email: ${email}, error: ${error.message}`);
     }
    },
+   removeSkill:async(email,skill)=>{
+    try {    
+        let user=await User.findOneAndUpdate({email:email},{$pull:{'Qualification.skills':skill}},{new:true})
+        if (user) {
+            logger.info(`Skill '${skill}' removed for user with email: ${email}`);
+        } else {
+            logger.warn(`No user found with email: ${email}. Skill '${skill}' removal failed.`);
+        }
+        return user
+    } catch (error) {
+        logger.error(`Error during removing skill '${skill}' for user with email: ${email}. Error: ${error.message}`);
+    }
+   },
    addDescription:async(id,description)=>{
     try {
         let result=await User.findOneAndUpdate({_id:id},{description:description},{new:true})

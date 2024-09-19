@@ -17,6 +17,10 @@ router.get('/company-getStats',authMiddleware,companyController.getStats)
 router.get('/get-companies',companyController.getCompanies)
 router.get('/company-getCompanyReviews',authMiddleware,companyController.getCompanyReviews)
 
+router.get('/company-recruiters',authMiddleware,companyController.getRecruiters)
+router.delete('/company-recruiters/:id',authMiddleware,companyController.deleteRecruiter)
+
+
 router.put('/company-uploadLogo',upload.single('logo'),authMiddleware,companyController.uploadLogo)
 router.put('/company-updateContact/:email',authMiddleware,companyController.updateProfile)
 router.put('/company-updateAboutDetails/:email',authMiddleware,companyController.updateAboutDetails)

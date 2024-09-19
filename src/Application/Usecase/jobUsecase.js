@@ -39,12 +39,12 @@ const jobUseCase = {
             logger.error(`Error in postJob: ${error}`);
         }
     },
-    getAllJobs: async () => {
+    getAllJobs: async (page,limit) => {
         try {
-            const jobs = await jobRepository.getJobs()
+            const {jobs,total} = await jobRepository.getJobs(page,limit)
             const activeJobs=jobs.filter(job=>!job.delete)
-            logger.info(`Retrieved ${jobs.length} jobs`);
-            return activeJobs
+            logger.info(`Retrieved ${activeJobs.length} active jobs out of ${total} total jobs`);
+            return {activeJobs,total}
         } catch (error) {
             logger.error(`Error in getAllJobs: ${error}`);
         }

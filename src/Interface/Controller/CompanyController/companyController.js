@@ -184,7 +184,37 @@ const companyController={
             logger.error(`Error uploading logo: ${error.message}`);
             return res.status(500).json({success:false, message: 'Error uploading logo' });
         }
+    },
+    getRecruiters:async(req,res)=>{
+        try {
+            const page=parseInt(req.query.page) || 1
+          const limit=parseInt(req.query.limit) || 10
+          const companyName=req.company.companyName
+          const recruiters =await companyUseCase.getRecruiters(companyName,page,limit)
+          if(recruiters.message){
+            logger.warn(`Error fetching recruiters: ${recruiters.message}`)
+          }
+          logger.info(`Found ${recruiters.recruiters.length} recruiters`);
+          res.status(200).json({ success:true, recruiters:recruiters.recruiters,total:recruiters.total,page:recruiters.page,limit:recruiters.limit })
+        } catch (error) {
+            logger.error(`Error fetching recruiters: ${error.message}`)
+            res.status(500).json({ message: "Internal server error" })
+        }
+    },
+    deleteRecruiter:async(req,res)=>{
+        try {
+           const {id}=req.params
+           const result=await companyUseCase.deleteRecruiter(id) 
+           if (result.message === "Recruiter not found") {
+            logger.warn(`Failed to delete recruiter: ${result.message} for ID: ${id}`);
+            return res.status(404).json({ success: false, message: result.message });
+        }
+        logger.info(`Recruiter successfully deleted with ID: ${id}`);
+        return res.status(200).json({ success: true, message: "Recruiter successfully deleted" });
+        } catch (error) {
+            logger.error(`Error deleting recruiter with ID: ${req.params.id}, error: ${error.message}`);
+            return res.status(500).json({ success: false, message: 'Internal server error' });
+        }
     }
-
 }
 export default companyController

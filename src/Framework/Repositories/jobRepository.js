@@ -28,11 +28,13 @@ const jobRepository = {
             logger.error(`Error finding company by name ${companyName}: ${error.message}`);
         }
     },
-    getJobs: async () => {
+    getJobs: async (page,limit) => {
         try {
-            const jobs = await Job.find()
+            const skip=(page-1)*limit
+            const jobs = await Job.find().skip(skip).limit(limit)
+            const total=await Job.countDocuments()
             logger.info(`Retrieved ${jobs.length} jobs`);
-            return jobs
+            return {jobs,total}
         } catch (error) {
             logger.error(`Error retrieving jobs: ${error}`);
         }

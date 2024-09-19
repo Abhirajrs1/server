@@ -270,6 +270,21 @@ const userUseCase={
             logger.error(`Add skill error for email: ${email}, error: ${error.message}`);
         }
     },
+    deleteSkill:async(email,skill)=>{
+        try {
+            const user=await userRepository.removeSkill(email,skill)
+            if (user) {
+                logger.info(`Skill '${skill}' successfully removed for user with email: ${email}`);
+                return { message: "Skill removed successfully", user };
+            } else {
+                logger.warn(`Failed to remove skill '${skill}' for user with email: ${email}. User or skill not found.`);
+                return { message: "Failed to remove skill. User or skill not found." };
+            }
+        } catch (error) {
+            logger.error(`Error removing skill '${skill}' for user with email: ${email}, error: ${error.message}`);
+           return { message: "Error removing skill", error: error.message };
+        }
+    },
     addDescription:async(id,description)=>{
         try {
             const result=await userRepository.addDescription(id,description)
