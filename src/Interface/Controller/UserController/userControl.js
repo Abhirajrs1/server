@@ -166,7 +166,7 @@ const userController = {
     // Update user details
     userUpdate: async (req, res) => {
         try {
-            const { email } = req.params;
+            const email = req.user.user.email;
             const { updatedUserContact } = req.body;
             const updatedUser = await userUseCase.updateUser(email, updatedUserContact);
             if (updatedUser.message === "User not found") {
@@ -190,7 +190,6 @@ const userController = {
         try {
             const { email } = req.params;
             const { education } = req.body;
-
             const insertEducation = await userUseCase.addEducation(email, education);
             if (insertEducation.message === "User not found") {
                 logger.warn(`Add education failed for email: ${email}, reason: ${insertEducation.message}`);
@@ -207,7 +206,44 @@ const userController = {
             res.status(500).json({ message: "Internal server error" });
         }
     },
-
+    editEducation:async(req,res)=>{
+        try {
+            const {id}=req.params
+            const email=req.user.user.email
+            const {education}=req.body
+            const updatedEducation=await userUseCase.editEducation(email,id,education)
+        if (updatedEducation.message==="User or education not found") {
+            logger.warn(`Edit education failed for email: ${email}, reason: User or education not found`);
+            res.status(400).json({ success: false, message: "User or education not found" });
+        } else if(updatedEducation.message==="User education updated successfully") {
+            logger.info(`User education updated successfully for email: ${email}, education ID: ${id}`);
+            res.status(200).json({ success: true, message: "User education updated successfully", user: updatedEducation.user });
+        }else{
+            logger.warn(`Edit education failed for email: ${email}, reason: ${updatedEducation.message}`);
+                res.status(400).json({ success: false, message:updatedEducation.message });
+        }
+        } catch (error) {
+            logger.error(`Edit education failed for email: ${email}, education ID: ${id}, error: ${error.message}`);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    },
+    deleteEducation:async(req,res)=>{
+        try {
+            const {id}=req.params
+            const email=req.user.user.email
+            const updatedEducation=await userUseCase.deleteEducation(id,email)
+            if (updatedEducation.message === "Education removed successfully") {
+                logger.info(`Successfully deleted education with ID '${id}' for user with email: ${email}`);
+                res.status(200).json({ success: true, message: updatedEducation.message, user: updatedEducation.user });
+            } else {
+                logger.warn(`Failed to delete education with ID '${id}' for user with email: ${email}, reason: ${updatedEducation.message}`);
+                res.status(400).json({ success: false, message: updatedEducation.message });
+            }
+        } catch (error) {
+            logger.error(`Error deleting education with ID '${id}' for user with email: ${email}, error: ${error.message}`);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    },
     // Add user skills
     addSkill: async (req, res) => {
         try {
@@ -227,6 +263,26 @@ const userController = {
         } catch (error) {
             logger.error(`Add skill failed for email: ${email}, error: ${error.message}`);
             res.status(500).json({ message: "Internal server error" });
+        }
+    },
+    editSkill:async(req,res)=>{
+        try {
+            const{email}=req.params
+            const {oldSkill,newSkill}=req.body
+            const result=await userUseCase.editSkill(email,oldSkill,newSkill)
+            if (result.message === "Skill not found or update failed") {
+                logger.warn(`Edit skill failed for email: ${email}, reason: ${result.message}`);
+                return res.status(400).json({ success: false, message: result.message });
+              }
+                if (result.message === "User skill updated successfully") {
+                logger.info(`Skill "${oldSkill}" successfully updated to "${newSkill}" for email: ${email}`);
+                return res.status(200).json({ success: true, message: result.message, user: result.updatedUser });
+              }
+              logger.warn(`Edit skill failed for email: ${email}, reason: ${result.message}`);
+              return res.status(400).json({ success: false, message: result.message });
+        } catch (error) {
+            logger.error(`Edit skill failed for email: ${email}, error: ${error.message}`);
+            return res.status(500).json({ message: "Internal server error" });
         }
     },
     deleteSkill:async(req,res)=>{
@@ -284,10 +340,45 @@ const userController = {
         try {
             const data={...req.body,userId:req.user.user._id}
             const result=await userUseCase.addWorkExperience(data)
+            logger.info(`Work experience added successfully for user ID: ${data.userId}, experience ID: ${result._id}`);
             res.status(201).json({ success: true, message: 'Work experience added successfully.', data: result });
         } catch (error) {
+            logger.error(`Failed to add work experience for user ID: ${req.user.user._id}. Error: ${error.message}`);
             res.status(500).json({ success: false, message: 'Failed to add work experience.', error: error.message });
         }
+    },
+    editWorkExperience:async(req,res)=>{
+        try {
+            const data={...req.body,userId:req.user.user.id,experienceId:req.params.id}
+            const result = await userUseCase.editWorkExperience(data);
+            if (!result) {
+                logger.warn(`Work experience not found for experience ID: ${req.params.id}, user ID: ${data.userId}`);
+                return res.status(404).json({ success: false, message: 'Work experience not found.' });
+            }
+            logger.info(`Work experience updated successfully for experience ID: ${req.params.id}, user ID: ${data.userId}`);
+            res.status(200).json({ success: true, message: 'Work experience updated successfully.', data: result });
+        } catch (error) {
+            logger.error(`Error updating work experience for experience ID: ${req.params.id}, user ID: ${req.user.user.id}. Error: ${error.message}`);
+            res.status(500).json({ success: false, message: 'Failed to update work experience.', error: error.message });
+        }
+    },
+    deleteWorkExperience:async(req,res)=>{
+        try {
+            let userId=req.user.user._id
+            let {experienceId}=req.params
+           const experiences=await userUseCase.deleteWorkExperience(userId,experienceId)
+           if (experiences) {
+            logger.info('Successfully deleted work experience for user ID: ' + userId + ', experience ID: ' + experienceId);
+            return res.status(200).json({ success: true, message: 'Work experience deleted successfully',experiences });
+        } else {
+            logger.warn('No work experience found to delete for experience ID: ' + experienceId);
+            return res.status(404).json({ success: false, message: 'Work experience not found' });
+        }  
+        } catch (error) {
+            logger.error('Error deleting work experience for user ID: ' + userId + ', experience ID: ' + experienceId + '. Error: ' + error.message);
+            return res.status(500).json({ success: false, message: 'An error occurred while deleting work experience' });
+        }
+
     },
     getWorkExperience:async(req,res)=>{
         try {
@@ -313,6 +404,22 @@ const userController = {
         } catch (error) {
             logger.error(`Error uploading resume for user ${req.user.user._id}: ${error.message}`);
             res.status(500).json({ success: false, message: 'Failed to upload resume' });
+        }
+    },
+    deleteResume:async(req,res)=>{
+        try {
+            const id=req.user.user._id
+            const resume=await userUseCase.deleteResume(id)
+            if (resume) {
+                logger.info(`Successfully removed resume for user ${id}.`);
+                res.status(200).json({ success: true, message: 'Resume deleted successfully' });
+            } else {
+                logger.warn(`No resume found for user ${id}.`);
+                res.json({ success: false, message: 'No resume found to delete' });
+            }
+        } catch (error) {
+            logger.error(`Error removing resume for user ${id}: ${error.message}`);
+            res.status(500).json({ success: false, message: 'Internal Server Error' });
         }
     },
     getResumeUrl:async(req,res)=>{
@@ -371,7 +478,7 @@ const userController = {
           try {
             const googleUser = await userUseCase.findOrCreateGoogleUser(req.user);
             const token = await generateJWT(googleUser.email);
-            res.cookie('accessToken', String(token), { httpOnly: true, maxAge: 3600000 });
+            res.cookie('accessToken', String(token), { httpOnly: false, maxAge: 3600000 });
             const redirectUrl = `http://localhost:5173/auth?token=${encodeURIComponent(token)}&user=${encodeURIComponent(JSON.stringify(googleUser))}`;
             res.redirect(redirectUrl);
           } catch (error) {

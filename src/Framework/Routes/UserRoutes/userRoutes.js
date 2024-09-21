@@ -2,7 +2,6 @@ import express from 'express'
 import userController from '../../../Interface/Controller/UserController/userControl.js'
 import jobController from '../../../Interface/Controller/RecruiterController/jobController.js'
 import jobControl from '../../../Interface/Controller/UserController/jobControl.js'
-import resumeControl from '../../../Interface/Controller/UserController/resumeControl.js'
 import chatController from '../../../Interface/Controller/UserController/chatControl.js'
 import middleware from '../../../Interface/Middleware/authMiddleware.js'
 import multer from 'multer'
@@ -23,24 +22,22 @@ router.get('/verify',authMiddleware,userController.isVerified)
 
 
 router.get('/employee-details/:email',userController.getUser)
-router.put('/employee-updateContact/:email',userController.userUpdate)
+router.put('/employee-updateContact',authMiddleware,userController.userUpdate)
 router.post('/employee-addQualification/education/:email',userController.addEducation)
+router.put('/employee-editEducation/:id',authMiddleware,userController.editEducation)
+router.delete('/employee-deleteEducation/:id',authMiddleware,userController.deleteEducation)
 router.post('/employee-addQualification/skill/:email',userController.addSkill)
+router.put('/employee-editSkill/:email',authMiddleware,userController.editSkill)
 router.delete('/employee-delteSkills/:skill',authMiddleware,userController.deleteSkill)
 router.get('/employee-getDescription/:id',authMiddleware,userController.getDescription)
 router.put('/employee-addDescription',authMiddleware,userController.addDescription)
 router.post('/employee-addworkexperience',authMiddleware,userController.addWorkExperience)
+router.put('/employee-editWorkExperience/:id',authMiddleware,userController.editWorkExperience)
+router.delete('/employee-deleteWorkExperience/:experienceId',authMiddleware,userController.deleteWorkExperience)
 router.get('/employee-getWorkExperience',authMiddleware,userController.getWorkExperience)
 router.post('/employee-addResume',upload.single('resume'),authMiddleware,userController.addResume)
+router.delete('/employee-deleteResume',authMiddleware,userController.deleteResume)
 router.get('/employee-getResumeUrl',authMiddleware,userController.getResumeUrl)
-
-
-router.post('/employee-postResume',authMiddleware,resumeControl.postUserDetails)
-router.post('/employee-addresumeeducation',authMiddleware,resumeControl.postResumeEducation)
-router.get('/employee-getresumeeducation',authMiddleware,resumeControl.getResumeEducation)
-router.post('/employee-addresumeskill',authMiddleware,resumeControl.postResumeSkill)
-router.get('/employee-getresumeskill',authMiddleware,resumeControl.getResumeSkill)
-
 
 
 router.get('/employee-logout',authMiddleware,userController.postLogout)
@@ -49,6 +46,7 @@ router.get('/employee-listJobs',jobController.getAllJobs)
 router.get('/employee-getIndividualJobDetails/:id',authMiddleware,jobControl.getIndividualJob)
 router.post('/employee-applyJob',authMiddleware,jobControl.applyJob)
 router.get('/employee-checkApplied/:id',authMiddleware,jobControl.checkAlreadyApplied) 
+router.get('/employee-unappliedJobs',authMiddleware,jobControl.getUnappliedJobs)
 router.get('/employee-getApplications',authMiddleware,jobControl.getApplications)
 router.post('/employee-jobReport',authMiddleware,jobControl.reportJob)
 router.get('/employee-checkReported/:id',authMiddleware,jobControl.checkIfReported)
@@ -59,6 +57,8 @@ router.delete('/employee-deleteIndividualReviews/:reviewId',authMiddleware,jobCo
 router.put('/employee-updateReview/:reviewId',authMiddleware,jobControl.updateReview)
 router.get('/employee-getCompanies',userController.getCompanies)
 router.get('/employee-getCompanyDetails/:id',userController.getCompanyDetails)
+
+router.get('/employee-getSearchApplication',authMiddleware,jobControl.getSearchApplication)
 
 router.get('/employee-getCategories',jobControl.getCategories)
 

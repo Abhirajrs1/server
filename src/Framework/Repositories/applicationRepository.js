@@ -1,4 +1,5 @@
 import { Application } from "../../Core/Entities/applicationCollection.js"
+import { Job } from "../../Core/Entities/jobCollection.js"
 import logger from "../Utilis/logger.js"
 
 
@@ -15,15 +16,15 @@ const applicationRepository={
     },
     getApplicationByRecruiter:async(id)=>{
         try {
-            const application=await Application.find({employerId:id}).populate('jobId')
+            const application=await Application.find({jobId:id}).populate('jobId')          
             if(!application){
-                logger.warn(`No applications found for recruiter ID: ${id}`);
+                logger.warn(`No applications found for job ID: ${id}`);
             }else{
-                logger.info(`Fetched applications for recruiter ID: ${id}`);
+                logger.info(`Fetched applications for job ID: ${id}`);
             }
             return application
         } catch (error) {
-            logger.error(`Error fetching applications for recruiter ID: ${id} - ${error.message}`);
+            logger.error(`Error fetching applications for job ID: ${id} - ${error.message}`);
         }
     },
     updateApplicationStatus:async(id,status)=>{
@@ -53,15 +54,86 @@ const applicationRepository={
             logger.error(`Error fetching application details for application ID: ${id} - ${error.message}`);
         }
     },
-    getApplicationforCandidates:async(id)=>{
+    getApplicationforCandidates:async(id,page,limit)=>{
         try {
-            const application=await Application.find({applicant:id}).populate('jobId').sort({ createdAt: -1 });
+            const skip=(page-1)*limit
+            const application=await Application.find({applicant:id}).populate('jobId').sort({ createdAt: -1 }).skip(skip).limit(limit);
+            const total=await Application.countDocuments({applicant:id})
             if(!application){
                 logger.warn(`No applications found for candidate ID: ${id}`);
             }else{
                 logger.info(`Fetched applications for candidate ID: ${id}`);
             }
-            return application
+            return {application,total}
+        } catch (error) {
+            logger.error(`Error fetching applications for candidate ID: ${id} - ${error.message}`);
+        }
+    },
+    getSearchedApplication: async (id, page, limit, searchTerm) => {
+        try {    
+            const skip = (page - 1) * limit;
+            const searchFilter =  {
+                    applicant: id,
+                    $or: [
+                        { 'jobId.jobTitle': { $regex: searchTerm, $options: 'i' } }, 
+                        { 'jobId.companyName': { $regex: searchTerm, $options: 'i' } } 
+                    ]
+                  }
+                ;
+            const application = await Application.aggregate([
+                { $match: { applicant:id } }, // Match based on applicant ID
+                { 
+                    $lookup: {
+                        from: 'jobs', // Your Job collection
+                        localField: 'jobId',
+                        foreignField: '_id',
+                        as: 'jobInfo'
+                    }
+                },
+                { $unwind: '$jobInfo' }, // Unwind the job info
+                {
+                    $match: searchTerm ? {
+                        $or: [
+                            { 'jobInfo.jobTitle': { $regex: searchTerm, $options: 'i' } }, // Search job title
+                            { 'jobInfo.companyName': { $regex: searchTerm, $options: 'i' } } // Search company name
+                        ]
+                    } : {}
+                },
+                { $skip: skip },
+                { $limit: limit }
+            ]);
+    
+            const total = await Application.aggregate([
+                { $match: { applicant:id } },
+                { 
+                    $lookup: {
+                        from: 'jobs',
+                        localField: 'jobId',
+                        foreignField: '_id',
+                        as: 'jobInfo'
+                    }
+                },
+                { $unwind: '$jobInfo' },
+                {
+                    $match: searchTerm ? {
+                        $or: [
+                            { 'jobInfo.jobTitle': { $regex: searchTerm, $options: 'i' } },
+                            { 'jobInfo.companyName': { $regex: searchTerm, $options: 'i' } }
+                        ]
+                    } : {}
+                },
+                { $count: 'total' }
+            ]);
+    
+                const totalCount = total.length > 0 ? total[0].total : 0;
+    
+            if (application.length === 0) {
+                logger.warn(`No applications found for candidate ID: ${id}`);
+                return { message: "Application not found", application: [], total: 0 };
+            } else {
+                logger.info(`Fetched applications for candidate ID: ${id}`);
+                return { application, total: totalCount };
+            }
         } catch (error) {
             logger.error(`Error fetching applications for candidate ID: ${id} - ${error.message}`);
         }
@@ -77,6 +149,17 @@ const applicationRepository={
             return existingApplication
         } catch (error) {
             logger.error(`Error checking application status for user ${userId} on job ${jobId}: ${error.message}`);
+        }
+    },
+    getUnappliedJobs:async(id)=>{
+        try {
+            const appliedJobs=await Application.find({applicant:id}).select('jobId')
+            const appliedJobIds=appliedJobs.map(app=>app.jobId)
+            const jobs=await Job.find({_id:{$nin:appliedJobIds}})
+            logger.info(`Fetched unapplied jobs for user ${id}. Applied jobs: ${appliedJobIds.length}, Unapplied jobs: ${jobs.length}`);
+            return jobs
+        } catch (error) {
+            logger.error(`Error fetching unapplied jobs for user ${userId}: ${error.message}`);
         }
     }
 

@@ -164,80 +164,6 @@ const userUseCase={
         }
     },
     
-    updateResume:async(resumeData)=>{
-        try {
-            const resume=await userRepository.findResumeCandidateByIdAndUpdate(resumeData.candidate,resumeData)
-            if(!resume){
-                resume=await userRepository.createResume(resumeData)
-                logger.info(`Created new resume for candidate ID: ${resumeData.candidate}`);
-            }else{
-                logger.info(`Updated resume for candidate ID: ${resumeData.candidate}`);
-            }
-            return resume
-
-        } catch (error) {
-            logger.error(`Failed to update or create resume for candidate ID: ${resumeData.candidate} - ${error.message}`);
-        }
-    },
-    addResumeEducation:async(id,education)=>{
-        try {
-            const resumeEducation=await userRepository.addResumeEducation(id,education)
-            if (!resumeEducation) {
-                logger.warn(`Add education failed for candidate ID: ${id}`);
-                return { message: "Failed to add education to resume" };
-            } else {
-                logger.info(`Education added successfully for candidate ID: ${id}`);
-                return { message: "Education added successfully", resume: resumeEducation };
-            }
-        } catch (error) {
-            logger.error(`Add education error for candidate ID: ${id}, error: ${error.message}`);
-        }
-    },
-    getResumeEducation:async(id)=>{
-        try {
-            const education=await userRepository.getResumeEducation(id)
-            if(education){
-                logger.info(`Education details successfully retrieved for candidate ID: ${id}`);
-                return education
-            }else{
-                logger.warn(`No education details found for candidate ID: ${id}`);
-                return {message: "No education details found for the given candidate ID" };
-            }
-        } catch (error) {
-            logger.error(`Error getting education by candidate ID: ${id}, error: ${error.message}`);
-            return { success: false, message: "Internal server error" };
-        }
-    },
-    addResumeSkill:async(id,skill)=>{
-        try {
-            const resumeSkill=await userRepository.addResumeSkill(id,skill)
-            if (!resumeSkill) {
-                logger.warn(`Add skill failed for candidate ID: ${id}`);
-                return { message: "Failed to add skill to resume" };
-            } else {
-                logger.info(`Skill added successfully for candidate ID: ${id}`);
-                return { message: "Skills added successfully", skill: resumeSkill };
-            }
-        } catch (error) {
-            logger.error(`Add skill error for candidate ID: ${id}, error: ${error.message}`);
-        }
-    },
-    getResumeSkill:async(id)=>{
-        try {
-            const skill=await userRepository.getResumeSkill(id)
-            if(skill){
-                logger.info(`Skill details successfully retrieved for candidate ID: ${id}`);
-                return skill
-            }else{
-                logger.warn(`No skill details found for candidate ID: ${id}`);
-                return {message: "No skill details found for the given candidate ID" };
-            }
-        } catch (error) {
-            logger.error(`Error getting skill by candidate ID: ${id}, error: ${error.message}`);
-            return { success: false, message: "Internal server error"};
-        }
-    },
-
 
     // Add education details
     addEducation:async(email,education)=>{
@@ -254,7 +180,35 @@ const userUseCase={
             logger.error(`Add education error for email: ${email}, error: ${error.message}`);
         }
     },
-
+    editEducation:async(email,id,education)=>{
+        try {
+            const user=await userRepository.editEducation(email,id,education)
+            if (!user) {
+                logger.warn(`Edit education failed for email: ${email}, reason: User or education not found`);
+                return { message: "User or education not found" };
+            } else {
+                logger.info(`User education updated successfully for email: ${email}, updated education ID: ${id}`);
+                return { message: "User education updated successfully", user };
+            }
+        } catch (error) {
+            logger.error(`Edit education error for email: ${email}, education ID: ${id}, error: ${error.message}`);
+        }
+    },
+    deleteEducation:async(id,email)=>{
+        try {
+            const user=await userRepository.removeEducation(id,email)
+            if (user) {
+                logger.info(`Education successfully removed for user with email: ${email} and education ID: ${id}`);
+                return { message: "Education removed successfully", user };
+            } else {
+                logger.warn(`Failed to remove education for user with email: ${email} and education ID: ${id}. User or education not found.`);
+                return { message: "Failed to remove education. User or education not found." };
+            }
+        } catch (error) {
+            logger.error(`Error removing education for user with email: ${email} and education ID: ${id}, error: ${error.message}`);
+            return { message: "Error removing education", error: error.message };
+        }
+    },
     // Add skills of user
     addSkill:async(email,skill)=>{
         try {
@@ -268,6 +222,20 @@ const userUseCase={
             }
         } catch (error) {
             logger.error(`Add skill error for email: ${email}, error: ${error.message}`);
+        }
+    },
+    editSkill:async(email,oldSkill,newSkill)=>{
+        try {
+            const updatedUser=await userRepository.editSkills(email,oldSkill,newSkill)
+            if (!updatedUser) {
+                logger.warn(`Edit skill failed for email: ${email}, reason: Old skill "${oldSkill}" not found`);
+                return { message: "Skill not found or update failed" };
+              } else {
+                logger.info(`Skill "${oldSkill}" successfully updated to "${newSkill}" for email: ${email}`);
+                return { message: "User skill updated successfully", updatedUser };
+              }
+        } catch (error) {
+            logger.error(`Edit skill error for email: ${email}, error: ${error.message}`);
         }
     },
     deleteSkill:async(email,skill)=>{
@@ -334,6 +302,44 @@ const userUseCase={
             logger.error(`Error adding work experience for user ID: ${userId}, error: ${error.message}`);
         }
     },
+    editWorkExperience:async(data)=>{
+        try {
+            const { jobTitle, companyName, city, state, country, startDate, endDate, salary, userId, experienceId } = data;
+            const result = await userRepository.editWorkExperience(experienceId, {
+                jobTitle,
+                companyName,
+                city,
+                state,
+                country,
+                startDate,
+                endDate,
+                currentSalary: salary,
+                userId,
+            });
+            if (!result) {
+                logger.warn(`Failed to update work experience. Experience ID: ${experienceId} not found for user ID: ${userId}`);
+                return null;
+            }
+            logger.info(`Work experience updated successfully for user ID: ${userId}, experience ID: ${experienceId}`);
+            return result;
+        } catch (error) {
+            logger.error(`Error updating work experience for user ID: ${userId}, experience ID: ${experienceId}, error: ${error.message}`);
+        }
+    },
+    deleteWorkExperience:async(userId,experienceId)=>{
+        try {
+            const result=await userRepository.removeWorkExperience(userId,experienceId)
+            if (result) {
+                logger.info('Successfully deleted work experience for user ID: ' + userId + ', experience ID: ' + experienceId);
+            } else {
+                logger.warn('No work experience found to delete for experience ID: ' + experienceId);
+            }
+            return result; 
+        } catch (error) {
+            logger.error('Error deleting work experience for user ID: ' + userId + ', experience ID: ' + experienceId + '. Error: ' + error.message);
+        }
+
+    },
     getExperiences:async(userId)=>{
         try {
             const workExperiences=await userRepository.getUserWorkExperience(userId)
@@ -352,6 +358,19 @@ const userUseCase={
             return resumeUrl
         } catch (error) {
             logger.error(`Error updating resume URL in database for user ${userId}: ${error.message}`);
+        }
+    },
+    deleteResume:async(id)=>{
+        try {
+           const resume=await userRepository.removeResume(id) 
+           if (resume) {
+            logger.info(`Successfully removed resume for user ${id}.`);
+            return resume
+        } else {
+            logger.warn(`No resume found for user ${id}.`);
+        }
+        } catch (error) {
+            logger.error(`Error removing resume for user ${id}: ${error.message}`);
         }
     },
     getResumeUrl:async(userId)=>{

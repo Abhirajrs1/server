@@ -63,6 +63,22 @@ const jobControl={
             return res.status(500).json({ success: false, message: "Internal server error" });
         }
     },
+    getUnappliedJobs:async(req,res)=>{
+        try {
+            let userId=req.user.user._id
+            const jobs=await applicationUseCase.getUnappliedJobs(userId)
+            if (jobs) {
+                logger.info(`Successfully fetched unapplied jobs for user ${userId}. Total jobs: ${jobs.length}`);
+                return res.status(200).json({ success: true, jobs });
+            } else {
+                logger.warn(`No unapplied jobs found for user ${userId}`);
+                return res.status(404).json({ success: false, message: "No unapplied jobs found" });
+            }
+        } catch (error) {
+            logger.error(`Error fetching unapplied jobs for user ${userId}: ${error.message}`);
+            return res.status(500).json({ message: "Internal server error" });
+        }
+    },
     getCategories:async(req,res)=>{
         try {
             const categories=await categoryUseCase.getAllCategoriesForRecruiter()
@@ -75,18 +91,46 @@ const jobControl={
     },
     getApplications:async(req,res)=>{
         try {
+            const page=parseInt(req.query.page) || 1
+            const limit=parseInt(req.query.limit) || 10
             const userId=req.user.user._id
-            const applications=await applicationUseCase.getApplicationforCandidates(userId)
+            const applications=await applicationUseCase.getApplicationforCandidates(userId,page,limit)
             if(applications.message){
                 logger.warn(`Failed to fetch applications for candidate ID: ${userId} - ${applications.message}`);
                 return res.status(400).json({success:false,message:applications.message})
             }else{
                 logger.info(`Applications fetched successfully for candidate ID: ${userId}`);
-                 return res.status(200).json({success:true,message:"Job fetch successfully",applications})
+                 return res.status(200).json({success:true,message:"Job fetch successfully",applications:applications.application,total:applications.total,page:applications.page,limit:applications.limit})
             }
         } catch (error) {
             logger.error(`Error fetching applications for candidate ID: ${userId} - ${error.message}`);
             return res.status(500).json({ success: false, message: "Internal Server Error" });   
+        }
+    },
+    getSearchApplication:async(req,res)=>{
+        try {
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+            const searchTerm = req.query.searchTerm
+            const userId=req.user.user._id            
+            const applications=await applicationUseCase.getSearchApplication(userId, page, limit, searchTerm)
+            if (applications.message) {
+                logger.warn(`Failed to fetch applications for candidate ID: ${userId} - ${applications.message}`);
+                return res.status(400).json({ success: false, message: applications.message });
+            } else {
+                logger.info(`Applications fetched successfully for candidate ID: ${userId}`);
+                return res.status(200).json({
+                    success: true,
+                    message: "Job fetch successfully",
+                    applications: applications.application,
+                    total: applications.total,
+                    page: applications.page,
+                    limit: applications.limit
+                });
+            }
+        } catch (error) {
+            logger.error(`Error fetching applications for candidate ID: - ${error.message}`);
+            return res.status(500).json({ success: false, message: "Internal Server Error" });
         }
     },
     reportJob: async (req, res) => {

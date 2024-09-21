@@ -24,10 +24,6 @@ const jobController={
         try {
             const page=parseInt(req.query.page) || 1
             const limit=parseInt(req.query.limit) || 10
-            console.log(limit,"LIMIT");
-            console.log(page,"PAGE");
-            
-            
             const jobs=await jobUseCase.getAllJobs(page,limit)
             logger.info(`Retrieved all jobs, count: ${jobs.length}`);
             res.status(200).json({success:true,jobs:jobs.activeJobs,total:jobs.total,page:jobs.page,limit:jobs.limit})

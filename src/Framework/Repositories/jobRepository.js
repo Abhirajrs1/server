@@ -51,7 +51,7 @@ const jobRepository = {
     },
     getJobsById: async (id) => {
         try {
-            const jobs = await Job.find({ jobPostedBy: id })
+            const jobs = await Job.find({ jobPostedBy: id }).sort({ createdAt: -1 });
             logger.info(`Retrieved jobs posted by user: ${id}`);
             return jobs;
         } catch (error) {

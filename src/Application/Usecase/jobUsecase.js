@@ -10,7 +10,7 @@ const jobUseCase = {
     postJob: async (jobData) => {
         try {
             const { jobTitle, companyName, minPrice, maxPrice, jobLocation, yearsOfExperience, category,employmentType, description, jobPostedBy,education, skills,easyApply,applicationUrl } = jobData
-            const companyId=await jobRepository.findCompanyByName(companyName)
+            const companyId=await jobReposi*tory.findCompanyByName(companyName)
             const newJob = await jobRepository.createJob({
                 company:companyId,
                 jobTitle: jobTitle,

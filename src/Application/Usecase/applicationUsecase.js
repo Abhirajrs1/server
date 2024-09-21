@@ -59,18 +59,43 @@ const applicationUseCase={
             return { error: "Failed to check job application status" };
         }
     },
-    getApplicationforCandidates:async(id)=>{
+    getUnappliedJobs:async(userId)=>{
         try {
-            const application=await applicationRepository.getApplicationforCandidates(id)
-            if(!application){
-                logger.warn(`Recruiter ID: ${id}`);
-                return {message:"Application not found"}
+            const unappliedJobs=await applicationRepository.getUnappliedJobs(userId)
+            logger.info(`Fetched unapplied jobs for user ${userId}. Total unapplied jobs: ${unappliedJobs.length}`);
+            return unappliedJobs
+        } catch (error) {
+            logger.error(`Error fetching unapplied jobs for user ${userId}: ${error.message}`);
+        }
+    },
+    getApplicationforCandidates:async(id,page,limit)=>{
+        try {
+            const {application,total}=await applicationRepository.getApplicationforCandidates(id,page,limit)
+            if(!application || application.length===0){
+                logger.warn(`No applications found for candidate ID: ${id}`);
+                return { message: "Application not found" };
             }else{
-                logger.info(`Applications fetched successfully for candidate ID: ${id}`);
-                return application;
+                logger.info(`Successfully fetched ${application.length} applications for candidate ID: ${id}`);
+                return { application, total };
             }
         } catch (error) {
             logger.error(`Error fetching applications for candidate ID: ${id} - ${error.message}`);
+        }
+    },
+    getSearchApplication:async(userId, page, limit, searchTerm)=>{
+        try {
+            const {application,total}=await applicationRepository.getSearchedApplication(userId,page,limit,searchTerm)
+            console.log(application,"APPLIC");
+            
+            if (!application || application.length === 0) {
+                logger.warn(`No applications found for candidate ID: ${userId}`);
+                return { message: "Application not found" };
+            } else {
+                logger.info(`Successfully fetched ${application.length} applications for candidate ID: ${userId}`);
+                return { application, total };
+            }
+        } catch (error) {
+            logger.error(`Error fetching applications for candidate ID: ${userId} - ${error.message}`);
         }
     }
 

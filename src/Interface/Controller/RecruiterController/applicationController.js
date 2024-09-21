@@ -4,7 +4,7 @@ import applicationUseCase from "../../../Application/Usecase/applicationUsecase.
 const applicationController={
     getApplication:async(req,res)=>{
         try {
-            const {id}=req.params
+            const {id}=req.params            
             const application=await applicationUseCase.getApplicationByRecruiter(id)
             if(application.message){
                 logger.warn(`Failed to fetch applications for recruiter ID: ${id} - ${application.message}`);
