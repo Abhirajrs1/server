@@ -59,7 +59,7 @@ const chatRepository = {
                 path:'members',
                 select:'username email',
                 model:User
-            })
+            })                        
             for (let chat of chats){
                 chat.latestMessageTimestamp =await chatRepository.getLatestMessageTimestamp(chat._id)
             }

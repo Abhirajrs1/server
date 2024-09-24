@@ -21,7 +21,9 @@ const messageRepository = {
     // U
     getMessagesByChatId: async (chatId) => {
         try {
-            const messages = await Message.find({ chatId }).sort({ createdAt: 1 });
+            console.log(chatId,"IS");
+            const messages = await Message.find({chatId:chatId}).sort({ createdAt: 1 });
+             console.log(messages,"MESSAGES");
             if (messages.length) {
                 logger.info(`Messages fetched successfully for chatId: ${chatId}`, { messages });
             } else {

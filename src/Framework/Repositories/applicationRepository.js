@@ -155,7 +155,7 @@ const applicationRepository={
         try {
             const appliedJobs=await Application.find({applicant:id}).select('jobId')
             const appliedJobIds=appliedJobs.map(app=>app.jobId)
-            const jobs=await Job.find({_id:{$nin:appliedJobIds}})
+            const jobs=await Job.find({_id:{$nin:appliedJobIds},delete:false})
             logger.info(`Fetched unapplied jobs for user ${id}. Applied jobs: ${appliedJobIds.length}, Unapplied jobs: ${jobs.length}`);
             return jobs
         } catch (error) {

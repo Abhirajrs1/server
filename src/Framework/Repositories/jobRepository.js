@@ -49,11 +49,14 @@ const jobRepository = {
 
         }
     },
-    getJobsById: async (id) => {
+    getJobsById: async (query, page, limit) => {
         try {
-            const jobs = await Job.find({ jobPostedBy: id }).sort({ createdAt: -1 });
-            logger.info(`Retrieved jobs posted by user: ${id}`);
-            return jobs;
+            const skip = (page - 1) * limit; 
+            const jobs = await Job.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit);
+            const totalJobs = await Job.countDocuments(query); 
+            const totalPages = Math.ceil(totalJobs / limit); 
+            logger.info(`Retrieved jobs with query: ${JSON.stringify(query)}`);
+            return { jobs, totalPages };
         } catch (error) {
             logger.error(`Error retrieving jobs by ID: ${error}`);
         }

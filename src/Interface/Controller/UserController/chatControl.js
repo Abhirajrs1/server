@@ -52,6 +52,8 @@ const chatController = {
         try {
             const messageData=req.body
             const {message,room}=messageData
+            console.log(room,"ROOM");
+            
             const id=room
             const userId=req.user.user._id            
             const result=await chatUseCase.saveMessages(message,id,userId)

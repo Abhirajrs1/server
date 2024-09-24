@@ -35,14 +35,15 @@ const jobController={
     showJobs:async(req,res)=>{
         try {
             const {id}=req.params
-            const jobs=await jobUseCase.showJobs(id)
-            if(jobs.message){
-                logger.warn(`Failed to show jobs for recruiter ${id}: ${jobs.message}`);
-                res.status(400).json({success:false,message:jobs.message})
-            }else{
-                logger.info(`Jobs retrieved successfully for recruiter ${id}`);
-                res.status(200).json({success:true,message:"Job shows successfully",jobs})
+            const { page = 1, limit = 10, searchTerm = '' } = req.query;
+            const jobs=await jobUseCase.showJobs(id, { page, limit, searchTerm })
+            if (!jobs.jobs.length) {
+                logger.warn(`No jobs found for recruiter ${id}`);
+                return res.status(200).json({ success: true, jobs: [], totalPages: 0, message: "No jobs found" });
             }
+                logger.info(`Jobs retrieved successfully for recruiter ${id}`);
+                res.status(200).json({success:true,message:"Job shows successfully",jobs:jobs.jobs,totalPages:jobs.totalPages})
+            
         } catch (error) {
             logger.error(`Error in showJobs: ${error.message}`);
             res.status(500).json({ message: "Internal server error" })

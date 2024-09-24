@@ -61,15 +61,19 @@ const jobUseCase = {
             logger.error(`Error in getJob: ${error}`);
         }
     },
-    showJobs: async (id) => {
+    showJobs: async (id, { page, limit, searchTerm }) => {
         try {
-            const jobs = await jobRepository.getJobsById(id)
-            if (!jobs) {
+            const query = { jobPostedBy: id };
+            if (searchTerm) {
+                query.jobTitle = { $regex: searchTerm, $options: 'i' };
+            }
+            const { jobs, totalPages }  = await jobRepository.getJobsById(query, page, limit)
+            if (!jobs.length) {
                 logger.warn(`No jobs found for user ID: ${id}`);
-                return { message: "No jobs found" }
+                return { jobs: [], totalPages: 0,  message: "No jobs found" }
             }
             logger.info(`Retrieved jobs for user ID: ${id}`);
-            return jobs
+            return  { jobs, totalPages };
         } catch (error) {
             logger.error(`Error in showJobs: ${error}`);
         }
