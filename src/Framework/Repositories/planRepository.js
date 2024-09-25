@@ -24,11 +24,11 @@ const planRepository={
             logger.error(`Failed to add plan. Error: ${error.message}`, { error });
         }
     },
-    getPlans:async(page,limit)=>{
+    getPlans:async(page,limit,search)=>{
         try {
             const skip=(page-1)*limit
-            const plans=await Plans.find().skip(skip).limit(limit)
-            const total=await Plans.countDocuments()
+            const plans=await Plans.find({planName: { $regex: search, $options: 'i'}}).skip(skip).limit(limit)
+            const total=await Plans.countDocuments({planName: { $regex: search, $options: 'i'}})
             logger.info(`Fetched ${plans.length} plans. Page: ${page}, Limit: ${limit}`);
             return {plans,total}
         } catch (error) {

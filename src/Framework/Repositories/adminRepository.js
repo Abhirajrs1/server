@@ -31,11 +31,12 @@ const adminRepository={
          
       }
    },
-   findAllRecruiters:async(page,limit)=>{
+   findAllRecruiters:async(page,limit,companyName)=>{
       try {
         const skip=(page-1)*limit
-         const recruiters=await Recruiter.find().skip(skip).limit(limit)
-         const total=await Recruiter.countDocuments()
+        const query = companyName ? { companyName: { $regex: companyName, $options: 'i' } } : {};
+         const recruiters=await Recruiter.find(query).skip(skip).limit(limit)
+         const total=await Recruiter.countDocuments(query)
          logger.info(`Found ${recruiters.length} recruiters`);
          return {recruiters,total}
       } catch (error) {
@@ -54,11 +55,19 @@ const adminRepository={
     }
 
    },
-   getAllJobs:async(page,limit)=>{
+   getAllJobs:async(page,limit,search,category)=>{
     try {
       const skip=(page-1)*limit
-      const jobs=await Job.find().skip(skip).limit(limit)
-      const total=await Job.countDocuments()
+      const query = {
+        jobTitle: { $regex: search, $options: 'i' }
+    };
+
+    if (category) {
+        query.categoryName = category;
+    }
+
+      const jobs=await Job.find(query).skip(skip).limit(limit)
+      const total=await Job.countDocuments(query)
       logger.info(`Found ${jobs.length} jobs`);
       return {jobs,total}
     } catch (error) {

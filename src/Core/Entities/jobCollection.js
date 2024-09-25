@@ -55,6 +55,15 @@ const JobSchema = new mongoose.Schema({
         type: Date,
         default: new Date
     },
+    expiryDate: {
+        type: Date,
+        validate: {
+            validator: function(value) {
+                return value > new Date();
+            },
+            message: "Expiry date must be greater than today."
+        }
+    },
     description: {
         type: String
     },

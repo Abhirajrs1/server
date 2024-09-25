@@ -15,6 +15,14 @@ const jobRepository = {
             logger.error(`Error creating job: ${error}`);
         }
     },
+    deleteExpiredJobs:async(currentDate)=>{
+        try {
+            const result=await Job.deleteMany({expiryDate:{$lt:currentDate}})
+            return result.deletedCount;
+        } catch (error) {
+            logger.error(`Error deleting expired jobs: ${error.message}`);
+        }
+    },
     findCompanyByName:async(companyName)=>{
         try {
             const company=await Company.findOne({companyName:companyName})            

@@ -7,6 +7,7 @@ import { RecruiterRouter } from '../Routes/RecruiterRoutes/recruiterRoutes.js'
 import { AdminRouter } from '../Routes/AdminRoutes/adminRoutes.js'
 import { CompanyRouter } from '../Routes/CompanyRoutes/companyRoutes.js'
 import connectDB from '../Database/mongoClient.js'
+import cron from '../Services/cron-jobs.js'
 
 import Session  from 'express-session';
 

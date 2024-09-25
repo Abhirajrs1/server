@@ -36,9 +36,9 @@ const planUseCase={
             logger.error(`Failed to add plan. Error: ${error.message}`, { error });
         }
     },
-    getPlans:async(page,limit)=>{
+    getPlans:async(page,limit,search)=>{
         try {
-          const {plans,total} = await planRepository.getPlans(page,limit)
+          const {plans,total} = await planRepository.getPlans(page,limit,search)
           if(!plans){
             logger.warn("No plans found");
             return { message: "No plans found" };

@@ -40,9 +40,9 @@ const adminUseCase = {
       return { message: error.message };
     }
   },
-  getAllJobs: async (page,limit) => {
+  getAllJobs: async (page,limit,search,category) => {
     try {
-        const {jobs,total} = await adminRepository.getAllJobs(page,limit)
+        const {jobs,total} = await adminRepository.getAllJobs(page,limit,search,category)
         logger.info(`Retrieved ${jobs.length} jobs`);
         return {jobs,total,page,limit}
     } catch (error) {
@@ -64,9 +64,9 @@ const adminUseCase = {
       return { message: error.message };
     }
   },
-  getAllRecruiters: async (page,limit) => {
+  getAllRecruiters: async (page,limit,companyName) => {
     try {
-      const {recruiters,total} = await adminRepository.findAllRecruiters(page,limit);
+      const {recruiters,total} = await adminRepository.findAllRecruiters(page,limit,companyName);
       if (!recruiters) {
         logger.warn(`Recruiters not found`);
         return { message: "Recruiters not found" };

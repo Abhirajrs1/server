@@ -6,11 +6,12 @@ const recruiterController={
         try {
           const page=parseInt(req.query.page) || 1
           const limit=parseInt(req.query.limit) || 10
-          const recruiters = await adminUseCase.getAllRecruiters(page,limit)
+          const companyName = req.query.companyName || '';
+          const recruiters = await adminUseCase.getAllRecruiters(page,limit,companyName)
           if(recruiters.message){
             logger.warn(`Error fetching recruiters: ${recruiters.message}`)
           }
-          logger.info(`Found ${recruiters.length} recruiters`);
+          logger.info(`Found ${recruiters.recruiters.length} recruiters`);
           res.status(200).json({ success: true, recruiters:recruiters.recruiters,total:recruiters.total,page:recruiters.page,limit:recruiters.limit })
         } catch (error) {
           logger.error(`Error fetching recruiters: ${error.message}`)

@@ -24,7 +24,8 @@ const planController={
         try {
             const page=parseInt(req.query.page) || 1
             const limit=parseInt(req.query.limit) || 5
-            const planData=await planUseCase.getPlans(page,limit)
+            const search = req.query.search || '';            
+            const planData=await planUseCase.getPlans(page,limit,search)
             if(planData.message){
                 logger.warn(`Failed to retrieve plans: ${planData.message}`);
                 return res.status(404).json({ success: false, message: planData.message });

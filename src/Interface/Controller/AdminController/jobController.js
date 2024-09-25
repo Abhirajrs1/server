@@ -6,7 +6,9 @@ const jobController={
         try {
             const page=parseInt(req.query.page) || 1
             const limit=parseInt(req.query.limit) || 10
-            const jobs=await adminUseCase.getAllJobs(page,limit)
+            const search = req.query.search || ''; 
+            const category = req.query.category || '';
+            const jobs=await adminUseCase.getAllJobs(page,limit,search,category)
             logger.info(`Retrieved all jobs, count: ${jobs.length}`);
             res.status(200).json({success:true,jobs:jobs.jobs,total:jobs.total,page:jobs.page,limit:jobs.limit})  
         } catch (error) {
