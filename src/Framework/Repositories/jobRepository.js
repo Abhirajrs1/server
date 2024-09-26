@@ -39,7 +39,9 @@ const jobRepository = {
     getJobs: async (page,limit) => {
         try {
             const skip=(page-1)*limit
-            const jobs = await Job.find().skip(skip).limit(limit)
+            const jobs = await Job.find().sort({ createdAt: -1 })
+            
+            .skip(skip).limit(limit)
             const total=await Job.countDocuments()
             logger.info(`Retrieved ${jobs.length} jobs`);
             return {jobs,total}
