@@ -131,6 +131,22 @@ const companyController={
             return res.status(500).json({ message: 'Error uploading document' });
         }
     },
+    deleteDocument:async(req,res)=>{
+        try {
+            const companyId = req.company._id;
+            const { docType } = req.query;              
+            const deleteResult = await companyUseCase.deleteCompanyDocument(companyId, docType);
+            if (deleteResult.message === "Company not found") {
+                logger.warn(`Delete document failed: Company not found with ID: ${companyId}`);
+                return res.status(404).json({ message: "Company not found" });
+            }
+            logger.info(`Document ${docType} deleted successfully for company ID: ${companyId}`);
+            return res.status(200).json({ message: "Document deleted successfully" });
+        } catch (error) {
+            logger.error(`Error deleting document: ${error.message}`);
+            return res.status(500).json({ message: 'Error deleting document' });
+        }
+    },
     getCompanyReviews:async(req,res)=>{
         try {
             const id=req.company._id

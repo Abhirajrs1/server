@@ -26,6 +26,7 @@ router.put('/company-uploadLogo',upload.single('logo'),authMiddleware,companyCon
 router.put('/company-updateContact/:email',authMiddleware,companyController.updateProfile)
 router.put('/company-updateAboutDetails/:email',authMiddleware,companyController.updateAboutDetails)
 router.post('/company-uploadDocuments',upload.single('file'),authMiddleware,companyController.uploadCompanyDocuments)
+router.delete('/company-deleteDocument',authMiddleware,companyController.deleteDocument)
 
 router.get('/company-logout',authMiddleware,companyController.logOut)
 export {router as CompanyRouter}

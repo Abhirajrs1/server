@@ -116,6 +116,21 @@ const companyUseCase={
             logger.error(`Error uploading document for company ID: ${companyId}, error: ${error.message}`);
         }
     },
+    deleteCompanyDocument: async (companyId, docType) => {
+        try {
+            const result = await companyRepository.deleteCompanyDocument(companyId, docType);
+            if (!result) {
+                logger.warn(`Delete document failed for company ID: ${companyId}, reason: Company not found`);
+                return { message: "Company not found" };
+            } else {
+                logger.info(`Document ${docType} deleted successfully for company ID: ${companyId}`);
+                return { message: "Document deleted successfully", result };
+            }
+        } catch (error) {
+            logger.error(`Error deleting document for company ID: ${companyId}, error: ${error.message}`);
+        }
+    },
+    
     getCompanies:async()=>{
         try {
             const companies = await companyRepository.getAllCompaniesForUser();
