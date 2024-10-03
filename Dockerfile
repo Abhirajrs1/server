@@ -8,9 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install build tools and dependencies, ensuring bcrypt is built from source
-RUN apk add --no-cache python3 make g++ \
-    && npm install bcrypt --build-from-source \
-    && npm install
+RUN npm install
 
 COPY . .
 
