@@ -4,7 +4,8 @@ const chatController = {
 
     createRoom:async(req,res)=>{
         try {
-            const {jobId,employerId}=req.body
+            const {jobId,employerId}=req.body  
+            console.log(jobId,employerId)   
             const userId=req.user.user._id
             const room=await chatUseCase.createRoom(jobId,userId,employerId)
             if (room) {
