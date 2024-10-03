@@ -29,23 +29,23 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/workstation_server:latest
 
-  deploy:
-    needs: build
-    runs-on: self-hosted
+  # deploy:
+  #   needs: build
+  #   runs-on: self-hosted
 
-    steps:
-      - name: Ensure Docker is running and accessible
-        run: |
-          sudo systemctl start docker
-          sudo chmod 666 /var/run/docker.sock 
+  #   steps:
+  #     - name: Ensure Docker is running and accessible
+  #       run: |
+  #         sudo systemctl start docker
+  #         sudo chmod 666 /var/run/docker.sock 
 
-      - name: Pull image from Docker Hub
-        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/workstation_server:latest
+  #     - name: Pull image from Docker Hub
+  #       run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/workstation_server:latest
 
-      - name: Stop and remove old container
-        run: |
-          docker stop room-booking-app || true
-          docker rm room-booking-app || true
+  #     - name: Stop and remove old container
+  #       run: |
+  #         docker stop room-booking-app || true
+  #         docker rm room-booking-app || true
 
       # - name: Run Docker Container
       #   run: |
