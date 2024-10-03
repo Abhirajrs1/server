@@ -21,10 +21,10 @@ const app=express()
 const port=process.env.PORT ||3000
 
 app.use(cors({
-    origin: 'https://workstation.today',
-    credentials:true,
-    methods:'GET,POST,PUT,DELETE'
- }))
+  origin: '*', 
+  credentials: true,
+  methods: 'GET,POST,PUT,DELETE'
+}));
 
  app.use(cookieParser())
  app.use(
