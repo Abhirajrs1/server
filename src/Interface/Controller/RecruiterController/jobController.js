@@ -25,7 +25,7 @@ const jobController={
             const page=parseInt(req.query.page) || 1
             const limit=parseInt(req.query.limit) || 10
             const jobs=await jobUseCase.getAllJobs(page,limit)
-            logger.info(`Retrieved all jobs, count: ${jobs.length}`);
+            logger.info(`Retrieved all jobs, count: ${jobs.total}`);
             res.status(200).json({success:true,jobs:jobs.activeJobs,total:jobs.total,page:jobs.page,limit:jobs.limit})
         } catch (error) {
             logger.error(`Error in getAllJobs: ${error.message}`);
