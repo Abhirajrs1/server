@@ -7,7 +7,7 @@
       {
         clientID: process.env.CLIENT_ID,
         clientSecret: process.env.CLIENT_SECRET,
-        callbackURL: 'http://localhost:3000/auth/google/callback',
+        callbackURL: 'https://api.workstation.today/auth/google/callback',
         scope: ['profile', 'email'],
       },
       async (accessToken, refreshToken, profile, done) => {
