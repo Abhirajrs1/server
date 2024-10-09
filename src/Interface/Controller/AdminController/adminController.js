@@ -13,7 +13,7 @@ const adminController = {
         res.status(400).json({ success: false, message: loginResult.message })
       } else {
         const { admin, token } = loginResult
-        res.cookie('adminaccessToken', String(token), { httpOnly:false, maxAge: 3600000 })
+        res.cookie('adminaccessToken', String(token), { httpOnly: true,secure:true,sameSite:'None', maxAge: 3600000 })
         logger.info(`Admin login successful: ${email}`);
         res.status(200).json({ success: true, message: "Admin login successfully", admin, token })
       }

@@ -33,7 +33,7 @@ const companyController={
                 return res.status(400).json({ success: false, message: loginResult.message });
             }
             const { company, token } = loginResult; 
-            res.cookie('companyaccessToken', String(token), { httpOnly: false, maxAge: 3600000 });
+            res.cookie('companyaccessToken', String(token), { httpOnly: true,secure:true,sameSite:'None', maxAge: 3600000 });
             logger.info(`Company successfully logged in: ${email}`);
             res.status(200).json({ success: true, message: "User login successfully",company, token });
         } catch (error) {

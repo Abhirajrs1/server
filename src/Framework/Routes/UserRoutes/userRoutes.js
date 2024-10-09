@@ -77,6 +77,6 @@ router.get('/employee-getMessages/:chatId', authMiddleware, chatController.getMe
 
 // Google authentication
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-router.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "http://localhost:5173/employee-login", }), userController.handlePassport);
+router.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "https://workstation.today/employee-login", }), userController.handlePassport);
 
 export { router as UserRouter }

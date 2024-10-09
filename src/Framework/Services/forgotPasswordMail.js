@@ -15,7 +15,7 @@ const sendEmail=(token,email)=>{
         from: 'workstation@gmail.com',
         to: email,
         subject: 'Reset password',
-        text: `http://localhost:5173/employee-resetPassword/${token}`
+        text: `https://workstation.today/employee-resetPassword/${token}`
       };
       
       transporter.sendMail(mailOptions, function(error, info){

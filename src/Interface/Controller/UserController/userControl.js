@@ -79,8 +79,8 @@ const userController = {
                 res.clearCookie('refreshToken')
                 return res.status(403).json({ success: false, message: 'Your account has been blocked. Please contact support.' });              
             }
-            res.cookie('accessToken', String(token), { httpOnly: false, maxAge: 3600000 });
-            res.cookie('refreshToken', refreshToken, { httpOnly: false, maxAge: 7 * 24 * 60 * 60 * 1000 });
+            res.cookie('accessToken', String(token), { httpOnly: true,secure:true,sameSite:'None',maxAge: 3600000 });
+            res.cookie('refreshToken', refreshToken, { httpOnly: true,secure:true,sameSite:'None', maxAge: 7 * 24 * 60 * 60 * 1000 });
             logger.info(`User successfully logged in: ${email}`);
             res.status(200).json({ success: true, message: "User login successfully", user, token });
         } catch (error) {
@@ -479,7 +479,7 @@ const userController = {
             const googleUser = await userUseCase.findOrCreateGoogleUser(req.user);
             const token = await generateJWT(googleUser.email);
             res.cookie('accessToken', String(token), { httpOnly: false, maxAge: 3600000 });
-            const redirectUrl = `http://localhost:5173/auth?token=${encodeURIComponent(token)}&user=${encodeURIComponent(JSON.stringify(googleUser))}`;
+            const redirectUrl = `https://workstation.today/auth?token=${encodeURIComponent(token)}&user=${encodeURIComponent(JSON.stringify(googleUser))}`;
             res.redirect(redirectUrl);
           } catch (error) {
             res.status(500).json({ success: false, message: 'Server error' });
