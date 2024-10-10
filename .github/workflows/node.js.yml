@@ -13,55 +13,45 @@ jobs:
       - name: Checkout Source
         uses: actions/checkout@v3 
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2 
+      - name: Login to Docker Hub
+        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Build Docker Image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/server-app .
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v3  
-        with:
-          context: .
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/workstation_server:latest
+      - name: Publish Image to Docker Hub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/server-app:latest
 
-  # deploy:
-  #   needs: build
-  #   runs-on: self-hosted
+  deploy:
+    needs: build
+    runs-on: self-hosted
 
-  #   steps:
-  #     - name: Ensure Docker is running and accessible
-  #       run: |
-  #         sudo systemctl start docker
-  #         sudo chmod 666 /var/run/docker.sock 
+    steps:
+      - name: Cleanup old images
+        run: |
+          docker image prune -f
+          docker rmi $(docker images -f "dangling=true" -q) || true
 
-  #     - name: Pull image from Docker Hub
-  #       run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/workstation_server:latest
+      - name: Pull image from Docker Hub
+        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/server-app:latest
 
-  #     - name: Stop and remove old container
-  #       run: |
-  #         docker stop room-booking-app || true
-  #         docker rm room-booking-app || true
+      - name: Delete old container
+        run: docker rm -f server-app || true
 
-      # - name: Run Docker Container
-      #   run: |
-      #     docker run -d -p 1997:1997 --name room-booking-app \
-      #       -e DATABASE_CONNECTION="${{ secrets.DATABASE_CONNECTION }}" \
-      #       -e FAST_TO_SMS_KEY="${{ secrets.FAST_TO_SMS_KEY }}" \
-      #       -e JWT_ADMIN_SECRET_KEY="${{ secrets.JWT_ADMIN_SECRET_KEY }}" \
-      #       -e ADMIN_USERNAME="${{ secrets.ADMIN_USERNAME }}" \
-      #       -e ADMIN_EMAIL="${{ secrets.ADMIN_EMAIL }}" \
-      #       -e ADMIN_MOBILE="${{ secrets.ADMIN_MOBILE }}" \
-      #       -e ADMIN_PASSWORD="${{ secrets.ADMIN_PASSWORD }}" \
-      #       -e ADMIN_CPASSWORD="${{ secrets.ADMIN_CPASSWORD }}" \
-      #       -e RAZORPAY_ID="${{ secrets.RAZORPAY_ID }}" \
-      #       -e RAZORPAY_SECRET_ID="${{ secrets.RAZORPAY_SECRET_ID }}" \
-      #       -e CLOUDINARY_CLOUD_NAME="${{ secrets.CLOUDINARY_CLOUD_NAME }}" \
-      #       -e CLOUDINARY_API_KEY="${{ secrets.CLOUDINARY_API_KEY }}" \
-      #       -e CLOUDINARY_API_SECRET="${{ secrets.CLOUDINARY_API_SECRET }}" \
-      #       -e EMAIL_PASSWORD="${{ secrets.EMAIL_PASSWORD }}" \
-      #       ${{ secrets.DOCKER_USERNAME }}/room-booking-app:latest  
+      - name: Run Docker Container
+        run: |
+          docker run -d -p 3000:3000 --name server-app \
+            -e PORT="${{ secrets.PORT }}" \
+            -e MONGODB_URL="${{ secrets.MONGODB_URL }}" \
+            -e EMAIL="${{ secrets.EMAIL }}" \
+            -e PASSWORD="${{ secrets.PASSWORD }}" \
+            -e CLIENT_ID="${{ secrets.CLIENT_ID }}" \
+            -e CLIENT_SECRET="${{ secrets.CLIENT_SECRET }}" \
+            -e KEY="${{ secrets.KEY }}" \
+            -e REFRESH_TOKEN_KEY="${{ secrets.REFRESH_TOKEN_KEY }}" \
+            -e AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}" \
+            -e AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
+            -e S3_BUCKET_NAME="${{ secrets.S3_BUCKET_NAME }}" \
+            -e AWS_REGION="${{ secrets.AWS_REGION }}" \
+            -e RAZORPAY_KEY_ID="${{ secrets.RAZORPAY_KEY_ID }}" \
+            -e RAZORPAY_KEYSECRET="${{ secrets.RAZORPAY_KEYSECRET }}"
