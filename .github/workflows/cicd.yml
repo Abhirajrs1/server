@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
- build:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,20 +17,20 @@ jobs:
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
       - name: Build Docker Image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/server-app .
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/server-app:latest .
 
       - name: Publish Image to Docker Hub
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/server-app:latest
 
-deploy:
-   needs: build
-   runs-on: self-hosted
+  deploy:
+    needs: build
+    runs-on: self-hosted
 
-   steps:
+    steps:
       - name: Cleanup old images
         run: |
-         docker image prune -f
-         docker rmi $(docker images -f "dangling=true" -q) || true
+          docker image prune -f
+          docker rmi $(docker images -f "dangling=true" -q) || true
 
       - name: Pull image from Docker Hub
         run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/server-app:latest
@@ -40,7 +40,7 @@ deploy:
 
       - name: Run Docker Container
         run: |
-         docker run -d -p 3000:3000 --name server-app \
+          docker run -d -p 3000:3000 --name server-app \
             -e PORT="${{ secrets.PORT }}" \
             -e MONGODB_URL="${{ secrets.MONGODB_URL }}" \
             -e EMAIL="${{ secrets.EMAIL }}" \
@@ -54,14 +54,5 @@ deploy:
             -e S3_BUCKET_NAME="${{ secrets.S3_BUCKET_NAME }}" \
             -e AWS_REGION="${{ secrets.AWS_REGION }}" \
             -e RAZORPAY_KEY_ID="${{ secrets.RAZORPAY_KEY_ID }}" \
-            -e RAZORPAY_KEYSECRET="${{ secrets.RAZORPAY_KEYSECRET }}"
+            -e RAZORPAY_KEYSECRET="${{ secrets.RAZORPAY_KEYSECRET }}" \
             ${{ secrets.DOCKERHUB_USERNAME }}/server-app:latest
-
-
-
-
-
-
-
-
-
