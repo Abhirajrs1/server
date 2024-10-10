@@ -27,25 +27,20 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Ensure Docker is running
-        run: |
-          sudo systemctl start docker
-          sudo chmod 666 /var/run/docker.sock
-
       - name: Cleanup old images
         run: |
-          sudo docker image prune -f
-          sudo docker rmi $(sudo docker images -f "dangling=true" -q) || true
+          docker image prune -f
+          docker rmi $(docker images -f "dangling=true" -q) || true
 
       - name: Pull image from Docker Hub
-        run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/server-app:latest
+        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/server-app:latest
 
       - name: Delete old container
-        run: sudo docker rm -f server-app || true
+        run: docker rm -f server-app || true
 
       - name: Run Docker Container
         run: |
-          sudo docker run -d -p 3000:3000 --name server-app \
+          docker run -d -p 3000:3000 --name server-app \
             -e PORT="${{ secrets.PORT }}" \
             -e MONGODB_URL="${{ secrets.MONGODB_URL }}" \
             -e EMAIL="${{ secrets.EMAIL }}" \
@@ -57,7 +52,7 @@ jobs:
             -e AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}" \
             -e AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
             -e S3_BUCKET_NAME="${{ secrets.S3_BUCKET_NAME }}" \
-            -e AWS_REGION="${{ secrets.AWS_REGION }}" \
+            -e AWS_REGION="${{ secrets.AW S_REGION }}" \
             -e RAZORPAY_KEY_ID="${{ secrets.RAZORPAY_KEY_ID }}" \
-            -e RAZORPAY_KEYSECRET="${{ secrets.RAZORPAY_KEYSECRET }}" \
+            -e RAZORPAY_KEYSECRET="${{ secrets.RAZORPAY_KEYSECRET }}"
             ${{ secrets.DOCKERHUB_USERNAME }}/server-app:latest
