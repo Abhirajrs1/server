@@ -55,3 +55,4 @@ jobs:
             -e AWS_REGION="${{ secrets.AWS_REGION }}" \
             -e RAZORPAY_KEY_ID="${{ secrets.RAZORPAY_KEY_ID }}" \
             -e RAZORPAY_KEYSECRET="${{ secrets.RAZORPAY_KEYSECRET }}"
+            ${{ secrets.DOCKERHUB_USERNAME }}/server-app:latest
