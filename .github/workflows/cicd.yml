@@ -22,15 +22,15 @@ jobs:
       - name: Publish Image to Docker Hub
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/server-app:latest
 
-  deploy:
-    needs: build
-    runs-on: self-hosted
+deploy:
+   needs: build
+   runs-on: self-hosted
 
-    steps:
+   steps:
       - name: Cleanup old images
         run: |
-          docker image prune -f
-          docker rmi $(docker images -f "dangling=true" -q) || true
+         docker image prune -f
+         docker rmi $(docker images -f "dangling=true" -q) || true
 
       - name: Pull image from Docker Hub
         run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/server-app:latest
@@ -40,7 +40,7 @@ jobs:
 
       - name: Run Docker Container
         run: |
-          docker run -d -p 3000:3000 --name server-app \
+         docker run -d -p 3000:3000 --name server-app \
             -e PORT="${{ secrets.PORT }}" \
             -e MONGODB_URL="${{ secrets.MONGODB_URL }}" \
             -e EMAIL="${{ secrets.EMAIL }}" \
